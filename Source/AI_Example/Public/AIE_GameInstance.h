@@ -12,8 +12,8 @@ UCLASS()
 class AI_EXAMPLE_API UAIE_GameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-	
-	
-	
-	
+protected:
+	UAIE_GameInstance(const FObjectInitializer& ObjectInitializer);
+public:
+	FStreamableManager StreamableManager;
 };

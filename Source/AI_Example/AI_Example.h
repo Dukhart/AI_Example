@@ -7,3 +7,6 @@
 // Global Classes
 #include "AIE_PlayerPawn.h"
 #include "AIE_PlayerController.h"
+
+// strings
+#include "AIE_Bp_Paths.h"

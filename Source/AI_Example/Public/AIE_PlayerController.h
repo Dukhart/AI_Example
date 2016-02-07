@@ -29,7 +29,6 @@ protected:
 	virtual void BeginPlay() override;
 	// handles setting up input, primarly used to bind methods to various inputs
 	virtual void SetupInputComponent() override;
-
 	// input methods
 public:
 	// called when input is detected
@@ -40,7 +39,4 @@ public:
 	virtual void DoMoveForwardBack(FVector value);
 	// moves player pawn
 	virtual void DoSimpleMove(FVector value);
-
-	
-	
 };

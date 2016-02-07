@@ -6,3 +6,6 @@
 
 
 
+UAIE_GameInstance::UAIE_GameInstance(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
+
+}

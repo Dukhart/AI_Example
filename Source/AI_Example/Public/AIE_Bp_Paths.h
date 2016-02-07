@@ -11,6 +11,7 @@ struct AI_EXAMPLE_API FAIE_Bp_Paths
 	GENERATED_USTRUCT_BODY()
 public:
 	// Player Blueprints
-	static const FString DefaultPlayerPawn;
+	static const FString DefaultPlayerPawnBp;
+	static const FString PlayerControllerBp;
 
 };

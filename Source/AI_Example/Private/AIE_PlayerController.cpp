@@ -5,20 +5,21 @@
 
 
 
-
+// Constructor
 AAIE_PlayerController::AAIE_PlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer) {
-	//fDeltaTime = 0.0f;
 }
+// handles what happens when the objet finishes construction
 void AAIE_PlayerController::BeginPlay() {
 	Super::BeginPlay();
 }
+// Called every frame
 void AAIE_PlayerController::PlayerTick(float DeltaSeconds) {
 	Super::PlayerTick(DeltaSeconds);
 	fDeltaTime = DeltaSeconds;
 }
+// handles setting up input, primarly used to bind methods to various inputs
 void AAIE_PlayerController::SetupInputComponent() {
-	
 	// make the input component from the base class
 	Super::SetupInputComponent();
 	// check creating the input component was succefull
@@ -27,10 +28,8 @@ void AAIE_PlayerController::SetupInputComponent() {
 	// Bind Input Axis to appropriate Methods
 	InputComponent->BindAxis("MoveLeftRight", this, &AAIE_PlayerController::OnMoveLeftRight);
 	InputComponent->BindAxis("MoveForwardBack", this, &AAIE_PlayerController::OnMoveForwardBack);
-	
 }
 // INPUT
-
 // Called when move left right input is detected
 void AAIE_PlayerController::OnMoveLeftRight(float value) {
 	
@@ -44,9 +43,8 @@ void AAIE_PlayerController::OnMoveLeftRight(float value) {
 	
 
 }
+// Called when move forward back input is detected
 void AAIE_PlayerController::OnMoveForwardBack(float value) {
-	
-	
 	// Get movement Direction based on current control rotation
 	FRotator RotationControlSpace = GetControlRotation();
 	FVector ForwardVector = FRotationMatrix(RotationControlSpace).GetUnitAxis(EAxis::Y);
@@ -57,12 +55,10 @@ void AAIE_PlayerController::OnMoveForwardBack(float value) {
 	// apply the movement to the pawn
 	DoMoveForwardBack(MovementVector * fDeltaTime);
 	
-
 	/*
 	GetPawn()->AddActorLocalOffset(MovementVector * fDeltaTime);
 	//GetPawn()->AddActorLocalOffset(MovementVector);
 	*/
-	
 }
 
 // Handles execution of valid input
