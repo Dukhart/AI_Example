@@ -19,24 +19,28 @@ public:
 	AAIE_PlayerController(const FObjectInitializer& ObjectInitializer);
 	// the base movement speed modifier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float baseMovementSpeed = 10.0f;
+	float BaseMovementSpeed;
 	// holds delta time
-	float fDeltaTime = 0.0f;
+	float DeltaTime;
 protected:
 	// what happens every frame
 	virtual void PlayerTick(float DeltaTime) override;
 	// handles what happens when the objet finishes construction
 	virtual void BeginPlay() override;
 	// handles setting up input, primarly used to bind methods to various inputs
+	
 	virtual void SetupInputComponent() override;
 	// input methods
 public:
+	
 	// called when input is detected
 	virtual void OnMoveLeftRight(float value = 0.0f);
 	virtual void OnMoveForwardBack(float value = 0.0f);
+	
 	// Handles execution of valid input
 	virtual void DoMoveLeftRight(FVector value);
 	virtual void DoMoveForwardBack(FVector value);
 	// moves player pawn
 	virtual void DoSimpleMove(FVector value);
+	
 };

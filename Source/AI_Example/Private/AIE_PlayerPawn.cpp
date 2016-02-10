@@ -5,25 +5,49 @@
 
 
 // Sets default values
-AAIE_PlayerPawn::AAIE_PlayerPawn()
-{
+AAIE_PlayerPawn::AAIE_PlayerPawn (const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer) {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//Create arrow to display control rotation
-	//UArrowComponent* arrowControlRot = new UArrowComponent();
-	UArrowComponent* arrowControlRot = CreateDefaultSubobject<UArrowComponent>("Arrow Control Rotation");
-	// attach the arrow to the root
-	arrowControlRot->AttachTo(RootComponent);
-	//set unique color for the arrow
-	arrowControlRot->ArrowColor = FColor::Blue;
+	//ROOT
+	//make the root component
+	PawnSceneRoot = CreateDefaultSubobject<USceneComponent>("Root Component");
+	RootComponent = PawnSceneRoot;
 
-	//create arrow to display camera roation
-	UArrowComponent* arrowCameraRot = CreateDefaultSubobject<UArrowComponent>("Arrow Camera Rotation");
+	//SPRING ARM
+	// create the spring arm
+	PawnSpringArm = CreateDefaultSubobject<USpringArmComponent>("Camera Boom");
+	// attach the spring arm to the Root
+	PawnSpringArm->AttachTo(RootComponent);
+	// set default arm length
+	PawnSpringArm->TargetArmLength = 300.0f;
+
+	// CAMERA
+	// create the camera
+	PawnCamera = CreateDefaultSubobject<UCameraComponent>("Camera");
+	// attach the camera to the END of the spring arm
+	PawnCamera->AttachTo(PawnSpringArm, USpringArmComponent::SocketName);
+
+	// DISPLAY ARROWS
+	//create arrow to display pawn roation
+	PawnRotationArrow = CreateDefaultSubobject<UArrowComponent>("Arrow Pawn Rotation");
 	// attach the arrow to the root
-	arrowCameraRot->AttachTo(RootComponent);
+	PawnRotationArrow->AttachTo(RootComponent);
 	//set unique color for the arrow
-	arrowCameraRot->ArrowColor = FColor::Red;
+	PawnRotationArrow->ArrowColor = FColor::Red;
+	// set the arrow to display in game
+	PawnRotationArrow->bHiddenInGame = false;
+
+	ControlRotationArrow = CreateDefaultSubobject<UArrowComponent>("Arrow Control Rotation");
+	// attach the arrow to the root
+	ControlRotationArrow->AttachTo(RootComponent);
+	//set unique color for the arrow
+	ControlRotationArrow->ArrowColor = FColor::Blue;
+	// set the arrow to display in game
+	ControlRotationArrow->bHiddenInGame = false;
+	// add vertical offset so the arrows are not on top of eachother
+	ControlRotationArrow->AddLocalOffset(FVector(0.0f,0.0f,30.0f));
 }
 
 // Called when the game starts or when spawned

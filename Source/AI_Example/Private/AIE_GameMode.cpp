@@ -8,6 +8,7 @@
 
 AAIE_GameMode::AAIE_GameMode()
 {
+	
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBpClass(*FAIE_Bp_Paths::DefaultPlayerPawnBp);
 	if (PlayerPawnBpClass.Class != NULL) {
@@ -26,11 +27,7 @@ AAIE_GameMode::AAIE_GameMode()
 	else {
 		PlayerControllerClass = AAIE_PlayerController::StaticClass();
 	}
-	/*
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter"));
-	if (PlayerPawnBPClass.Class != NULL)
-	{
-	DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
-	*/
+	
+	//PlayerControllerClass = AAIE_PlayerController::StaticClass();
+	//DefaultPawnClass = AAIE_PlayerPawn::StaticClass();
 }
