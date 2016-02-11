@@ -28,19 +28,44 @@ protected:
 	// handles what happens when the objet finishes construction
 	virtual void BeginPlay() override;
 	// handles setting up input, primarly used to bind methods to various inputs
-	
 	virtual void SetupInputComponent() override;
+	// bools for click detection
+	bool bLeftClick = 0;
+	bool bRightClick = 0;
+	// counters for click duration
+	float fLeftClickCounter = 0.0f;
+	float fRightClickCounter = 0.0f;
+
 	// input methods
+	UFUNCTION(BlueprintNativeEvent, Category = "Input")
+	void OnMoveLeftRight(float value = 0.0f);
+	virtual void OnMoveLeftRight_Implementation(float value = 0.0f);
+	UFUNCTION(BlueprintNativeEvent, Category = "Input")
+	void OnMoveForwardBack(float value = 0.0f);
+	virtual void OnMoveForwardBack_Implementation(float value = 0.0f);
+	// left mouse button behavior
+	UFUNCTION(BlueprintNativeEvent, Category = "Input")
+	void OnLeftMousePress();
+	virtual void OnLeftMousePress_Implementation();
+	UFUNCTION(BlueprintNativeEvent, Category = "Input")
+	void OnLeftMouseRelease();
+	virtual void OnLeftMouseRelease_Implementation();
+	// right mouse button behavior
+	UFUNCTION(BlueprintNativeEvent, Category = "Input")
+	void OnRightMousePress();
+	virtual void OnRightMousePress_Implementation();
+	UFUNCTION(BlueprintNativeEvent, Category = "Input")
+	void OnRightMouseRelease();
+	virtual void OnRightMouseRelease_Implementation();
+
+	void DoRightMouseAction(float time);
+	void DoLeftMouseAction(float time);
+
 public:
-	
-	// called when input is detected
-	virtual void OnMoveLeftRight(float value = 0.0f);
-	virtual void OnMoveForwardBack(float value = 0.0f);
-	
 	// Handles execution of valid input
 	virtual void DoMoveLeftRight(FVector value);
 	virtual void DoMoveForwardBack(FVector value);
 	// moves player pawn
 	virtual void DoSimpleMove(FVector value);
-	
+	void UpdateControlArrow();
 };

@@ -21,7 +21,9 @@ AAIE_PlayerPawn::AAIE_PlayerPawn (const FObjectInitializer& ObjectInitializer)
 	// attach the spring arm to the Root
 	PawnSpringArm->AttachTo(RootComponent);
 	// set default arm length
-	PawnSpringArm->TargetArmLength = 300.0f;
+	PawnSpringArm->TargetArmLength = 200.0f;
+	// set spring arm angle
+	//PawnSpringArm->SetRelativeRotation(FQuat(FRotator(20.0f, 0.0f, 0.0f)));
 
 	// CAMERA
 	// create the camera

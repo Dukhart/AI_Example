@@ -8,7 +8,7 @@
 // Constructor
 AAIE_PlayerController::AAIE_PlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer) {
-	BaseMovementSpeed = 10.0f;
+	BaseMovementSpeed = 300.0f;
 	DeltaTime = 0.0f;
 }
 // handles what happens when the objet finishes construction
@@ -19,7 +19,9 @@ void AAIE_PlayerController::BeginPlay() {
 void AAIE_PlayerController::PlayerTick(float DeltaSeconds) {
 	Super::PlayerTick(DeltaSeconds);
 	DeltaTime = DeltaSeconds;
-	
+	// will auto fire in order so sequence can node from example can be ignored
+	DoLeftMouseAction(DeltaSeconds);
+	DoRightMouseAction(DeltaSeconds);
 }
 
 // handles setting up input, primarly used to bind methods to various inputs
@@ -33,78 +35,99 @@ void AAIE_PlayerController::SetupInputComponent() {
 	// Bind Input Axis to appropriate Methods
 	InputComponent->BindAxis("MoveLeftRight", this, &AAIE_PlayerController::OnMoveLeftRight);
 	InputComponent->BindAxis("MoveForwardBack", this, &AAIE_PlayerController::OnMoveForwardBack);
+
+	// Bind Input Actions to appropriate Methods
+	InputComponent->BindAction("LeftMouseButton", IE_Pressed, this, &AAIE_PlayerController::OnLeftMousePress);
+	InputComponent->BindAction("LeftMouseButton", IE_Released, this, &AAIE_PlayerController::OnLeftMouseRelease);
+	InputComponent->BindAction("RightMouseButton", IE_Pressed, this, &AAIE_PlayerController::OnRightMousePress);
+	InputComponent->BindAction("RightMouseButton", IE_Released, this, &AAIE_PlayerController::OnRightMouseRelease);
 }
 
 // INPUT
 // Called when move left right input is detected
-void AAIE_PlayerController::OnMoveLeftRight(float value) {
-
-//#if UE_BUILD_DEBUG
+void AAIE_PlayerController::OnMoveLeftRight_Implementation(float value) {
+#if !UE_BUILD_SHIPPING
 	if (value != 0.0f) {
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "Move Left Right " + FString::SanitizeFloat(value) + " at " + FString::SanitizeFloat(BaseMovementSpeed));
+		GEngine->AddOnScreenDebugMessage(0, 1.0f, FColor::Red, "Move Left Right " + FString::SanitizeFloat(value) + " at base " + FString::SanitizeFloat(BaseMovementSpeed));
 	}
-//#endif
+#endif
 
 	// Get movement Direction based on current control rotation
 	FRotator RotationControlSpace = GetControlRotation();
 	FVector RightVector = FRotationMatrix(RotationControlSpace).GetUnitAxis(EAxis::Y);
 	// multiply movement direction by input value and base speed modifier
 	FVector MovementVector = RightVector * value * BaseMovementSpeed;
-
+	// remove any z axis input
+	MovementVector = FVector(MovementVector.X, MovementVector.Y, 0.0f);
 	// apply the movement to the pawn
-	//DoMoveLeftRight(MovementVector * fDeltaTime);
-	DoMoveLeftRight(MovementVector);
+	DoMoveLeftRight(MovementVector * DeltaTime);
 }
 // Called when move forward back input is detected
-void AAIE_PlayerController::OnMoveForwardBack(float value) {
-//#if UE_BUILD_DEBUG
+void AAIE_PlayerController::OnMoveForwardBack_Implementation(float value) {
+#if !UE_BUILD_SHIPPING
 	if (value != 0.0f) {
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, "Move Forward Back " + FString::SanitizeFloat(value) + " at " + FString::SanitizeFloat(BaseMovementSpeed));
+		GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Black, "Move Forward Back " + FString::SanitizeFloat(value) + " at " + FString::SanitizeFloat(BaseMovementSpeed));
 	}
-//#endif
+#endif
 	// Get movement Direction based on current control rotation
 	FRotator RotationControlSpace = GetControlRotation();
 	FVector ForwardVector = FRotationMatrix(RotationControlSpace).GetUnitAxis(EAxis::X);
 	// multiply movement direction by input value and base speed modifier
 	FVector MovementVector = ForwardVector * value * BaseMovementSpeed;
-
-	//GetPawn()->AddMovementInput(ForwardVector, value * baseMovementSpeed);
-
 	// remove any z axis input
-	//MovementVector = FVector(MovementVector.X, MovementVector.Y, 0.0f);
-
+	MovementVector = FVector(MovementVector.X, MovementVector.Y, 0.0f);
 
 	// apply the movement to the pawn
-	//DoMoveForwardBack(MovementVector * fDeltaTime);
-	DoMoveForwardBack(MovementVector);
-	
-
-
-	
-	//GetPawn()->AddActorLocalOffset(MovementVector * fDeltaTime);
-	//GetPawn()->AddActorLocalOffset(MovementVector);
-	
+	DoMoveForwardBack(MovementVector * DeltaTime);	
 }
-
-// Handles execution of valid input
+// Handles execution of valid Left Right input
 void AAIE_PlayerController::DoMoveLeftRight(FVector value) {
 	DoSimpleMove(value);
 }
-
+// Handles execution of valid Forward Back input
 void AAIE_PlayerController::DoMoveForwardBack(FVector value) {
 	DoSimpleMove(value);
 }
+// left mouse behavior
+void AAIE_PlayerController::OnLeftMousePress_Implementation() {
 
-//Moves the pawn and updates direction arrow indicators
+}
+void AAIE_PlayerController::OnLeftMouseRelease_Implementation() {
+	fLeftClickCounter = 0.0f;
+	bLeftClick = 0;
+}
+void AAIE_PlayerController::DoLeftMouseAction(float time) {
+
+}
+// right mouse behavior
+void AAIE_PlayerController::OnRightMousePress_Implementation() {
+
+}
+void AAIE_PlayerController::OnRightMouseRelease_Implementation() {
+	fRightClickCounter = 0.0f;
+	bRightClick = 0;
+}
+void AAIE_PlayerController::DoRightMouseAction(float time) {
+
+}
+
+//Moves the pawn
 void AAIE_PlayerController::DoSimpleMove(FVector value) {
 	if (GetPawn() != NULL && value != FVector(0, 0, 0)) {
-//#if UE_BUILD_DEBUG
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, value.ToString());
-//#endif
+#if !UE_BUILD_SHIPPING
+	GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Blue, value.ToString());
+#endif
 	// move pawn
-	//GetPawn()->AddActorWorldOffset(value);
-	
 		GetPawn()->AddActorLocalOffset(value);
 	}
-	// TODO:: update arrows
+	// update controll arrow
+	UpdateControlArrow();
+}
+//updates directional arrow indicators
+void AAIE_PlayerController::UpdateControlArrow() {
+	if (GetPawn() != NULL) {
+		UArrowComponent* ArrowRef = Cast<AAIE_PlayerPawn>(GetPawn())->GetControlRotationArrow();
+		check(ArrowRef);
+		ArrowRef->SetWorldRotation(GetControlRotation());
+	}
 }
