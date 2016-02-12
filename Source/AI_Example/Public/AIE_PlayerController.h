@@ -19,9 +19,9 @@ public:
 	AAIE_PlayerController(const FObjectInitializer& ObjectInitializer);
 	// the base movement speed modifier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float BaseMovementSpeed;
+	float BaseMovementSpeed = 300.0f;
 	// holds delta time
-	float DeltaTime;
+	float DeltaTime = 0.0f;
 protected:
 	// what happens every frame
 	virtual void PlayerTick(float DeltaTime) override;
@@ -30,10 +30,18 @@ protected:
 	// handles setting up input, primarly used to bind methods to various inputs
 	virtual void SetupInputComponent() override;
 	// bools for click detection
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mouse Settings")
 	bool bLeftClick = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mouse Settings")
 	bool bRightClick = 0;
 	// counters for click duration
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mouse Settings")
+	float fClickHoldTime = 0.1f;
+	// counters for click duration
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mouse Settings")
 	float fLeftClickCounter = 0.0f;
+	// counters for click duration
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mouse Settings")
 	float fRightClickCounter = 0.0f;
 
 	// input methods

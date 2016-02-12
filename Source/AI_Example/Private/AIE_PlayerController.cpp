@@ -20,8 +20,14 @@ void AAIE_PlayerController::PlayerTick(float DeltaSeconds) {
 	Super::PlayerTick(DeltaSeconds);
 	DeltaTime = DeltaSeconds;
 	// will auto fire in order so sequence can node from example can be ignored
-	DoLeftMouseAction(DeltaSeconds);
-	DoRightMouseAction(DeltaSeconds);
+	// if Left mouse button is down fire left mouse action
+	if (bLeftClick) {
+		DoLeftMouseAction(DeltaSeconds);
+	}
+	// if Right mouse button is down fire right mouse action
+	if (bRightClick) {
+		DoRightMouseAction(DeltaSeconds);
+	}
 }
 
 // handles setting up input, primarly used to bind methods to various inputs
@@ -50,7 +56,7 @@ void AAIE_PlayerController::OnMoveLeftRight_Implementation(float value) {
 	if (value != 0.0f) {
 		GEngine->AddOnScreenDebugMessage(0, 1.0f, FColor::Red, "Move Left Right " + FString::SanitizeFloat(value) + " at base " + FString::SanitizeFloat(BaseMovementSpeed));
 	}
-#endif
+#endif // !UE_BUILD_SHIPPING
 
 	// Get movement Direction based on current control rotation
 	FRotator RotationControlSpace = GetControlRotation();
@@ -68,7 +74,7 @@ void AAIE_PlayerController::OnMoveForwardBack_Implementation(float value) {
 	if (value != 0.0f) {
 		GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Black, "Move Forward Back " + FString::SanitizeFloat(value) + " at " + FString::SanitizeFloat(BaseMovementSpeed));
 	}
-#endif
+#endif  // !UE_BUILD_SHIPPING
 	// Get movement Direction based on current control rotation
 	FRotator RotationControlSpace = GetControlRotation();
 	FVector ForwardVector = FRotationMatrix(RotationControlSpace).GetUnitAxis(EAxis::X);
@@ -90,25 +96,41 @@ void AAIE_PlayerController::DoMoveForwardBack(FVector value) {
 }
 // left mouse behavior
 void AAIE_PlayerController::OnLeftMousePress_Implementation() {
-
+	bLeftClick = 1;
 }
 void AAIE_PlayerController::OnLeftMouseRelease_Implementation() {
+	if (fLeftClickCounter <= fClickHoldTime) {
+#if !UE_BUILD_SHIPPING
+		GEngine->AddOnScreenDebugMessage(3, 1.0f, FColor::Cyan, "Left Mouse Button Clicked");
+#endif // !UE_BUILD_SHIPPING
+	}
 	fLeftClickCounter = 0.0f;
 	bLeftClick = 0;
 }
 void AAIE_PlayerController::DoLeftMouseAction(float time) {
-
+	fLeftClickCounter += time;
+	if (fLeftClickCounter > fClickHoldTime) {
+		GEngine->AddOnScreenDebugMessage(4, 1.0, FColor::Cyan, "Left Mouse Button Held");
+	}
 }
 // right mouse behavior
 void AAIE_PlayerController::OnRightMousePress_Implementation() {
-
+	bRightClick = 1;
 }
 void AAIE_PlayerController::OnRightMouseRelease_Implementation() {
+	if (fRightClickCounter <= fClickHoldTime) {
+#if !UE_BUILD_SHIPPING
+		GEngine->AddOnScreenDebugMessage(3, 1.0f, FColor::Cyan, "Right Mouse Button Clicked");
+#endif // !UE_BUILD_SHIPPING
+	}
 	fRightClickCounter = 0.0f;
 	bRightClick = 0;
 }
 void AAIE_PlayerController::DoRightMouseAction(float time) {
-
+	fRightClickCounter += time;
+	if (fRightClickCounter > fClickHoldTime) {
+		GEngine->AddOnScreenDebugMessage(4, 1.0, FColor::Cyan, "Right Mouse Button Held");
+	}
 }
 
 //Moves the pawn
@@ -116,7 +138,7 @@ void AAIE_PlayerController::DoSimpleMove(FVector value) {
 	if (GetPawn() != NULL && value != FVector(0, 0, 0)) {
 #if !UE_BUILD_SHIPPING
 	GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Blue, value.ToString());
-#endif
+#endif // !UE_BUILD_SHIPPING
 	// move pawn
 		GetPawn()->AddActorLocalOffset(value);
 	}
