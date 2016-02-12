@@ -20,6 +20,8 @@ public:
 	// the base movement speed modifier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float BaseMovementSpeed = 300.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	float BaseCameraSpeed = 1.0f;
 	// holds delta time
 	float DeltaTime = 0.0f;
 protected:

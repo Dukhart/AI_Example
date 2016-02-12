@@ -110,8 +110,10 @@ void AAIE_PlayerController::OnLeftMouseRelease_Implementation() {
 void AAIE_PlayerController::DoLeftMouseAction(float time) {
 	fLeftClickCounter += time;
 	if (fLeftClickCounter > fClickHoldTime) {
+#if !UE_BUILD_SHIPPING
 		GEngine->AddOnScreenDebugMessage(4, 1.0, FColor::Cyan, "Left Mouse Button Held");
 	}
+#endif // !UE_BUILD_SHIPPING
 }
 // right mouse behavior
 void AAIE_PlayerController::OnRightMousePress_Implementation() {
@@ -129,7 +131,33 @@ void AAIE_PlayerController::OnRightMouseRelease_Implementation() {
 void AAIE_PlayerController::DoRightMouseAction(float time) {
 	fRightClickCounter += time;
 	if (fRightClickCounter > fClickHoldTime) {
-		GEngine->AddOnScreenDebugMessage(4, 1.0, FColor::Cyan, "Right Mouse Button Held");
+		// params to hold the mouse input delta
+		float xRef;
+		float yRef;
+		// get mouse X and Y Delta (How far we moved the mouse this frame)
+		GetInputMouseDelta(xRef, yRef);
+#if !UE_BUILD_SHIPPING
+		GEngine->AddOnScreenDebugMessage(4, 1.0, FColor::Cyan, "Right Mouse Button Held X::" + FString::SanitizeFloat(xRef) + " Y:: " + FString::SanitizeFloat(yRef));
+#endif // !UE_BUILD_SHIPPING
+		// get current rotation add the xRef and multiply by the base camera move speed modifier
+		FRotator rot = FRotator(0.0f, (GetControlRotation().Yaw + xRef) * BaseCameraSpeed, 0.0f);
+		// apply the new rotation to the control
+		SetControlRotation(rot);
+
+		if (GetPawn() != NULL) {
+			// cast the pawn to our custom player pawn
+			AAIE_PlayerPawn* pawnRef = Cast<AAIE_PlayerPawn>(GetPawn());
+			// check that casting was succsefull
+			if (pawnRef) {
+				// get the rotation of the spring arm
+				FRotator rotRef = pawnRef->GetPawnSpringArm()->GetComponentRotation();
+				// make a new rotation based off the old spring arm rotation offset by mouse X and Y delta and multiply it by the camera speed modifier
+				rot = FRotator((rotRef.Pitch + yRef) * BaseCameraSpeed, (rotRef.Yaw + xRef) * BaseCameraSpeed, 0.0f);
+				// apply the new rotation to the spring arm
+				pawnRef->GetPawnSpringArm()->SetWorldRotation(rot);
+			}
+		}
+
 	}
 }
 
