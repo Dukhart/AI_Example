@@ -8,8 +8,14 @@
 // Constructor
 AAIE_PlayerController::AAIE_PlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer) {
-	BaseMovementSpeed = 300.0f;
+	// delta time should be zero at construction
 	DeltaTime = 0.0f;
+	// enable mouse input
+	bShowMouseCursor = true;
+	bEnableClickEvents = true;
+	bEnableTouchEvents = true;
+	bEnableTouchOverEvents = true;
+	bEnableMouseOverEvents = true;
 }
 // handles what happens when the objet finishes construction
 void AAIE_PlayerController::BeginPlay() {
