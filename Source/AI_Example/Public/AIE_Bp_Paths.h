@@ -14,4 +14,9 @@ public:
 	static const FString DefaultPlayerPawnBp;
 	static const FString PlayerControllerBp;
 
+	// AI Blueprints
+	static const FString DefaultBotCharacterBp;
+	static const FString DefaultBotControllerBp;
+	static const FString DefaultBotBehaviorTree;
+	static const FString DefaultBotBlackboard;
 };

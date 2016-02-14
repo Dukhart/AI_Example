@@ -10,3 +10,4 @@
 
 // strings
 #include "AIE_Bp_Paths.h"
+#include "AIE_Asset_Paths.h"

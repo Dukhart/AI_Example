@@ -3,6 +3,11 @@
 #pragma once
 
 #include "AIController.h"
+
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
 #include "AIE_AIController.generated.h"
 
 /**
@@ -17,8 +22,15 @@ class AI_EXAMPLE_API AAIE_AIController : public AAIController
 protected:
 	// handles what happens when the objet finishes construction
 	virtual void BeginPlay() override;
-private:
-	UBehaviorTree* BehaviorTree;
-	UBlackboardData* BlackBoard;
-	
+	// handles what happens when the controller possess a pawn
+	virtual void Possess(APawn* InPawn) override;
+public:
+	UPROPERTY(transient)
+	UBehaviorTreeComponent* BehaviorTreeComp;
+	UPROPERTY(transient)
+	UBlackboardComponent* BlackBoardComp;
+protected:
+	// Blackboard keys
+	uint8 EnemyKeyId;
+	uint8 EnemyLocationId;
 };
