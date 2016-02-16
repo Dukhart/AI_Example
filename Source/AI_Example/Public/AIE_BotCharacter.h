@@ -24,4 +24,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	UBehaviorTree* BotBehavior;
+private:
+	UPROPERTY(EditAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+	float Health = 100.0f;
+public:
+	// Get and Set Health
+	FORCEINLINE float GetHealth() const { return Health; }
+	FORCEINLINE void SetHealth(float newHealth) { Health = newHealth; }
+
 };

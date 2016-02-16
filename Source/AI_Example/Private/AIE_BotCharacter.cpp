@@ -30,14 +30,25 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 			// set the character mesh to use our animation blueprint
 			GetMesh()->AnimBlueprintGeneratedClass = AnimRef.Object;
 		}
-		// set default movement speeds
-		CharacterMovement->MaxWalkSpeed = 400.0f;
-		CharacterMovement->MaxWalkSpeedCrouched = 200.0f;
-		// set default AI contoller
-		AIControllerClass = AAIE_AIController::StaticClass();
-		// set auto possess AI param
-		AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	}
+	// set default movement speeds
+	if (GetCharacterMovement()) {
+		GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+		GetCharacterMovement()->MaxWalkSpeedCrouched = 200.0f;
+		GetCharacterMovement()->RotationRate.Yaw = 160.0f;
+		GetCharacterMovement()->MaxAcceleration = 600.0f;
+		// rotaton should be based on move direction
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+	}
+	else {
+		UE_LOG(DebugLog, Error, TEXT("AIE_BotCharacter Missing Movement Component"));
+	}
+	// rotaton should be based on move direction not controller
+	bUseControllerRotationYaw = false;
+	// set default AI contoller
+	AIControllerClass = AAIE_AIController::StaticClass();
+	// set auto possess AI param
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
 
 

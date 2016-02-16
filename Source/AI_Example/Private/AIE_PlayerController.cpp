@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Jordan Duncan 2016
 
 #include "AI_Example.h"
 #include "AIE_PlayerController.h"
