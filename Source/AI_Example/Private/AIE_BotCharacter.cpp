@@ -147,7 +147,9 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 			// add the regen value to health with set health
 			SetHealth(GetHealth() + HealthRegenValue);
 #if !UE_BUILD_SHIPPING
+			if (GetHealth() < 100.0f) {
 			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + FString::SanitizeFloat(Health));
+		}
 #endif
 		}
 		// set the stamina to our new value

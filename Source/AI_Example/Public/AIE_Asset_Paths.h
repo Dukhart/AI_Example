@@ -10,6 +10,9 @@ struct AI_EXAMPLE_API FAIE_Asset_Paths
 {
 	GENERATED_USTRUCT_BODY()
 public:
+	// bot assets
 	static const FString DefaultBotMesh;
 	static const FString DefaultBotAnim;
+	// Items
+	static const FString DefaultFoodMesh;
 };

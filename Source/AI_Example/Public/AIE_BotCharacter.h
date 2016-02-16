@@ -44,7 +44,7 @@ protected:
 	// handles damage dealt to the bot
 	UFUNCTION()
 		virtual void AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, class AActor* DamageCauser);
-private:
+protected:
 	// our bots health Use Get and Set functions to access
 	UPROPERTY(EditAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
 		float Health = 100.0f;

@@ -50,12 +50,14 @@ AAIE_PlayerPawn::AAIE_PlayerPawn (const FObjectInitializer& ObjectInitializer)
 	ControlRotationArrow->bHiddenInGame = false;
 	// add vertical offset so the arrows are not on top of eachother
 	ControlRotationArrow->AddLocalOffset(FVector(0.0f,0.0f,30.0f));
+	
 }
 
 // Called when the game starts or when spawned
 void AAIE_PlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	
 }
 
 // Called every frame
