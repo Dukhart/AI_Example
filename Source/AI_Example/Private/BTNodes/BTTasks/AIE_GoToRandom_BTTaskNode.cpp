@@ -42,13 +42,9 @@ EBTNodeResult::Type UAIE_GoToRandom_BTTaskNode::ExecuteTask(UBehaviorTreeCompone
 						// set the MoveToLocation BlackboardKeyID to our new location
 						BlackboardCompRef->SetValue<UBlackboardKeyType_Vector>(BlackboardKey_MoveToLocation, endPosi.Location);
 						// return succeeded now that we have set up our new loacation
-
-						UE_LOG(DebugLog, Warning, TEXT("SUCCESS"));
-
 						return EBTNodeResult::Succeeded;
 					}
 					else {
-						UE_LOG(DebugLog, Warning, TEXT("ABORT"));
 						// return Aborted if we can't find the Key as it will never succeed without a proper Key
 						if (bForceSuccess) {
 							return EBTNodeResult::Succeeded;
@@ -57,7 +53,6 @@ EBTNodeResult::Type UAIE_GoToRandom_BTTaskNode::ExecuteTask(UBehaviorTreeCompone
 					}
 				}
 				// return in progress if their are currently no valid locations
-				UE_LOG(DebugLog, Warning, TEXT("INProggress"));
 				if (bForceSuccess) {
 					return EBTNodeResult::Succeeded;
 				}
@@ -67,8 +62,6 @@ EBTNodeResult::Type UAIE_GoToRandom_BTTaskNode::ExecuteTask(UBehaviorTreeCompone
 		 
 		
 	}
-	
-	UE_LOG(DebugLog, Warning, TEXT("FAILED"));
 	// we will only get here if execution fails so we will check if force success is on
 	if (bForceSuccess) {
 		// if force success is on we will return Succeeded anyway
