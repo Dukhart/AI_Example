@@ -6,6 +6,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 
 #include "AIE_IsUsable.h"
+#include "AIE_BotStat_Struct.h"
 
 #include "AIE_BotCharacter.generated.h"
 
@@ -55,54 +56,66 @@ protected:
 	FTimerHandle StaminaTimerHandle;
 	// Handles stamina Drain
 	void AutoStaminaDrain();
+
 private:
+
+	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+	FAIE_BotStat_Struct Health;
+	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+	FAIE_BotStat_Struct Stamina;
+
+
+	/* Removed After Video2
 	// our bots health Use Get and Set functions to access
 	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
 		float Health = 100.0f;
 	// our bots stamina Use Get and Set functions to access
 	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
 		float Stamina = 100.0f;
+	*/
 public:
+	/* Removed After Video2
 	// our bots Max health
 	UPROPERTY(EditAnywhere, Category = "Stats")
 		float MaxHealth = 100.0f;
-	// our bots health regenValue
-	UPROPERTY(EditAnywhere, Category = "Stats")
-		float HealthRegenValue = 1.0f;
 	// our bots Max Stamina
 	UPROPERTY(EditAnywhere, Category = "Stats")
 		float MaxStamina = 100.0f;
+	*/
+	// our bots health regenValue
+	UPROPERTY(EditAnywhere, Category = "Stats")
+		int32 HealthRegenValue = 1;
 	// sets the rate at which stamina will fall, see drain value for how much stamina will fall
 	UPROPERTY(EditAnywhere, Category = "Stats")
-		float staminaDrainRate = 1.0f;
+		int32 staminaDrainRate = 1;
 	// sets how much the stamina will fall, see Drain Rate for how often stamina will fall
 	UPROPERTY(EditAnywhere, Category = "Stats")
-		float staminaDrainValue = 1.0f;
+		int32 staminaDrainValue = 1;
 	// the amount of damage a bot will take for having no stamina on health drain
 	UPROPERTY(EditAnywhere, Category = "Stats")
-		float zeroStaminaHealthDrainValue = 5.0f;
+		int32 zeroStaminaHealthDrainValue = 5;
 public:
 	// Get Health
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		float GetHealth();
+		int32 GetHealth();
 	//Set health
 	// health can never be below zero health will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxHealth is input
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		void SetHealth(float newHealth);
+		void SetHealth(int32 newHealth);
 	// get and set Max Health
-	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
-	FORCEINLINE void SetMaxHealth(float newMaxHealth) { MaxHealth = newMaxHealth; }
+	FORCEINLINE int32 GetMaxHealth() const { return Health.MaxValue; }
+	FORCEINLINE void SetMaxHealth(int32 newMaxHealth) { Health.MaxValue = newMaxHealth; }
 
 	// Get and Set stamina
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		float GetStamina();
+		int32 GetStamina();
 	// Set stamina
 	// stamina can never be below zero stamina will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxStamina is input
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		void SetStamina(float newStamina);
+		void SetStamina(int32 newStamina);
 	// get and set Max Stamina
-	FORCEINLINE float GetMaxStamina() const { return MaxStamina; }
-	FORCEINLINE void SetMaxStamina(float newMaxStamina) { MaxStamina = newMaxStamina; }
+	FORCEINLINE int32 GetMaxStamina() const { return Stamina.MaxValue; }
+	FORCEINLINE void SetMaxStamina(int32 newMaxStamina) { Stamina.MaxValue = newMaxStamina; }
 
 	// IsUsable Interface
 public:

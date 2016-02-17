@@ -117,10 +117,11 @@ void AAIE_BotCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Oth
 // handles damage Input 
 // won't be bound if bOverideNativeOnTakeAnyDamage is set to true
 void AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, class AActor* DamageCauser) {
+	
 	// remove incoming damage from total health and set health 
-	SetHealth(GetHealth() - Damage);
+	SetHealth(GetHealth() - FMath::CeilToInt(Damage));
 #if !UE_BUILD_SHIPPING
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + FString::SanitizeFloat(Health));
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + GetHealth());
 #endif
 	// check if the bot has died from the incoming damage
 	if (GetHealth() <= 0) {
@@ -148,14 +149,14 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 	// if stamina is currently greater then zero drian stamina
 	if (GetStamina() > 0) {
 		// store the stamina before we drain it
-		float stamRef = GetStamina();
+		int32 stamRef = GetStamina();
 		// set stamRef to the new stamina
 		stamRef = stamRef - staminaDrainValue;
 		// Check if our Bot has run out of stamina
 		if (stamRef < 0) {
 			// if it has inverse the result with times -1 to get a positive value back
 			// and clamp it to zeroStaminaDrainValue so we don't do more damage then if we already had zero stamina
-			float stamDamage = FMath::Clamp(stamRef * -1.0f, 0.0f, zeroStaminaHealthDrainValue);
+			int32 stamDamage = FMath::Clamp(stamRef * -1, 0, zeroStaminaHealthDrainValue);
 			// TODO:: Make Exhaustion Damage Type
 			//UDamageType* DamageType = Cast<UDamageType>(UDamageType::StaticClass());
 			// apply the damage to the Bot
@@ -166,14 +167,14 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 			SetHealth(GetHealth() + HealthRegenValue);
 #if !UE_BUILD_SHIPPING
 			if (GetHealth() < 100.0f) {
-				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + FString::SanitizeFloat(Health));
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + GetHealth());
 			}
 #endif
 		}
 		// set the stamina to our new value
 		SetStamina(stamRef);
 #if !UE_BUILD_SHIPPING
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, BotName.ToString() + " Stamina " + FString::SanitizeFloat(Stamina));
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, BotName.ToString() + " Stamina " + GetStamina());
 #endif
 	}
 	else { // else stamina is already at zero so the Bot will take damage for being over exhausted
@@ -182,22 +183,22 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 	}
 }
 // get health
-float AAIE_BotCharacter::GetHealth() { return Health; }
+int32 AAIE_BotCharacter::GetHealth() { return Health.Value; }
 // set health
 // health can never be below zero health will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxHealth is input
-void AAIE_BotCharacter::SetHealth(float newHealth) {
+void AAIE_BotCharacter::SetHealth(int32 newHealth) {
 	if (newHealth < 0) { newHealth = 0; }
-	else if (newHealth > MaxHealth) { newHealth = MaxHealth; }
-	Health = newHealth;
+	else if (newHealth > Health.MaxValue) { newHealth = Health.MaxValue; }
+	Health.Value = newHealth;
 }
 // Get Stamina
-float AAIE_BotCharacter::GetStamina() { return Stamina; }
+int32 AAIE_BotCharacter::GetStamina() { return Stamina.Value; }
 // Set stamina
 // stamina can never be below zero stamina will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxStamina is input
-void AAIE_BotCharacter::SetStamina(float newStamina) {
+void AAIE_BotCharacter::SetStamina(int32 newStamina) {
 	if (newStamina < 0) { newStamina = 0; }
-	else if (newStamina > MaxStamina) { newStamina = MaxStamina; }
-	Stamina = newStamina;
+	else if (newStamina > Stamina.MaxValue) { newStamina = Stamina.MaxValue; }
+	Stamina.Value = newStamina;
 }
 
 // IsUsable interface
