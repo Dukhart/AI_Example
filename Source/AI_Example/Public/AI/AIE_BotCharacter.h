@@ -5,10 +5,12 @@
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BehaviorTree.h"
 
+#include "AIE_IsUsable.h"
+
 #include "AIE_BotCharacter.generated.h"
 
 UCLASS()
-class AI_EXAMPLE_API AAIE_BotCharacter : public ACharacter
+class AI_EXAMPLE_API AAIE_BotCharacter : public ACharacter, public IAIE_IsUsable
 {
 	GENERATED_BODY()
 
@@ -21,6 +23,11 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
+	// will call use item on objects that have the IsUsable interface
+	//UFUNCTION(BlueprintNativeEvent, Category = "Actions")
+	//void UseItemAction(AActor* ActorToUse);
+	//virtual void UseItemAction_Implementation(AActor* ActorToUse);
 
 	// the name of our bot
 	UPROPERTY(EditAnywhere, Category = "Character")
@@ -96,5 +103,10 @@ public:
 	// get and set Max Stamina
 	FORCEINLINE float GetMaxStamina() const { return MaxStamina; }
 	FORCEINLINE void SetMaxStamina(float newMaxStamina) { MaxStamina = newMaxStamina; }
+
+	// IsUsable Interface
+public:
+	void UseItem_Implementation(AAIE_BotCharacter* BotUsing);
+	void AI_UseItem_Implementation(AActor* ActorUsing);
 
 };

@@ -33,11 +33,15 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	// set local position of the sphere
 	CollisionSphere->AddLocalOffset(FVector(0.0f, 0.0f, 50.0f));
 	// set size of the sphere
-	CollisionSphere->SetSphereRadius(80.0f);
+	CollisionSphere->SetSphereRadius(60.0f);
+
+	CollisionSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	/* // begin ***REMOVED AFTER VIDEO 1*** \\
 	// add overlap events to the sphere
 	if (!bOverideNativeOverlapEvents) {
 		CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AAIE_BaseFood_Actor::OnFoodOverlapBegin);
 	}
+	// end ***REMOVED AFTER VIDEO 1*** \\*/
 }
 
 // Called when the game starts or when spawned
@@ -53,10 +57,11 @@ void AAIE_BaseFood_Actor::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 }
+/* // begin ***REMOVED AFTER VIDEO 1*** \\
 // handles overlap events
 // won't be bound if bOverideNativeOverlapEvents = true
 void AAIE_BaseFood_Actor::OnFoodOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
-	// check if we are overiding native overlap events
+	// check if we can auto pick up on touch
 	if (bAutoPickup) {
 		// try to get the bot that hit the food item
 		AAIE_BotCharacter* BotHit = Cast<AAIE_BotCharacter>(OtherActor);
@@ -73,4 +78,24 @@ void AAIE_BaseFood_Actor::OnFoodOverlapBegin(class AActor* OtherActor, class UPr
 			Destroy();
 		}
 	}
+}
+// end ***REMOVED AFTER VIDEO 1*** \\*/
+
+// IsUsable interface functions
+// use item
+void AAIE_BaseFood_Actor::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {
+	// check we have a valid bot
+	if (BotUsing) {
+#if !UE_BUILD_SHIPPING
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, " Food Hit by " + BotUsing->BotName.ToString());
+#endif
+		// set the bots health based on the health increase value of the food
+		BotUsing->SetHealth(BotUsing->GetHealth() + HealthIncreaseValue);
+		// set the bots stamina based on the stamina increase value of the food
+		BotUsing->SetStamina(BotUsing->GetStamina() + StaminaIncreaseValue);
+		// Destroy the food item as it has been consumed
+		Destroy();
+	}
+}
+void AAIE_BaseFood_Actor::AI_UseItem_Implementation(AActor* BotUsing) {
 }

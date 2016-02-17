@@ -1,9 +1,11 @@
 // Copyright Jordan Duncan 2016
 
 #include "AI_Example.h"
-#include "AIE_BotCharacter.h"
 
+#include "AIE_BotCharacter.h"
 #include "AIE_AIController.h"
+
+#include "AIE_IsUsable.h"
 
 // Constructor
 AAIE_BotCharacter::AAIE_BotCharacter()
@@ -83,7 +85,21 @@ void AAIE_BotCharacter::SetupPlayerInputComponent(class UInputComponent* InputCo
 	Super::SetupPlayerInputComponent(InputComponent);
 
 }
-
+/*
+// calls use item on an item
+void AAIE_BotCharacter::UseItemAction_Implementation(AActor* ActorToUse) {
+	// checks we have a valid actor AND that actor implements our IsUsable Interface
+	if (ActorToUse && GetClass()->ImplementsInterface(UAIE_IsUsable::StaticClass())) {
+		IAIE_IsUsable::Execute_UseItem(ActorToUse, this);
+	}
+	else {
+#if !UE_BUILD_SHIPPING
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " trying to use invalid object IsUsable not Implemented");
+#endif
+	}
+	
+}
+*/
 // handles Hit detection
 void AAIE_BotCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) {
 	// won't fire our native hit event if blueprints set the overide bool to true
@@ -182,4 +198,19 @@ void AAIE_BotCharacter::SetStamina(float newStamina) {
 	if (newStamina < 0) { newStamina = 0; }
 	else if (newStamina > MaxStamina) { newStamina = MaxStamina; }
 	Stamina = newStamina;
+}
+
+// IsUsable interface
+void AAIE_BotCharacter::UseItem_Implementation(AAIE_BotCharacter* BotUsing){}
+
+void AAIE_BotCharacter::AI_UseItem_Implementation(AActor* ActorUsing){
+	// checks we have a valid actor AND that actor implements our IsUsable Interface
+	if (ActorUsing && ActorUsing->GetClass()->ImplementsInterface(UAIE_IsUsable::StaticClass())) {
+		IAIE_IsUsable::Execute_UseItem(ActorUsing, this);
+	}
+	else {
+#if !UE_BUILD_SHIPPING
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " trying to use invalid object IsUsable not Implemented");
+#endif
+	}
 }
