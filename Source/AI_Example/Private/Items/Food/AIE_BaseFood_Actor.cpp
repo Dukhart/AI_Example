@@ -35,8 +35,9 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	// set size of the sphere
 	CollisionSphere->SetSphereRadius(80.0f);
 	// add overlap events to the sphere
-	CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AAIE_BaseFood_Actor::OnFoodOverlapBegin);
-	
+	if (!bOverideNativeOverlapEvents) {
+		CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AAIE_BaseFood_Actor::OnFoodOverlapBegin);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -52,10 +53,11 @@ void AAIE_BaseFood_Actor::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 }
-
+// handles overlap events
+// won't be bound if bOverideNativeOverlapEvents = true
 void AAIE_BaseFood_Actor::OnFoodOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
 	// check if we are overiding native overlap events
-	if (bOverideNativeOverlapEvents == false && bAutoPickup) {
+	if (bAutoPickup) {
 		// try to get the bot that hit the food item
 		AAIE_BotCharacter* BotHit = Cast<AAIE_BotCharacter>(OtherActor);
 		// check if we managed to get a bot
