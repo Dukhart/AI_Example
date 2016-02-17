@@ -26,18 +26,26 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	}
 	// attach the mesh to the root
 	Mesh->AttachTo(RootComponent);
+	// set to block all
+	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	// create the sphere
+	/*
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>("Sphere Collision");
 	// attach the sphere to the root
 	CollisionSphere->AttachTo(RootComponent);
 	// set local position of the sphere
 	CollisionSphere->AddLocalOffset(FVector(0.0f, 0.0f, 50.0f));
 	// set size of the sphere
-	CollisionSphere->SetSphereRadius(80.0f);
+	CollisionSphere->SetSphereRadius(60.0f);
+
+	CollisionSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	*/
+	/* // begin ***REMOVED AFTER VIDEO 1*** \\
 	// add overlap events to the sphere
 	if (!bOverideNativeOverlapEvents) {
 		CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AAIE_BaseFood_Actor::OnFoodOverlapBegin);
 	}
+	// end ***REMOVED AFTER VIDEO 1*** \\*/
 }
 
 // Called when the game starts or when spawned
@@ -53,10 +61,11 @@ void AAIE_BaseFood_Actor::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 }
+/* // begin ***REMOVED AFTER VIDEO 1*** \\
 // handles overlap events
 // won't be bound if bOverideNativeOverlapEvents = true
 void AAIE_BaseFood_Actor::OnFoodOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
-	// check if we are overiding native overlap events
+	// check if we can auto pick up on touch
 	if (bAutoPickup) {
 		// try to get the bot that hit the food item
 		AAIE_BotCharacter* BotHit = Cast<AAIE_BotCharacter>(OtherActor);
@@ -73,4 +82,30 @@ void AAIE_BaseFood_Actor::OnFoodOverlapBegin(class AActor* OtherActor, class UPr
 			Destroy();
 		}
 	}
+}
+// end ***REMOVED AFTER VIDEO 1*** \\*/
+
+// IsUsable interface functions
+// use item
+void AAIE_BaseFood_Actor::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {
+	// check we have a valid bot
+	if (BotUsing) {
+#if !UE_BUILD_SHIPPING
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, " Food Hit by " + BotUsing->BotName.ToString());
+#endif
+		// if HealthIncreaseValue is equal to or greater than zero give HealthIncreaseValue as health
+		if(HealthIncreaseValue >= 0){
+			// set the bots health based on the health increase value of the food
+			BotUsing->SetHealth(BotUsing->GetHealth() + HealthIncreaseValue);
+		} // else apply damage
+		else {
+			BotUsing->OnTakeAnyDamage.Broadcast(HealthIncreaseValue * -1.0f, NULL, NULL, this);
+		}
+		// set the bots stamina based on the stamina increase value of the food
+		BotUsing->SetStamina(BotUsing->GetStamina() + StaminaIncreaseValue);
+		// Destroy the food item as it has been consumed
+		Destroy();
+	}
+}
+void AAIE_BaseFood_Actor::AI_UseItem_Implementation(AActor* BotUsing) {
 }
