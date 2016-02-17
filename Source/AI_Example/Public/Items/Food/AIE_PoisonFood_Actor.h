@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include "Items/Food/AIE_BaseFood_Actor.h"
+#include "Items/Food/AIE_BaseBadFood_Actor.h"
 #include "AIE_PoisonFood_Actor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class AI_EXAMPLE_API AAIE_PoisonFood_Actor : public AAIE_BaseFood_Actor
+class AI_EXAMPLE_API AAIE_PoisonFood_Actor : public AAIE_BaseBadFood_Actor
 {
 	GENERATED_BODY()
 	
