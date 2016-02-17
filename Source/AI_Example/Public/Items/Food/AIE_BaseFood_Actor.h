@@ -28,8 +28,8 @@ public:
 	// the mesh that will display our food item
 	UPROPERTY(EditAnywhere, Category = "Actor")
 		UStaticMeshComponent* Mesh;
-	UPROPERTY(EditAnywhere, Category = "Actor")
-		USphereComponent* CollisionSphere;
+	//UPROPERTY(EditAnywhere, Category = "Actor")
+		//USphereComponent* CollisionSphere;
 	// how much health will be restored by picking up this food item
 	UPROPERTY(EditAnywhere, Category = "Stats")
 		float HealthIncreaseValue = 0.0f;
