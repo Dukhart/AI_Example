@@ -10,6 +10,8 @@ AAIE_PlantFood_Actor::AAIE_PlantFood_Actor(const FObjectInitializer& ObjectIniti
 	if (meshObj.Object) {
 		// apply the mesh to our static mesh component
 		Mesh->SetStaticMesh(meshObj.Object);
+
+		Mesh->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
 	}
 	// set the plants stam restore
 	StaminaIncreaseValue = 50.0f;

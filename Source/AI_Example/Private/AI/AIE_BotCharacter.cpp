@@ -145,8 +145,6 @@ void AAIE_BotCharacter::Destroy_AIE_Bot() {
 // Handles Natural Stamina Drain
 void AAIE_BotCharacter::AutoStaminaDrain() {
 	// we might make a Damage type later use this for now as take any damage must have a damage type input
-	// TODO:: Make Exhaustion Damage Type
-	UDamageType* DamageType = Cast<UDamageType>(UDamageType::StaticClass());
 	// if stamina is currently greater then zero drian stamina
 	if (GetStamina() > 0) {
 		// store the stamina before we drain it
@@ -158,8 +156,10 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 			// if it has inverse the result with times -1 to get a positive value back
 			// and clamp it to zeroStaminaDrainValue so we don't do more damage then if we already had zero stamina
 			float stamDamage = FMath::Clamp(stamRef * -1.0f, 0.0f, zeroStaminaHealthDrainValue);
+			// TODO:: Make Exhaustion Damage Type
+			//UDamageType* DamageType = Cast<UDamageType>(UDamageType::StaticClass());
 			// apply the damage to the Bot
-			OnTakeAnyDamage.Broadcast(stamDamage, DamageType, GetController(), this);
+			OnTakeAnyDamage.Broadcast(stamDamage, NULL, GetController(), this);
 		}
 		else { // else stamina stayed above zero so we can allow health regen
 			// add the regen value to health with set health
@@ -178,7 +178,7 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 	}
 	else { // else stamina is already at zero so the Bot will take damage for being over exhausted
 	 // apply the damage to the Bot
-		OnTakeAnyDamage.Broadcast(zeroStaminaHealthDrainValue, DamageType, GetController(), this);
+		OnTakeAnyDamage.Broadcast(zeroStaminaHealthDrainValue, NULL, GetController(), this);
 	}
 }
 // get health

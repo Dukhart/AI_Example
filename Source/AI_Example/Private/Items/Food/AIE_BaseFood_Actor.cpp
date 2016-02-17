@@ -93,8 +93,14 @@ void AAIE_BaseFood_Actor::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {
 #if !UE_BUILD_SHIPPING
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, " Food Hit by " + BotUsing->BotName.ToString());
 #endif
-		// set the bots health based on the health increase value of the food
-		BotUsing->SetHealth(BotUsing->GetHealth() + HealthIncreaseValue);
+		// if HealthIncreaseValue is equal to or greater than zero give HealthIncreaseValue as health
+		if(HealthIncreaseValue >= 0){
+			// set the bots health based on the health increase value of the food
+			BotUsing->SetHealth(BotUsing->GetHealth() + HealthIncreaseValue);
+		} // else apply damage
+		else {
+			BotUsing->OnTakeAnyDamage.Broadcast(HealthIncreaseValue * -1.0f, NULL, NULL, this);
+		}
 		// set the bots stamina based on the stamina increase value of the food
 		BotUsing->SetStamina(BotUsing->GetStamina() + StaminaIncreaseValue);
 		// Destroy the food item as it has been consumed
