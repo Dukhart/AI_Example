@@ -4,7 +4,7 @@
 #include "AIE_UseItem_BTTaskNode.h"
 
 #include "AIE_IsUsable.h"
-#include "UMyStaticLibrary.h"
+#include "AIE_StaticLibrary.h"
 
 // constructor
 UAIE_UseItem_BTTaskNode::UAIE_UseItem_BTTaskNode(const FObjectInitializer &ObjectInitializer) : Super(ObjectInitializer) {
@@ -40,18 +40,19 @@ EBTNodeResult::Type UAIE_UseItem_BTTaskNode::ExecuteTask(UBehaviorTreeComponent&
 				
 				FHitResult hit;
 				// fire the trace and check if we hit something
-				if (UUMyStaticLibrary::Trace(GetWorld(), actorsToIgnore, BotCharacter->GetActorLocation(), desiredObjectActor->GetActorLocation(), hit, ECollisionChannel::ECC_WorldStatic)) {
+				
+				if (UAIE_StaticLibrary::Trace(GetWorld(), actorsToIgnore, BotCharacter->GetActorLocation(), desiredObjectActor->GetActorLocation(), hit, ECollisionChannel::ECC_WorldDynamic)) {
+#if !UE_BUILD_SHIPPING
+					GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, hit.GetActor()->GetName() + "  grab object");
+#endif
 					if (hit.GetActor() == desiredObjectActor) {
 #if !UE_BUILD_SHIPPING
 						GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotCharacter->BotName.ToString() + " trying to grab object");
 #endif
-						// check if we hit our desired object
-						if (hit.Actor == desiredObjectActor) {
 							// exacute AI_UseItem on our bot with the Desired object
 							IAIE_IsUsable::Execute_AI_UseItem(BotCharacter, desiredObjectActor);
 							// return success
 							return EBTNodeResult::Succeeded;
-						}
 					}
 				}
 			}

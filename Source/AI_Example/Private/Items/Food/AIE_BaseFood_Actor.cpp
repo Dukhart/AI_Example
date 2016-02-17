@@ -26,7 +26,10 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	}
 	// attach the mesh to the root
 	Mesh->AttachTo(RootComponent);
+	// set to block all
+	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	// create the sphere
+	/*
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>("Sphere Collision");
 	// attach the sphere to the root
 	CollisionSphere->AttachTo(RootComponent);
@@ -36,6 +39,7 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	CollisionSphere->SetSphereRadius(60.0f);
 
 	CollisionSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	*/
 	/* // begin ***REMOVED AFTER VIDEO 1*** \\
 	// add overlap events to the sphere
 	if (!bOverideNativeOverlapEvents) {

@@ -1,7 +1,7 @@
 // Copyright Jordan Duncan 2016
 
 #include "AI_Example.h"
-#include "UMyStaticLibrary.h"
+#include "AIE_StaticLibrary.h"
 
 
 
