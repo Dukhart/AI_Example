@@ -38,9 +38,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Function")
 	bool bAutoPickup = true;
 	// sets blueprints to overide native overlap implementation
+	UPROPERTY(EditAnywhere, Category = "Collision")
 	bool bOverideNativeOverlapEvents = false;
 	// handles overlap events
 	UFUNCTION()
-	void OnFoodOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	virtual void OnFoodOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 	
 };
