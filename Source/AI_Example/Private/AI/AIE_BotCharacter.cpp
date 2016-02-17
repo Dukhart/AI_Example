@@ -55,7 +55,9 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	// bind the on take damage delegate to our bots take damage function
-	OnTakeAnyDamage.AddDynamic(this, &AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage);
+	if (!bOverideNativeOnTakeAnyDamage) {
+		OnTakeAnyDamage.AddDynamic(this, &AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -64,6 +66,8 @@ void AAIE_BotCharacter::BeginPlay()
 	Super::BeginPlay();
 	// set our Bots Natural Stamina drain to be triggered by the timer manager
 	GetWorldTimerManager().SetTimer(StaminaTimerHandle, this, &AAIE_BotCharacter::AutoStaminaDrain, staminaDrainRate, true);
+	// set health to max health
+	SetHealth(GetMaxHealth());
 }
 
 // Called every frame
@@ -94,20 +98,18 @@ void AAIE_BotCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Oth
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 }
 
-// handles damage Input
+// handles damage Input 
+// won't be bound if bOverideNativeOnTakeAnyDamage is set to true
 void AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, class AActor* DamageCauser) {
-	// check if our blueprint has set override take anydamage events
-	if (bOverideNativeOnTakeAnyDamage == false) {
-		// remove incoming damage from total health and set health 
-		SetHealth(GetHealth() - Damage);
+	// remove incoming damage from total health and set health 
+	SetHealth(GetHealth() - Damage);
 #if !UE_BUILD_SHIPPING
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + FString::SanitizeFloat(Health));
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + FString::SanitizeFloat(Health));
 #endif
-		// check if the bot has died from the incoming damage
-		if (GetHealth() <= 0) {
-			// destroys the bot
-			Destroy_AIE_Bot();
-		}
+	// check if the bot has died from the incoming damage
+	if (GetHealth() <= 0) {
+		// destroys the bot
+		Destroy_AIE_Bot();
 	}
 }
 
@@ -148,8 +150,8 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 			SetHealth(GetHealth() + HealthRegenValue);
 #if !UE_BUILD_SHIPPING
 			if (GetHealth() < 100.0f) {
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + FString::SanitizeFloat(Health));
-		}
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + FString::SanitizeFloat(Health));
+			}
 #endif
 		}
 		// set the stamina to our new value
@@ -157,8 +159,27 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 #if !UE_BUILD_SHIPPING
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, BotName.ToString() + " Stamina " + FString::SanitizeFloat(Stamina));
 #endif
-	} else { // else stamina is already at zero so the Bot will take damage for being over exhausted
-		// apply the damage to the Bot
+	}
+	else { // else stamina is already at zero so the Bot will take damage for being over exhausted
+	 // apply the damage to the Bot
 		OnTakeAnyDamage.Broadcast(zeroStaminaHealthDrainValue, DamageType, GetController(), this);
 	}
+}
+// get health
+float AAIE_BotCharacter::GetHealth() { return Health; }
+// set health
+// health can never be below zero health will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxHealth is input
+void AAIE_BotCharacter::SetHealth(float newHealth) {
+	if (newHealth < 0) { newHealth = 0; }
+	else if (newHealth > MaxHealth) { newHealth = MaxHealth; }
+	Health = newHealth;
+}
+// Get Stamina
+float AAIE_BotCharacter::GetStamina() { return Stamina; }
+// Set stamina
+// stamina can never be below zero stamina will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxStamina is input
+void AAIE_BotCharacter::SetStamina(float newStamina) {
+	if (newStamina < 0) { newStamina = 0; }
+	else if (newStamina > MaxStamina) { newStamina = MaxStamina; }
+	Stamina = newStamina;
 }
