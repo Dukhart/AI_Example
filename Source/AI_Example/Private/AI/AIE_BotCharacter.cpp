@@ -60,6 +60,51 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	if (!bOverideNativeOnTakeAnyDamage) {
 		OnTakeAnyDamage.AddDynamic(this, &AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage);
 	}
+
+	// set our bots default stats
+	// health
+	Health.Name = "Health";
+	Health.Value = 100;
+	Health.MaxValue = 100;
+	Health.MinValue = 0;
+	Health.DesireMultiplier = 1;
+	// Stamina
+	Stamina.Name = "Stamina";
+	Stamina.Value = 100;
+	Stamina.MaxValue = 100;
+	Stamina.MinValue = 0;
+	Stamina.DesireMultiplier = 1;
+	// Hunger
+	Hunger.Name = "Hunger";
+	Hunger.Value = 0;
+	Hunger.MaxValue = 100;
+	Hunger.MinValue = 0;
+	Hunger.DesireMultiplier = 1;
+	// Happiness
+	Happiness.Name = "Happiness";
+	Happiness.Value = 75;
+	Happiness.MaxValue = 100;
+	Happiness.MinValue = -100;
+	Happiness.DesireMultiplier = 1;
+	// set our bots default attributes
+	// Strength
+	Strength.Name = "Happiness";
+	Strength.Value = 10;
+	Strength.MaxValue = 25;
+	Strength.MinValue = 1;
+	Strength.DesireMultiplier = 1;
+	// Intelligence
+	Intelligence.Name = "Intelligence";
+	Intelligence.Value = 10;
+	Intelligence.MaxValue = 25;
+	Intelligence.MinValue = 1;
+	Intelligence.DesireMultiplier = 1;
+	// Speed
+	Speed.Name = "Speed";
+	Speed.Value = 10;
+	Speed.MaxValue = 25;
+	Speed.MinValue = 1;
+	Speed.DesireMultiplier = 1;
 }
 
 // Called when the game starts or when spawned

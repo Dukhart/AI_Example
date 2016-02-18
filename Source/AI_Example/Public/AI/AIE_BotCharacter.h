@@ -25,11 +25,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	// will call use item on objects that have the IsUsable interface
-	//UFUNCTION(BlueprintNativeEvent, Category = "Actions")
-	//void UseItemAction(AActor* ActorToUse);
-	//virtual void UseItemAction_Implementation(AActor* ActorToUse);
-
 	// the name of our bot
 	UPROPERTY(EditAnywhere, Category = "Character")
 		FName BotName;
@@ -58,11 +53,31 @@ protected:
 	void AutoStaminaDrain();
 
 private:
+	// Stats use get and set functions for access
+	// health
+	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+		FAIE_BotStat_Struct Health;
+	// stamina
+	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+		FAIE_BotStat_Struct Stamina;
+	// hunger
+	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+		FAIE_BotStat_Struct Hunger;
+	// Happiness
+	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+		FAIE_BotStat_Struct Happiness;
 
-	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-	FAIE_BotStat_Struct Health;
-	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-	FAIE_BotStat_Struct Stamina;
+	// attributes use get and set functions for access
+	// strength
+	UPROPERTY(VisibleAnywhere, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+		FAIE_BotStat_Struct Strength;
+	// intelligence
+	UPROPERTY(VisibleAnywhere, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+		FAIE_BotStat_Struct Intelligence;
+	// speed
+	UPROPERTY(VisibleAnywhere, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+		FAIE_BotStat_Struct Speed;
+
 
 
 	/* Removed After Video2
