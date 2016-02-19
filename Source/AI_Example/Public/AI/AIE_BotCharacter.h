@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BehaviorTree.h"
 
+#include "Runtime/UMG/Public/Components/WidgetComponent.h"
+
 #include "AIE_IsUsable.h"
 #include "AIE_BotStat_Struct.h"
 
@@ -26,10 +28,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 	// the name of our bot
-	UPROPERTY(EditAnywhere, Category = "Character")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
 		FName BotName;
 	// the behavior tree helping control our bots actions
-	UPROPERTY(EditAnywhere, Category = "AI")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 		UBehaviorTree* BotBehavior;
 
 	// if set to true native on hit events won't trigger only blueprint version will be called
@@ -53,32 +55,15 @@ protected:
 	void AutoStaminaDrain();
 
 private:
-	// Stats use get and set functions for access
-	// health
-	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-		FAIE_BotStat_Struct Health;
-	// stamina
-	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-		FAIE_BotStat_Struct Stamina;
-	// hunger
-	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-		FAIE_BotStat_Struct Hunger;
-	// Happiness
-	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-		FAIE_BotStat_Struct Happiness;
+	// array to hold our stats
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+	TArray<FAIE_BotStat_Struct> Stats;
+	// array to hold our atributes
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+	TArray<FAIE_BotStat_Struct> Attributes;
 
-	// attributes use get and set functions for access
-	// strength
-	UPROPERTY(VisibleAnywhere, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
-		FAIE_BotStat_Struct Strength;
-	// intelligence
-	UPROPERTY(VisibleAnywhere, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
-		FAIE_BotStat_Struct Intelligence;
-	// speed
-	UPROPERTY(VisibleAnywhere, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
-		FAIE_BotStat_Struct Speed;
-
-
+	// Widget for our stat display
+	//UWidgetComponent* StatDisplay;
 
 	/* Removed After Video2
 	// our bots health Use Get and Set functions to access
@@ -98,39 +83,39 @@ public:
 		float MaxStamina = 100.0f;
 	*/
 	// our bots health regenValue
-	UPROPERTY(EditAnywhere, Category = "Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		int32 HealthRegenValue = 1;
 	// sets the rate at which stamina will fall, see drain value for how much stamina will fall
-	UPROPERTY(EditAnywhere, Category = "Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		int32 staminaDrainRate = 1;
 	// sets how much the stamina will fall, see Drain Rate for how often stamina will fall
-	UPROPERTY(EditAnywhere, Category = "Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		int32 staminaDrainValue = 1;
 	// the amount of damage a bot will take for having no stamina on health drain
-	UPROPERTY(EditAnywhere, Category = "Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		int32 zeroStaminaHealthDrainValue = 5;
 public:
 	// Get Health
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		int32 GetHealth();
+		int32 GetHealthValue();
 	//Set health
 	// health can never be below zero health will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxHealth is input
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		void SetHealth(int32 newHealth);
+		void SetHealthValue(int32 newHealth);
 	// get and set Max Health
-	FORCEINLINE int32 GetMaxHealth() const { return Health.MaxValue; }
-	FORCEINLINE void SetMaxHealth(int32 newMaxHealth) { Health.MaxValue = newMaxHealth; }
+	FORCEINLINE int32 GetMaxHealth() const { return Stats[0].MaxValue; }
+	FORCEINLINE void SetMaxHealth(int32 newMaxHealth) { Stats[0].MaxValue = newMaxHealth; }
 
 	// Get and Set stamina
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		int32 GetStamina();
+		int32 GetStaminaValue();
 	// Set stamina
 	// stamina can never be below zero stamina will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxStamina is input
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		void SetStamina(int32 newStamina);
+		void SetStaminaValue(int32 newStamina);
 	// get and set Max Stamina
-	FORCEINLINE int32 GetMaxStamina() const { return Stamina.MaxValue; }
-	FORCEINLINE void SetMaxStamina(int32 newMaxStamina) { Stamina.MaxValue = newMaxStamina; }
+	FORCEINLINE int32 GetMaxStamina() const { return Stats[1].MaxValue; }
+	FORCEINLINE void SetMaxStamina(int32 newMaxStamina) { Stats[1].MaxValue = newMaxStamina; }
 
 	// IsUsable Interface
 public:
