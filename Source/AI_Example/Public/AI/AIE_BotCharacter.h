@@ -4,6 +4,7 @@
 
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 
 #include "Runtime/UMG/Public/Components/WidgetComponent.h"
 
@@ -41,6 +42,8 @@ public:
 		UBehaviorTree* BotBehavior;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|AI")
 		TArray<UBehaviorTree*> BotStatBehavior;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|AI")
+		// BotBehavior;
 	// UI
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|UI")
 		UWidgetComponent* UI_Stat_Component;
@@ -94,7 +97,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
 		int32 zeroStaminaHealthDrainValue = 5;
 public:
-	// Get Stat Value
+	// Get all stats
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		TArray<FAIE_BotStat_Struct> GetStats() const;
+	// Get Stat
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 		FAIE_BotStat_Struct GetStat(EBotStatNames InName) const;
 	FAIE_BotStat_Struct GetStat(int32 StatIndex) const;

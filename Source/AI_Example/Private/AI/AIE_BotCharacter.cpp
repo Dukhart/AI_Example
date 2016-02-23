@@ -76,7 +76,7 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	// Stamina
 	FAIE_BotStat_Struct Stamina(EBotStatNames::SName_Stamina);
 	// Hunger
-	FAIE_BotStat_Struct Hunger(EBotStatNames::SName_Hunger, 0);
+	FAIE_BotStat_Struct Hunger(EBotStatNames::SName_Hunger, 0, 100, 0, 1, true);
 	// Happiness
 	FAIE_BotStat_Struct Happiness(EBotStatNames::SName_Happiness, 75, 100, -100);
 	// add stats to the array
@@ -200,6 +200,9 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 	 // apply the damage to the Bot
 		OnTakeAnyDamage.Broadcast(zeroStaminaHealthDrainValue, NULL, GetController(), this);
 	}
+}
+TArray<FAIE_BotStat_Struct> AAIE_BotCharacter::GetStats() const {
+	return Stats;
 }
 // get a stat
 FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(EBotStatNames InName) const {

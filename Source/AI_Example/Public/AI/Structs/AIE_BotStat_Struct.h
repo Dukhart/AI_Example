@@ -46,9 +46,12 @@ struct AI_EXAMPLE_API FAIE_BotStat_Struct
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 			int32 DesireMultiplier;
 
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+			bool bInverse;
+
 
 		// sets default values
-	FAIE_BotStat_Struct(EBotStatNames InStat = EBotStatNames::SName_None, int32 inValue = 100, int32 inMax = 100, int32 inMin = 0, int32 inDesire = 1) {
+	FAIE_BotStat_Struct(EBotStatNames InStat = EBotStatNames::SName_None, int32 inValue = 100, int32 inMax = 100, int32 inMin = 0, int32 inDesire = 1, bool bInInverse = false) {
 		Stat = InStat;
 		switch (InStat) {
 		case EBotStatNames::SName_Health:
@@ -80,5 +83,6 @@ struct AI_EXAMPLE_API FAIE_BotStat_Struct
 		MaxValue = inMax;
 		MinValue = inMin;
 		DesireMultiplier = inDesire;
+		bInverse = bInInverse;
 	}
 };

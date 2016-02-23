@@ -3,6 +3,7 @@
 #pragma once
 
 #include "AI/BTNodes/BTServices/AIE_BTService.h"
+#include "AIE_BotStat_Struct.h"
 #include "AIE_StatDesireCheck_BTService.generated.h"
 
 /**
@@ -18,5 +19,5 @@ protected:
 		virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 private:
 	UPROPERTY(EditAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-		float statLowValue = 0.5f;
+		float statLowValue = 50.0f;
 };
