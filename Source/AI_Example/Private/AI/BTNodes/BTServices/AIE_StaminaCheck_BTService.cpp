@@ -13,7 +13,7 @@ void UAIE_StaminaCheck_BTService::TickNode(UBehaviorTreeComponent& OwnerComp, ui
 	// check we have a bot character
 	if (BotCharacter) {
 		// if our max stamina times current stamina low value is greater than our current stamina set stamLow to true else stamLow is false
-		bool stamLow = BotCharacter->GetMaxStamina() * (staminaLowValue) > BotCharacter->GetStaminaValue() ? true : false;
+		bool stamLow = BotCharacter->GetStatMax(1) * (staminaLowValue) > BotCharacter->GetStatValue(1) ? true : false;
 		// check we have a blackboard
 		if (Blackboard) {
 			// get staminaLow key

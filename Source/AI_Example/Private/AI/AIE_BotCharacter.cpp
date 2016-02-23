@@ -20,6 +20,14 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 		// assign the behavior tree to our Bot Behavior
 		BotBehavior = BehaviorTreeAsset.Object;
 	}
+	// create the ui Component
+	UI_Stat_Component = CreateDefaultSubobject<UWidgetComponent>("Widget Component");
+	// attach our UI to the root
+	UI_Stat_Component->AttachTo(RootComponent);
+	// set the draw size of our ui
+	UI_Stat_Component->SetDrawSize(FVector2D(450.0f, 266.0f));
+	
+		//BotUI->SetWidget(UIAsset.Object);
 	// get the refrence to our skeletal mesh
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(*FAIE_Asset_Paths::DefaultBotMesh);
 	// check that we got the mesh and a mesh component exists
@@ -63,33 +71,13 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 
 	// set our bots default stats
 	// health
-	FAIE_BotStat_Struct Health;
-	Health.Name = "Health";
-	Health.Value = 100;
-	Health.MaxValue = 100;
-	Health.MinValue = 0;
-	Health.DesireMultiplier = 1;
+	FAIE_BotStat_Struct Health("Health");
 	// Stamina
-	FAIE_BotStat_Struct Stamina;
-	Stamina.Name = "Stamina";
-	Stamina.Value = 100;
-	Stamina.MaxValue = 100;
-	Stamina.MinValue = 0;
-	Stamina.DesireMultiplier = 1;
+	FAIE_BotStat_Struct Stamina("Stamina");
 	// Hunger
-	FAIE_BotStat_Struct Hunger;
-	Hunger.Name = "Hunger";
-	Hunger.Value = 0;
-	Hunger.MaxValue = 100;
-	Hunger.MinValue = 0;
-	Hunger.DesireMultiplier = 1;
+	FAIE_BotStat_Struct Hunger("Hunger", 0);
 	// Happiness
-	FAIE_BotStat_Struct Happiness;
-	Happiness.Name = "Happiness";
-	Happiness.Value = 75;
-	Happiness.MaxValue = 100;
-	Happiness.MinValue = -100;
-	Happiness.DesireMultiplier = 1;
+	FAIE_BotStat_Struct Happiness("Happiness", 75, 100, -100);
 	// add stats to the array
 	Stats.Add(Health);
 	Stats.Add(Stamina);
@@ -97,26 +85,11 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	Stats.Add(Happiness);
 	// set our bots default attributes
 	// Strength
-	FAIE_BotStat_Struct Strength;
-	Strength.Name = "Happiness";
-	Strength.Value = 10;
-	Strength.MaxValue = 25;
-	Strength.MinValue = 1;
-	Strength.DesireMultiplier = 1;
+	FAIE_BotStat_Struct Strength("Strength", 10, 25, 1);
 	// Intelligence
-	FAIE_BotStat_Struct Intelligence;
-	Intelligence.Name = "Intelligence";
-	Intelligence.Value = 10;
-	Intelligence.MaxValue = 25;
-	Intelligence.MinValue = 1;
-	Intelligence.DesireMultiplier = 1;
+	FAIE_BotStat_Struct Intelligence("Intelligence", 10, 25, 1);
 	// Speed
-	FAIE_BotStat_Struct Speed;
-	Speed.Name = "Speed";
-	Speed.Value = 10;
-	Speed.MaxValue = 25;
-	Speed.MinValue = 1;
-	Speed.DesireMultiplier = 1;
+	FAIE_BotStat_Struct Speed("Speed", 10, 25, 1);
 	// add atributes to the array
 	Attributes.Add(Strength);
 	Attributes.Add(Intelligence);
@@ -131,7 +104,14 @@ void AAIE_BotCharacter::BeginPlay()
 	// set our Bots Natural Stamina drain to be triggered by the timer manager
 	GetWorldTimerManager().SetTimer(StaminaTimerHandle, this, &AAIE_BotCharacter::AutoStaminaDrain, staminaDrainRate, true);
 	// set health to max health
-	SetHealthValue(GetMaxHealth());
+	SetStatValue(GetStatMax(0), 0);
+	//UIWidgetInstance
+	UI_Stat_WidgetInstance = Cast<UAIE_StatBox_UserWidget>(UI_Stat_Component->GetUserWidgetObject());
+	if (UI_Stat_WidgetInstance) {
+		UI_Stat_WidgetInstance->Owner = this;
+		UI_Stat_WidgetInstance->BuildWidget();
+		UI_Stat_WidgetInstance->UpdateWidget();
+	}
 }
 
 // Called every frame
@@ -147,21 +127,7 @@ void AAIE_BotCharacter::SetupPlayerInputComponent(class UInputComponent* InputCo
 	Super::SetupPlayerInputComponent(InputComponent);
 
 }
-/*
-// calls use item on an item
-void AAIE_BotCharacter::UseItemAction_Implementation(AActor* ActorToUse) {
-	// checks we have a valid actor AND that actor implements our IsUsable Interface
-	if (ActorToUse && GetClass()->ImplementsInterface(UAIE_IsUsable::StaticClass())) {
-		IAIE_IsUsable::Execute_UseItem(ActorToUse, this);
-	}
-	else {
-#if !UE_BUILD_SHIPPING
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " trying to use invalid object IsUsable not Implemented");
-#endif
-	}
-	
-}
-*/
+
 // handles Hit detection
 void AAIE_BotCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) {
 	// won't fire our native hit event if blueprints set the overide bool to true
@@ -180,13 +146,10 @@ void AAIE_BotCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Oth
 // won't be bound if bOverideNativeOnTakeAnyDamage is set to true
 void AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, class AActor* DamageCauser) {
 	
-	// remove incoming damage from total health and set health 
-	SetHealthValue(GetHealthValue() - FMath::CeilToInt(Damage));
-#if !UE_BUILD_SHIPPING
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + FString::FromInt(GetHealthValue()));
-#endif
+	// remove incoming damage from total health
+	AddStatValue(-FMath::CeilToInt(Damage), 0);
 	// check if the bot has died from the incoming damage
-	if (GetHealthValue() <= 0) {
+	if (GetStatValue(0) <= GetStatMin(0)) {
 		// destroys the bot
 		Destroy_AIE_Bot();
 	}
@@ -209,67 +172,126 @@ void AAIE_BotCharacter::Destroy_AIE_Bot() {
 void AAIE_BotCharacter::AutoStaminaDrain() {
 	// we might make a Damage type later use this for now as take any damage must have a damage type input
 	// if stamina is currently greater then zero drian stamina
-	if (GetStaminaValue() > 0) {
+	if (GetStatValue(1) > GetStatMin(1)) {
 		// store the stamina before we drain it
-		int32 stamRef = GetStaminaValue();
+		int32 stamRef = GetStatValue(1);
 		// set stamRef to the new stamina
 		stamRef = stamRef - staminaDrainValue;
+		
 		// Check if our Bot has run out of stamina
-		if (stamRef < 0) {
-			// if it has inverse the result with times -1 to get a positive value back
+		if (stamRef < GetStatMin(1)) {
+			// if it has subtract the min from our new current to get the difference
 			// and clamp it to zeroStaminaDrainValue so we don't do more damage then if we already had zero stamina
-			int32 stamDamage = FMath::Clamp(stamRef * -1, 0, zeroStaminaHealthDrainValue);
+			int32 stamDamage = FMath::Clamp(stamRef - GetStatMin(1), 0, zeroStaminaHealthDrainValue);
 			// TODO:: Make Exhaustion Damage Type
 			//UDamageType* DamageType = Cast<UDamageType>(UDamageType::StaticClass());
 			// apply the damage to the Bot
 			OnTakeAnyDamage.Broadcast(stamDamage, NULL, GetController(), this);
 		}
 		else { // else stamina stayed above zero so we can allow health regen
-			// add the regen value to health with set health
-			SetHealthValue(GetHealthValue() + HealthRegenValue);
-#if !UE_BUILD_SHIPPING
-			if (GetHealthValue() < 100.0f) {
-				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Health " + FString::FromInt(GetHealthValue()));
-			}
-#endif
+			// add the regen value to health
+			AddStatValue(HealthRegenValue, 0);
 		}
 		// set the stamina to our new value
-		SetStaminaValue(stamRef);
-#if !UE_BUILD_SHIPPING
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, BotName.ToString() + " Stamina " + FString::FromInt(GetStaminaValue()));
-#endif
+		SetStatValue(stamRef, 1);
 	}
 	else { // else stamina is already at zero so the Bot will take damage for being over exhausted
 	 // apply the damage to the Bot
 		OnTakeAnyDamage.Broadcast(zeroStaminaHealthDrainValue, NULL, GetController(), this);
 	}
 }
-// get health
-int32 AAIE_BotCharacter::GetHealthValue() { return Stats[0].Value; }
-// set health
-// health can never be below zero health will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxHealth is input
-void AAIE_BotCharacter::SetHealthValue(int32 newHealth) {
-	if (newHealth < 0) { newHealth = 0; }
-	else if (newHealth > Stats[0].MaxValue) { newHealth = Stats[0].MaxValue; }
-	Stats[0].Value = newHealth;
+// get a stat
+FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(int32 StatIndex) const {
+	FAIE_BotStat_Struct stat;
+	// check we have a valid index
+	if (Stats.IsValidIndex(StatIndex)) {
+		stat = Stats[StatIndex];
+	}
+	return stat;
 }
-// Get Stamina
-int32 AAIE_BotCharacter::GetStaminaValue() { return Stats[1].Value; }
-// Set stamina
-// stamina can never be below zero stamina will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxStamina is input
-void AAIE_BotCharacter::SetStaminaValue(int32 newStamina) {
-	if (newStamina < 0) { newStamina = 0; }
-	else if (newStamina > Stats[1].MaxValue) { newStamina = Stats[1].MaxValue; }
-	Stats[1].Value = newStamina;
+// Get Stat Value
+int32 AAIE_BotCharacter::GetStatValue(int32 StatIndex) const {
+	// check we have a valid index
+	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].Value : NULL;
+	return value;
+}
+//Set Stat Value
+void AAIE_BotCharacter::SetStatValue(int32 newValue, int32 StatIndex) {
+	// check we have a valid index
+	if (Stats.IsValidIndex(StatIndex)) {
+		if (newValue < Stats[StatIndex].MinValue) { newValue = Stats[StatIndex].MinValue; }
+		else if (newValue > Stats[StatIndex].MaxValue) { newValue = Stats[StatIndex].MaxValue; }
+		//FMath::Clamp(newValue, Stats[StatIndex].MinValue, Stats[StatIndex].MaxValue);
+		Stats[StatIndex].Value = newValue;
+	}
+	// update display widget
+	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
+}
+//Add to Stat Value
+void AAIE_BotCharacter::AddStatValue(int32 inValue, int32 StatIndex) {
+	// check we have a valid index
+	if (Stats.IsValidIndex(StatIndex)) {
+		inValue = FMath::Clamp(inValue + Stats[StatIndex].Value, Stats[StatIndex].MinValue, Stats[StatIndex].MaxValue);
+		Stats[StatIndex].Value = inValue;
+	}
+	// update display widget
+	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
+}
+// Get Stat Max
+int32 AAIE_BotCharacter::GetStatMax(int32 StatIndex) const {
+	// check we have a valid index
+	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].MaxValue : NULL;
+	return value;
+}
+// Set Stat Max
+void AAIE_BotCharacter::SetStatMax(int32 newMax, int32 StatIndex) {
+	// check we have a valid index
+	if (Stats.IsValidIndex(StatIndex)) {
+		// max can't be lower then the min
+		Stats[StatIndex].MaxValue = (newMax < Stats[StatIndex].MinValue) ? Stats[StatIndex].MinValue : newMax;
+	}
+	// update display widget
+	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
+}
+// Get Stat Min
+int32 AAIE_BotCharacter::GetStatMin(int32 StatIndex) const {
+	// check we have a valid index
+	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].MinValue : NULL;
+	return value;
+}
+// Set Stat Min
+void AAIE_BotCharacter::SetStatMin(int32 newMin, int32 StatIndex) {
+	// check we have a valid index
+	if (Stats.IsValidIndex(StatIndex)) {
+		// min can't be higher then the max
+		Stats[StatIndex].MinValue = newMin > Stats[StatIndex].MaxValue ? Stats[StatIndex].MaxValue : newMin;
+	}
+	// update display widget
+	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
+}
+// set Stat desire
+void AAIE_BotCharacter::SetStatDesire(int32 newDesire, int32 StatIndex) {
+	// check we have a valid index
+	if (Stats.IsValidIndex(StatIndex)) {
+		Stats[StatIndex].DesireMultiplier = newDesire;
+	}
+	// update display widget
+	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
+}
+// get Desire
+int32 AAIE_BotCharacter::GetStatDesire(int32 StatIndex) const {
+	// check we have a valid index
+	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].DesireMultiplier : NULL;
+	return value;
 }
 
 // IsUsable interface
 void AAIE_BotCharacter::UseItem_Implementation(AAIE_BotCharacter* BotUsing){}
 
-void AAIE_BotCharacter::AI_UseItem_Implementation(AActor* ActorUsing){
+void AAIE_BotCharacter::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
 	// checks we have a valid actor AND that actor implements our IsUsable Interface
-	if (ActorUsing && ActorUsing->GetClass()->ImplementsInterface(UAIE_IsUsable::StaticClass())) {
-		IAIE_IsUsable::Execute_UseItem(ActorUsing, this);
+	if (ActorToUse && ActorToUse->GetClass()->ImplementsInterface(UAIE_IsUsable::StaticClass())) {
+		IAIE_IsUsable::Execute_UseItem(ActorToUse, this);
 	}
 	else {
 #if !UE_BUILD_SHIPPING

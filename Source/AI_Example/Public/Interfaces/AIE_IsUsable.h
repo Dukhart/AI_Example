@@ -25,6 +25,6 @@ public:
 		UFUNCTION(BlueprintNativeEvent, Category = "Actions")
 		void UseItem(AAIE_BotCharacter* BotUsing);
 		UFUNCTION(BlueprintNativeEvent, Category = "Actions")
-		void AI_UseItem(AActor* ActorUsing);
+		void AI_ActivateUseItem(AActor* ActorToUse);
 		
 };

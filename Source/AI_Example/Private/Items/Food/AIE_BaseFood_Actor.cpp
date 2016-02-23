@@ -28,24 +28,9 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	Mesh->AttachTo(RootComponent);
 	// set to block all
 	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-	// create the sphere
-	/*
-	CollisionSphere = CreateDefaultSubobject<USphereComponent>("Sphere Collision");
-	// attach the sphere to the root
-	CollisionSphere->AttachTo(RootComponent);
-	// set local position of the sphere
-	CollisionSphere->AddLocalOffset(FVector(0.0f, 0.0f, 50.0f));
-	// set size of the sphere
-	CollisionSphere->SetSphereRadius(60.0f);
 
-	CollisionSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-	*/
-	/* // begin ***REMOVED AFTER VIDEO 1*** \\
-	// add overlap events to the sphere
-	if (!bOverideNativeOverlapEvents) {
-		CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AAIE_BaseFood_Actor::OnFoodOverlapBegin);
-	}
-	// end ***REMOVED AFTER VIDEO 1*** \\*/
+	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(1, 5);
+	Stats.Add(stam);
 }
 
 // Called when the game starts or when spawned
@@ -61,30 +46,6 @@ void AAIE_BaseFood_Actor::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 }
-/* // begin ***REMOVED AFTER VIDEO 1*** \\
-// handles overlap events
-// won't be bound if bOverideNativeOverlapEvents = true
-void AAIE_BaseFood_Actor::OnFoodOverlapBegin(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
-	// check if we can auto pick up on touch
-	if (bAutoPickup) {
-		// try to get the bot that hit the food item
-		AAIE_BotCharacter* BotHit = Cast<AAIE_BotCharacter>(OtherActor);
-		// check if we managed to get a bot
-		if (BotHit) {
-#if !UE_BUILD_SHIPPING
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, " Food Hit by " + BotHit->BotName.ToString());
-#endif
-			// set the bots health based on the health increase value of the food
-			BotHit->SetHealth(BotHit->GetHealth() + HealthIncreaseValue);
-			// set the bots stamina based on the stamina increase value of the food
-			BotHit->SetStamina(BotHit->GetStamina() + StaminaIncreaseValue);
-			// Destroy the food item as it has been consumed
-			Destroy();
-		}
-	}
-}
-// end ***REMOVED AFTER VIDEO 1*** \\*/
-
 // IsUsable interface functions
 // use item
 void AAIE_BaseFood_Actor::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {
@@ -93,19 +54,25 @@ void AAIE_BaseFood_Actor::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {
 #if !UE_BUILD_SHIPPING
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, " Food Hit by " + BotUsing->BotName.ToString());
 #endif
-		// if HealthIncreaseValue is equal to or greater than zero give HealthIncreaseValue as health
-		if(HealthIncreaseValue >= 0){
-			// set the bots health based on the health increase value of the food
-			BotUsing->SetHealthValue(BotUsing->GetHealthValue() + HealthIncreaseValue);
-		} // else apply damage
-		else {
-			BotUsing->OnTakeAnyDamage.Broadcast(HealthIncreaseValue * -1.0f, NULL, NULL, this);
+		for (int32 i = 0; i < Stats.Num(); i++) {
+			int32 s = Stats[i].StatIndex;
+			// check if we are affecting health as negative health values need to be handled as damage
+			if (s == 0 && Stats[i].StatChange < 0) {
+				// apply health damage
+				BotUsing->OnTakeAnyDamage.Broadcast(Stats[i].StatChange * -1.0f, NULL, NULL, this);
+			}
+			// change stat
+			else { BotUsing->AddStatValue(Stats[i].StatChange, s); }
+			// apply stat affects to Max
+			BotUsing->SetStatMax(BotUsing->GetStatMax(s) + Stats[i].StatMaxChange, s);
+			// apply stat affects to Min
+			BotUsing->SetStatMin(BotUsing->GetStatMin(s) + Stats[i].StatMinChange, s);
+			// apply stat affects to Desire
+			BotUsing->SetStatDesire(BotUsing->GetStatDesire(s) + Stats[i].StatDesireChange, s);
 		}
-		// set the bots stamina based on the stamina increase value of the food
-		BotUsing->SetStaminaValue(BotUsing->GetStaminaValue() + StaminaIncreaseValue);
 		// Destroy the food item as it has been consumed
 		Destroy();
 	}
 }
-void AAIE_BaseFood_Actor::AI_UseItem_Implementation(AActor* BotUsing) {
+void AAIE_BaseFood_Actor::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
 }

@@ -5,4 +5,8 @@
 
 
 
+/*
+UAIE_StatBar_UserWidget::UAIE_StatBar_UserWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 
+}
+*/

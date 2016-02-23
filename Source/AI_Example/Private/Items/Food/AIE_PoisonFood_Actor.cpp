@@ -15,9 +15,13 @@ AAIE_PoisonFood_Actor::AAIE_PoisonFood_Actor(const FObjectInitializer& ObjectIni
 
 		Mesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 	}
-	
+	// clear our stats array
+	Stats.Empty();
 	// set the poisons stam restore
-	StaminaIncreaseValue = 5.0f;
+	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(1, 5);
 	// set the poisons health damage
-	HealthIncreaseValue = -10.0f;
+	FAIE_ItemStatEffect_Struct hp = FAIE_ItemStatEffect_Struct(0, -15);
+	// add stat effects to the array
+	Stats.Add(stam);
+	Stats.Add(hp);
 }

@@ -30,12 +30,12 @@ struct AI_EXAMPLE_API FAIE_BotStat_Struct
 
 
 		// sets default values
-	FAIE_BotStat_Struct() {
-		Name = "Stat Name";
-		Value = 100;
-		MaxValue = 100;
-		MinValue = 0;
-		DesireMultiplier = 1;
+	FAIE_BotStat_Struct(FName inName = "Stat Name", int32 inValue = 100, int32 inMax = 100, int32 inMin = 0, int32 inDesire = 1) {
+		Name = inName;
+		Value = inValue;
+		MaxValue = inMax;
+		MinValue = inMin;
+		DesireMultiplier = inDesire;
 	}
 	
 	

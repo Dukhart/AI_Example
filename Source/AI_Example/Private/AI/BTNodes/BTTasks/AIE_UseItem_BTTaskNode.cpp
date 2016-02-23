@@ -50,7 +50,7 @@ EBTNodeResult::Type UAIE_UseItem_BTTaskNode::ExecuteTask(UBehaviorTreeComponent&
 						GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotCharacter->BotName.ToString() + " trying to grab object");
 #endif
 							// exacute AI_UseItem on our bot with the Desired object
-							IAIE_IsUsable::Execute_AI_UseItem(BotCharacter, desiredObjectActor);
+							IAIE_IsUsable::Execute_AI_ActivateUseItem(BotCharacter, desiredObjectActor);
 							// return success
 							return EBTNodeResult::Succeeded;
 					}

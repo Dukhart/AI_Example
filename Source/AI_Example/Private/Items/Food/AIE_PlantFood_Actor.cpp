@@ -13,7 +13,10 @@ AAIE_PlantFood_Actor::AAIE_PlantFood_Actor(const FObjectInitializer& ObjectIniti
 
 		Mesh->SetRelativeScale3D(FVector(0.25f, 0.25f, 0.25f));
 	}
+	// clear our stats array
+	Stats.Empty();
 	// set the plants stam restore
-	StaminaIncreaseValue = 50.0f;
+	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(1, 50);
+	Stats.Add(stam);
 }
 
