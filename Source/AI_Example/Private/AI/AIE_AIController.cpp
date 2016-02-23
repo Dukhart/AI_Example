@@ -19,8 +19,12 @@ void AAIE_AIController::Possess(APawn* InPawn) {
 	if (BotPawn && BotPawn->BotBehavior) {
 		// get the black board from the pawn behavior tree
 		BlackBoardComp->InitializeBlackboard(*(BotPawn->BotBehavior->BlackboardAsset));
-		// Get keys from blackboard
-
+		// Get and set starting values of blackboard keys
+		FBlackboard::FKey lowStatEnumKey = BlackBoardComp->GetKeyID("lowStat");
+		if (BlackBoardComp->IsValidKey(lowStatEnumKey)) {
+			BlackBoardComp->SetValue<UBlackboardKeyType_Enum>(lowStatEnumKey, static_cast<UBlackboardKeyType_Enum::FDataType>(EBotStatNames::SName_None));
+		}
+		//f (bb->)
 		// start the behvior tree from the pawn
 		BehaviorTreeComp->StartTree(*(BotPawn->BotBehavior));
 

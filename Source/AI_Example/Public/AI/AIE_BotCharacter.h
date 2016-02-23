@@ -4,10 +4,19 @@
 
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
+
+#include "Runtime/UMG/Public/Components/WidgetComponent.h"
+
+#include "AIE_StatBar_UserWidget.h"
+#include "AIE_StatBox_UserWidget.h"
 
 #include "AIE_IsUsable.h"
+#include "AIE_BotStat_Struct.h"
 
 #include "AIE_BotCharacter.generated.h"
+
+
 
 UCLASS()
 class AI_EXAMPLE_API AAIE_BotCharacter : public ACharacter, public IAIE_IsUsable
@@ -24,17 +33,27 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
-	// will call use item on objects that have the IsUsable interface
-	//UFUNCTION(BlueprintNativeEvent, Category = "Actions")
-	//void UseItemAction(AActor* ActorToUse);
-	//virtual void UseItemAction_Implementation(AActor* ActorToUse);
-
 	// the name of our bot
-	UPROPERTY(EditAnywhere, Category = "Character")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
 		FName BotName;
+	// COMPONENTS
 	// the behavior tree helping control our bots actions
-	UPROPERTY(EditAnywhere, Category = "AI")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|AI")
 		UBehaviorTree* BotBehavior;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|AI")
+		TArray<UBehaviorTree*> BotStatBehavior;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|AI")
+		// BotBehavior;
+	// UI
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|UI")
+		UWidgetComponent* UI_Stat_Component;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|UI")
+		TSubclassOf<UAIE_StatBox_UserWidget> UI_Stat_WidgetTemplate;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components|UI")
+		UAIE_StatBox_UserWidget* UI_Stat_WidgetInstance;
+
+
+
 
 	// if set to true native on hit events won't trigger only blueprint version will be called
 	UPROPERTY(EditAnywhere, Category = "Hit Detection")
@@ -55,58 +74,73 @@ protected:
 	FTimerHandle StaminaTimerHandle;
 	// Handles stamina Drain
 	void AutoStaminaDrain();
+
 private:
-	// our bots health Use Get and Set functions to access
-	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-		float Health = 100.0f;
-	// our bots stamina Use Get and Set functions to access
-	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-		float Stamina = 100.0f;
+	// array to hold our stats
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+		TArray<FAIE_BotStat_Struct> Stats;
+	// array to hold our atributes
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+		TArray<FAIE_BotStat_Struct> Attributes;
 public:
-	// our bots Max health
-	UPROPERTY(EditAnywhere, Category = "Stats")
-		float MaxHealth = 100.0f;
+
 	// our bots health regenValue
-	UPROPERTY(EditAnywhere, Category = "Stats")
-		float HealthRegenValue = 1.0f;
-	// our bots Max Stamina
-	UPROPERTY(EditAnywhere, Category = "Stats")
-		float MaxStamina = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Health")
+		int32 HealthRegenValue = 1;
 	// sets the rate at which stamina will fall, see drain value for how much stamina will fall
-	UPROPERTY(EditAnywhere, Category = "Stats")
-		float staminaDrainRate = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
+		int32 staminaDrainRate = 1;
 	// sets how much the stamina will fall, see Drain Rate for how often stamina will fall
-	UPROPERTY(EditAnywhere, Category = "Stats")
-		float staminaDrainValue = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
+		int32 staminaDrainValue = 1;
 	// the amount of damage a bot will take for having no stamina on health drain
-	UPROPERTY(EditAnywhere, Category = "Stats")
-		float zeroStaminaHealthDrainValue = 5.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
+		int32 zeroStaminaHealthDrainValue = 5;
 public:
-	// Get Health
+	// Get all stats
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		float GetHealth();
-	//Set health
-	// health can never be below zero health will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxHealth is input
+		TArray<FAIE_BotStat_Struct> GetStats() const;
+	// Get Stat
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		void SetHealth(float newHealth);
-	// get and set Max Health
-	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
-	FORCEINLINE void SetMaxHealth(float newMaxHealth) { MaxHealth = newMaxHealth; }
-
-	// Get and Set stamina
+		FAIE_BotStat_Struct GetStat(EBotStatNames InName) const;
+	FAIE_BotStat_Struct GetStat(int32 StatIndex) const;
+	// Get Stat Value
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		float GetStamina();
-	// Set stamina
-	// stamina can never be below zero stamina will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxStamina is input
+		int32 GetStatValue(EBotStatNames InName) const;
+	int32 GetStatValue(int32 StatIndex) const;
+	//Set Stat Value
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		void SetStamina(float newStamina);
-	// get and set Max Stamina
-	FORCEINLINE float GetMaxStamina() const { return MaxStamina; }
-	FORCEINLINE void SetMaxStamina(float newMaxStamina) { MaxStamina = newMaxStamina; }
-
+		void SetStatValue(int32 newValue, EBotStatNames InName);
+	void SetStatValue(int32 newValue, int32 StatIndex);
+	// Add inValue to Stat current Value
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		void AddStatValue(int32 inValue, EBotStatNames InName);
+	void AddStatValue(int32 inValue, int32 StatIndex);
+	// Get Stat Max
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		int32 GetStatMax(EBotStatNames InName) const;
+	int32 GetStatMax(int32 StatIndex) const;
+	// Set Stat Max
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		void SetStatMax(int32 newMax, EBotStatNames InName);
+	void SetStatMax(int32 newMax, int32 StatIndex);
+	// Get Stat Min
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		int32 GetStatMin(EBotStatNames InName) const;
+	int32 GetStatMin(int32 StatIndex) const;
+	// Set Stat Min
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		void SetStatMin(int32 newMin, EBotStatNames InName);
+	void SetStatMin(int32 newMin, int32 StatIndex);
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		void SetStatDesire(int32 newDesire, EBotStatNames InName);
+	void SetStatDesire(int32 newDesire, int32 StatIndex);
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		int32 GetStatDesire(EBotStatNames InName) const;
+	int32 GetStatDesire(int32 StatIndex) const;
 	// IsUsable Interface
 public:
 	void UseItem_Implementation(AAIE_BotCharacter* BotUsing);
-	void AI_UseItem_Implementation(AActor* ActorUsing);
+	void AI_ActivateUseItem_Implementation(AActor* ActorToUse);
 
 };

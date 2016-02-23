@@ -9,7 +9,7 @@ AAIE_PlayerPawn::AAIE_PlayerPawn (const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer) {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 	//ROOT
 	//make the root component
 	PawnSceneRoot = CreateDefaultSubobject<USceneComponent>("Root Component");

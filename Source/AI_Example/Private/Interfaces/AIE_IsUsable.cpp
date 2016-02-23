@@ -10,7 +10,7 @@ UAIE_IsUsable::UAIE_IsUsable(const class FObjectInitializer& ObjectInitializer) 
 void IAIE_IsUsable::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {
 
 }
-void IAIE_IsUsable::AI_UseItem_Implementation(AActor* ActorUsing) {
+void IAIE_IsUsable::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
 
 }
 
