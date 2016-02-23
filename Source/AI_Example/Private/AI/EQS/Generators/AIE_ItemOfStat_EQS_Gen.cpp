@@ -26,24 +26,27 @@ void UAIE_ItemOfStat_EQS_Gen::GenerateItems(FEnvQueryInstance& QueryInstance) co
 	{
 		return;
 	}
+	
 	float RadiusValue = SearchRadius.GetValue();
 	const float RadiusSq = FMath::Square(RadiusValue);
 
 	TArray<FVector> ContextLocations;
 	QueryInstance.PrepareContext(SearchCenter, ContextLocations);
-
+	
 	// get all actors of searched class
 	for (TActorIterator<AActor> ActorItr(World, SearchedActorClass); ActorItr; ++ActorItr) {
 		AAIE_BaseFood_Actor* actorRef = Cast<AAIE_BaseFood_Actor>(*ActorItr);
+		
 		if (actorRef) {
 			// get all context locations to compare actors too
 			for (int32 ContextIndex = 0; ContextIndex < ContextLocations.Num(); ++ContextIndex)
 			{
+				
 				// filter out actors out of range
 				if (FVector::DistSquared(ContextLocations[ContextIndex], actorRef->GetActorLocation()) < RadiusSq)
 				{
 					// Check for the searched stat
-					for (int32 statIndex = 0; actorRef->Stats.Num(); statIndex++) {
+					for (int32 statIndex = 0; statIndex < actorRef->Stats.Num(); statIndex++) {
 						if (actorRef->Stats[statIndex].StatIndex == StatIndex) {
 							QueryInstance.AddItemData<UEnvQueryItemType_Actor>(actorRef);
 							break;

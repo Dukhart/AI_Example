@@ -15,6 +15,8 @@
 
 #include "AIE_BotCharacter.generated.h"
 
+
+
 UCLASS()
 class AI_EXAMPLE_API AAIE_BotCharacter : public ACharacter, public IAIE_IsUsable
 {
@@ -75,27 +77,8 @@ private:
 	// array to hold our atributes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
 	TArray<FAIE_BotStat_Struct> Attributes;
-
-	// Widget for our stat display
-	//UWidgetComponent* StatDisplay;
-
-	/* Removed After Video2
-	// our bots health Use Get and Set functions to access
-	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-		float Health = 100.0f;
-	// our bots stamina Use Get and Set functions to access
-	UPROPERTY(VisibleAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-		float Stamina = 100.0f;
-	*/
 public:
-	/* Removed After Video2
-	// our bots Max health
-	UPROPERTY(EditAnywhere, Category = "Stats")
-		float MaxHealth = 100.0f;
-	// our bots Max Stamina
-	UPROPERTY(EditAnywhere, Category = "Stats")
-		float MaxStamina = 100.0f;
-	*/
+
 	// our bots health regenValue
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Health")
 		int32 HealthRegenValue = 1;
@@ -111,100 +94,42 @@ public:
 public:
 	// Get Stat Value
 	UFUNCTION(BlueprintCallable, Category = "Stats")
+		//FAIE_BotStat_Struct GetStat(EBotStatNames InName) const;
 		FAIE_BotStat_Struct GetStat(int32 StatIndex) const;
 	// Get Stat Value
 	UFUNCTION(BlueprintCallable, Category = "Stats")
+		//int32 GetStatValue(EBotStatNames InName) const;
 		int32 GetStatValue(int32 StatIndex) const;
 	//Set Stat Value
 	UFUNCTION(BlueprintCallable, Category = "Stats")
+		//void SetStatValue(int32 newValue, EBotStatNames InName);
 		void SetStatValue(int32 newValue, int32 StatIndex);
 	// Add inValue to Stat current Value
 	UFUNCTION(BlueprintCallable, Category = "Stats")
+		//void AddStatValue(int32 inValue, EBotStatNames InName);
 	void AddStatValue(int32 inValue, int32 StatIndex);
 	// Get Stat Max
 	UFUNCTION(BlueprintCallable, Category = "Stats")
+		//int32 GetStatMax(EBotStatNames InName) const;
 		int32 GetStatMax(int32 StatIndex) const;
 	// Set Stat Max
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		void SetStatMax(int32 newMax, int32 StatIndex);
+		//void SetStatMax(int32 newMax, EBotStatNames InName);
+	void SetStatMax(int32 newMax, int32 StatIndex);
 	// Get Stat Min
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		int32 GetStatMin(int32 StatIndex) const;
+		//int32 GetStatMin(EBotStatNames InName) const;
+	int32 GetStatMin(int32 StatIndex) const;
 	// Set Stat Min
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		void SetStatMin(int32 newMin, int32 StatIndex);
+		//void SetStatMin(int32 newMin, EBotStatNames InName);
+	void SetStatMin(int32 newMin, int32 StatIndex);
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		void SetStatDesire(int32 newDesire, int32 StatIndex);
+		//void SetStatDesire(int32 newDesire, EBotStatNames InName);
+	void SetStatDesire(int32 newDesire, int32 StatIndex);
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		int32 GetStatDesire(int32 StatIndex) const;
-	/*
-	// Get Health
-	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
-		int32 GetHealthValue() const;
-	//Set health
-	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
-		void SetHealthValue(int32 newHealth);
-	// get and set Max Health
-	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
-		int32 GetMaxHealth() const;
-	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
-		void SetMaxHealth(int32 newMaxHealth);
-	// Get and Set Min Health
-	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
-		int32 GetMinHealth() const;
-	UFUNCTION(BlueprintCallable, Category = "Stats|Health")
-		void SetMinHealth(int32 newMinHealth);
-
-	// Get and Set stamina
-	UFUNCTION(BlueprintCallable, Category = "Stats|Stamina")
-		int32 GetStaminaValue() const;
-	// Set stamina
-	UFUNCTION(BlueprintCallable, Category = "Stats|Stamina")
-		void SetStaminaValue(int32 newStamina);
-	// get and set Max Stamina
-	UFUNCTION(BlueprintCallable, Category = "Stats|Stamina")
-		int32 GetMaxStamina() const;
-	UFUNCTION(BlueprintCallable, Category = "Stats|Stamina")
-		void SetMaxStamina(int32 newMaxStamina);
-	// get and set Min Stamina
-	UFUNCTION(BlueprintCallable, Category = "Stats|Stamina")
-		int32 GetMinStamina() const;
-	UFUNCTION(BlueprintCallable, Category = "Stats|Stamina")
-		void SetMinStamina(int32 newMinStamina);
-	// Get and Set Hunger
-	UFUNCTION(BlueprintCallable, Category = "Stats|Hunger")
-		int32 GetHungerValue() const;
-	// Set stamina
-	// stamina can never be below zero stamina will auto correct to zero if a number lower than zero is input and to Max if a number higher then MaxStamina is input
-	UFUNCTION(BlueprintCallable, Category = "Stats|Hunger")
-		void SetHungerValue(int32 newHunger);
-	// get and set Max Hunger
-	UFUNCTION(BlueprintCallable, Category = "Stats|Hunger")
-		int32 GetMaxHunger() const;
-	UFUNCTION(BlueprintCallable, Category = "Stats|Hunger")
-		void SetMaxHunger(int32 newMaxHunger);
-	// get and set Min Hunger
-	UFUNCTION(BlueprintCallable, Category = "Stats|Hunger")
-		int32 GetMinHunger() const;
-	UFUNCTION(BlueprintCallable, Category = "Stats|Hunger")
-		void SetMinHunger(int32 newMinHunger);
-	// Get and Set Happiness
-	UFUNCTION(BlueprintCallable, Category = "Stats|Happiness")
-		int32 GetHappinessValue() const;
-	// Set Happiness
-	UFUNCTION(BlueprintCallable, Category = "Stats|Happiness")
-		void SetHappinessValue(int32 newStamina);
-	// get and set Max Happiness
-	UFUNCTION(BlueprintCallable, Category = "Stats|Happiness")
-		int32 GetMaxHappiness() const;
-	UFUNCTION(BlueprintCallable, Category = "Stats|Happiness")
-		void SetMaxHappiness(int32 newMaxHappiness);
-	// get and set Min Happiness
-	UFUNCTION(BlueprintCallable, Category = "Stats|Happiness")
-		int32 GetMinHappiness() const;
-	UFUNCTION(BlueprintCallable, Category = "Stats|Happiness")
-		void SetMinHappiness(int32 newMinHappiness);
-		*/
+		//int32 GetStatDesire(EBotStatNames InName) const;
+	int32 GetStatDesire(int32 StatIndex) const;
 	// IsUsable Interface
 public:
 	void UseItem_Implementation(AAIE_BotCharacter* BotUsing);

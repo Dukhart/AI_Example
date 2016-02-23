@@ -16,7 +16,8 @@ AAIE_PlantFood_Actor::AAIE_PlantFood_Actor(const FObjectInitializer& ObjectIniti
 	// clear our stats array
 	Stats.Empty();
 	// set the plants stam restore
-	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(1, 50);
+	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(EBotStatNames::SName_Stamina, 50);
 	Stats.Add(stam);
+
 }
 

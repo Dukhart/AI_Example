@@ -26,6 +26,7 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	UI_Stat_Component->AttachTo(RootComponent);
 	// set the draw size of our ui
 	UI_Stat_Component->SetDrawSize(FVector2D(450.0f, 266.0f));
+	UI_Stat_Component->SetRelativeLocation(FVector(0, 0, 100));
 	
 		//BotUI->SetWidget(UIAsset.Object);
 	// get the refrence to our skeletal mesh
@@ -71,13 +72,13 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 
 	// set our bots default stats
 	// health
-	FAIE_BotStat_Struct Health("Health");
+	FAIE_BotStat_Struct Health(EBotStatNames::SName_Health);
 	// Stamina
-	FAIE_BotStat_Struct Stamina("Stamina");
+	FAIE_BotStat_Struct Stamina(EBotStatNames::SName_Stamina);
 	// Hunger
-	FAIE_BotStat_Struct Hunger("Hunger", 0);
+	FAIE_BotStat_Struct Hunger(EBotStatNames::SName_Hunger, 0);
 	// Happiness
-	FAIE_BotStat_Struct Happiness("Happiness", 75, 100, -100);
+	FAIE_BotStat_Struct Happiness(EBotStatNames::SName_Happiness, 75, 100, -100);
 	// add stats to the array
 	Stats.Add(Health);
 	Stats.Add(Stamina);
@@ -85,11 +86,11 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	Stats.Add(Happiness);
 	// set our bots default attributes
 	// Strength
-	FAIE_BotStat_Struct Strength("Strength", 10, 25, 1);
+	FAIE_BotStat_Struct Strength(EBotStatNames::SName_Strength, 10, 25, 1);
 	// Intelligence
-	FAIE_BotStat_Struct Intelligence("Intelligence", 10, 25, 1);
+	FAIE_BotStat_Struct Intelligence(EBotStatNames::SName_Intelligence, 10, 25, 1);
 	// Speed
-	FAIE_BotStat_Struct Speed("Speed", 10, 25, 1);
+	FAIE_BotStat_Struct Speed(EBotStatNames::SName_Speed, 10, 25, 1);
 	// add atributes to the array
 	Attributes.Add(Strength);
 	Attributes.Add(Intelligence);
@@ -201,6 +202,28 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 	}
 }
 // get a stat
+/*
+FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(EBotStatNames InName) const {
+	FAIE_BotStat_Struct stat;
+	switch (InName) {
+	case EBotStatNames::SName_Health:
+		stat = GetStat(0);
+		break;
+	case EBotStatNames::SName_Stamina:
+		stat = GetStat(1);
+		break;
+	case EBotStatNames::SName_Hunger:
+		stat = GetStat(2);
+		break;
+	case EBotStatNames::SName_Happiness:
+		stat = GetStat(3);
+		break;
+	default:
+		break;
+	}
+	return stat;
+}
+*/
 FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(int32 StatIndex) const {
 	FAIE_BotStat_Struct stat;
 	// check we have a valid index
@@ -210,12 +233,54 @@ FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(int32 StatIndex) const {
 	return stat;
 }
 // Get Stat Value
+/*
+int32 AAIE_BotCharacter::GetStatValue(EBotStatNames InName) const {
+	int32 val = -1;
+	switch (InName) {
+	case EBotStatNames::SName_Health:
+		val = GetStatValue(0);
+		break;
+	case EBotStatNames::SName_Stamina:
+		val = GetStatValue(1);
+		break;
+	case EBotStatNames::SName_Hunger:
+		val = GetStatValue(2);
+		break;
+	case EBotStatNames::SName_Happiness:
+		val = GetStatValue(3);
+		break;
+	default:
+		break;
+	}
+	return val;
+}
+*/
 int32 AAIE_BotCharacter::GetStatValue(int32 StatIndex) const {
 	// check we have a valid index
 	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].Value : NULL;
 	return value;
 }
 //Set Stat Value
+/*
+void AAIE_BotCharacter::SetStatValue(int32 newValue, EBotStatNames InName) {
+	switch (InName) {
+	case EBotStatNames::SName_Health:
+		SetStatValue(newValue, 0);
+		break;
+	case EBotStatNames::SName_Stamina:
+		SetStatValue(newValue, 1);
+		break;
+	case EBotStatNames::SName_Hunger:
+		SetStatValue(newValue, 2);
+		break;
+	case EBotStatNames::SName_Happiness:
+		SetStatValue(newValue, 3);
+		break;
+	default:
+		break;
+	}
+}
+*/
 void AAIE_BotCharacter::SetStatValue(int32 newValue, int32 StatIndex) {
 	// check we have a valid index
 	if (Stats.IsValidIndex(StatIndex)) {
@@ -228,6 +293,26 @@ void AAIE_BotCharacter::SetStatValue(int32 newValue, int32 StatIndex) {
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
 //Add to Stat Value
+/*
+void AAIE_BotCharacter::AddStatValue(int32 inValue, EBotStatNames InName) {
+	switch (InName) {
+	case EBotStatNames::SName_Health:
+		AddStatValue(inValue, 0);
+		break;
+	case EBotStatNames::SName_Stamina:
+		AddStatValue(inValue, 1);
+		break;
+	case EBotStatNames::SName_Hunger:
+		AddStatValue(inValue, 2);
+		break;
+	case EBotStatNames::SName_Happiness:
+		AddStatValue(inValue, 3);
+		break;
+	default:
+		break;
+	}
+}
+*/
 void AAIE_BotCharacter::AddStatValue(int32 inValue, int32 StatIndex) {
 	// check we have a valid index
 	if (Stats.IsValidIndex(StatIndex)) {
@@ -238,12 +323,54 @@ void AAIE_BotCharacter::AddStatValue(int32 inValue, int32 StatIndex) {
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
 // Get Stat Max
+/*
+int32 AAIE_BotCharacter::GetStatMax(EBotStatNames InName) const {
+	int32 val = -1;
+	switch (InName) {
+	case EBotStatNames::SName_Health:
+		val = GetStatMax(0);
+		break;
+	case EBotStatNames::SName_Stamina:
+		val = GetStatMax(1);
+		break;
+	case EBotStatNames::SName_Hunger:
+		val = GetStatMax(2);
+		break;
+	case EBotStatNames::SName_Happiness:
+		val = GetStatMax(3);
+		break;
+	default:
+		break;
+	}
+	return val;
+}
+*/
 int32 AAIE_BotCharacter::GetStatMax(int32 StatIndex) const {
 	// check we have a valid index
 	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].MaxValue : NULL;
 	return value;
 }
 // Set Stat Max
+/*
+void AAIE_BotCharacter::SetStatMax(int32 newMax, EBotStatNames InName) {
+	switch (InName) {
+	case EBotStatNames::SName_Health:
+		SetStatMax(newMax, 0);
+		break;
+	case EBotStatNames::SName_Stamina:
+		SetStatMax(newMax, 1);
+		break;
+	case EBotStatNames::SName_Hunger:
+		SetStatMax(newMax, 2);
+		break;
+	case EBotStatNames::SName_Happiness:
+		SetStatMax(newMax, 3);
+		break;
+	default:
+		break;
+	}
+}
+*/
 void AAIE_BotCharacter::SetStatMax(int32 newMax, int32 StatIndex) {
 	// check we have a valid index
 	if (Stats.IsValidIndex(StatIndex)) {
@@ -254,12 +381,54 @@ void AAIE_BotCharacter::SetStatMax(int32 newMax, int32 StatIndex) {
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
 // Get Stat Min
+/*
+int32 AAIE_BotCharacter::GetStatMin(EBotStatNames InName) const {
+	int32 val = -1;
+	switch (InName) {
+	case EBotStatNames::SName_Health:
+		val = GetStatMin(0);
+		break;
+	case EBotStatNames::SName_Stamina:
+		val = GetStatMin(1);
+		break;
+	case EBotStatNames::SName_Hunger:
+		val = GetStatMin(2);
+		break;
+	case EBotStatNames::SName_Happiness:
+		val = GetStatMin(3);
+		break;
+	default:
+		break;
+	}
+	return val;
+}
+*/
 int32 AAIE_BotCharacter::GetStatMin(int32 StatIndex) const {
 	// check we have a valid index
 	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].MinValue : NULL;
 	return value;
 }
 // Set Stat Min
+/*
+void AAIE_BotCharacter::SetStatMin(int32 newMin, EBotStatNames InName) {
+	switch (InName) {
+	case EBotStatNames::SName_Health:
+		SetStatMin(newMin, 0);
+		break;
+	case EBotStatNames::SName_Stamina:
+		SetStatMin(newMin, 1);
+		break;
+	case EBotStatNames::SName_Hunger:
+		SetStatMin(newMin, 2);
+		break;
+	case EBotStatNames::SName_Happiness:
+		SetStatMin(newMin, 3);
+		break;
+	default:
+		break;
+	}
+}
+*/
 void AAIE_BotCharacter::SetStatMin(int32 newMin, int32 StatIndex) {
 	// check we have a valid index
 	if (Stats.IsValidIndex(StatIndex)) {
@@ -270,6 +439,26 @@ void AAIE_BotCharacter::SetStatMin(int32 newMin, int32 StatIndex) {
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
 // set Stat desire
+/*
+void AAIE_BotCharacter::SetStatDesire(int32 newDesire, EBotStatNames InName) {
+	switch (InName) {
+	case EBotStatNames::SName_Health:
+		SetStatDesire(newDesire, 0);
+		break;
+	case EBotStatNames::SName_Stamina:
+		SetStatDesire(newDesire, 1);
+		break;
+	case EBotStatNames::SName_Hunger:
+		SetStatDesire(newDesire, 2);
+		break;
+	case EBotStatNames::SName_Happiness:
+		SetStatDesire(newDesire, 3);
+		break;
+	default:
+		break;
+	}
+}
+*/
 void AAIE_BotCharacter::SetStatDesire(int32 newDesire, int32 StatIndex) {
 	// check we have a valid index
 	if (Stats.IsValidIndex(StatIndex)) {
@@ -279,6 +468,28 @@ void AAIE_BotCharacter::SetStatDesire(int32 newDesire, int32 StatIndex) {
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
 // get Desire
+/*
+int32 AAIE_BotCharacter::GetStatDesire(EBotStatNames InName) const {
+	int32 val = -1;
+	switch (InName) {
+	case EBotStatNames::SName_Health:
+		val = GetStatDesire(0);
+		break;
+	case EBotStatNames::SName_Stamina:
+		val = GetStatDesire(1);
+		break;
+	case EBotStatNames::SName_Hunger:
+		val = GetStatDesire(2);
+		break;
+	case EBotStatNames::SName_Happiness:
+		val = GetStatDesire(3);
+		break;
+	default:
+		break;
+	}
+	return val;
+}
+*/
 int32 AAIE_BotCharacter::GetStatDesire(int32 StatIndex) const {
 	// check we have a valid index
 	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].DesireMultiplier : NULL;

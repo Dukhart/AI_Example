@@ -29,7 +29,7 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	// set to block all
 	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 
-	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(1, 5);
+	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(EBotStatNames::SName_Stamina, 5);
 	Stats.Add(stam);
 }
 

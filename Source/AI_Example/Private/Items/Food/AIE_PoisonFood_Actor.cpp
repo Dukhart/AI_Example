@@ -18,9 +18,9 @@ AAIE_PoisonFood_Actor::AAIE_PoisonFood_Actor(const FObjectInitializer& ObjectIni
 	// clear our stats array
 	Stats.Empty();
 	// set the poisons stam restore
-	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(1, 5);
+	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(EBotStatNames::SName_Stamina, 5);
 	// set the poisons health damage
-	FAIE_ItemStatEffect_Struct hp = FAIE_ItemStatEffect_Struct(0, -15);
+	FAIE_ItemStatEffect_Struct hp = FAIE_ItemStatEffect_Struct(EBotStatNames::SName_Health, -15);
 	// add stat effects to the array
 	Stats.Add(stam);
 	Stats.Add(hp);
