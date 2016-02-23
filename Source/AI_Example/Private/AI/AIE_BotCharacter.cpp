@@ -20,6 +20,15 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 		// assign the behavior tree to our Bot Behavior
 		BotBehavior = BehaviorTreeAsset.Object;
 	}
+	static ConstructorHelpers::FObjectFinder<UBehaviorTree> HealthBTAsset(*FAIE_Asset_Paths::BotHealthBehavior);
+	static ConstructorHelpers::FObjectFinder<UBehaviorTree> StaminaBTAsset(*FAIE_Asset_Paths::BotStaminaBehavior);
+	if (HealthBTAsset.Object) {
+		BotStatBehavior.Add(HealthBTAsset.Object);
+	}
+	if (StaminaBTAsset.Object) {
+		BotStatBehavior.Add(StaminaBTAsset.Object);
+	}
+
 	// create the ui Component
 	UI_Stat_Component = CreateDefaultSubobject<UWidgetComponent>("Widget Component");
 	// attach our UI to the root
