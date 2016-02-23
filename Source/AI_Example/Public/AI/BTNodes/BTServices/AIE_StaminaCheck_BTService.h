@@ -14,7 +14,7 @@ class AI_EXAMPLE_API UAIE_StaminaCheck_BTService : public UAIE_BTService
 	GENERATED_BODY()
 public:
 	// constructor
-	UAIE_StaminaCheck_BTService(const FObjectInitializer& ObjectInittializer);
+	UAIE_StaminaCheck_BTService(const FObjectInitializer& ObjectInitializer);
 protected:
 	// handles tick events
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;

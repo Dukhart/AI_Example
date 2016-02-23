@@ -39,6 +39,8 @@ public:
 	// the behavior tree helping control our bots actions
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|AI")
 		UBehaviorTree* BotBehavior;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|AI")
+		TArray<UBehaviorTree*> BotStatBehavior;
 	// UI
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|UI")
 		UWidgetComponent* UI_Stat_Component;
@@ -46,9 +48,9 @@ public:
 		TSubclassOf<UAIE_StatBox_UserWidget> UI_Stat_WidgetTemplate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components|UI")
 		UAIE_StatBox_UserWidget* UI_Stat_WidgetInstance;
-	
 
-		
+
+
 
 	// if set to true native on hit events won't trigger only blueprint version will be called
 	UPROPERTY(EditAnywhere, Category = "Hit Detection")
@@ -73,10 +75,10 @@ protected:
 private:
 	// array to hold our stats
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-	TArray<FAIE_BotStat_Struct> Stats;
+		TArray<FAIE_BotStat_Struct> Stats;
 	// array to hold our atributes
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
-	TArray<FAIE_BotStat_Struct> Attributes;
+		TArray<FAIE_BotStat_Struct> Attributes;
 public:
 
 	// our bots health regenValue
@@ -94,41 +96,41 @@ public:
 public:
 	// Get Stat Value
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		//FAIE_BotStat_Struct GetStat(EBotStatNames InName) const;
-		FAIE_BotStat_Struct GetStat(int32 StatIndex) const;
+		FAIE_BotStat_Struct GetStat(EBotStatNames InName) const;
+	FAIE_BotStat_Struct GetStat(int32 StatIndex) const;
 	// Get Stat Value
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		//int32 GetStatValue(EBotStatNames InName) const;
-		int32 GetStatValue(int32 StatIndex) const;
+		int32 GetStatValue(EBotStatNames InName) const;
+	int32 GetStatValue(int32 StatIndex) const;
 	//Set Stat Value
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		//void SetStatValue(int32 newValue, EBotStatNames InName);
-		void SetStatValue(int32 newValue, int32 StatIndex);
+		void SetStatValue(int32 newValue, EBotStatNames InName);
+	void SetStatValue(int32 newValue, int32 StatIndex);
 	// Add inValue to Stat current Value
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		//void AddStatValue(int32 inValue, EBotStatNames InName);
+		void AddStatValue(int32 inValue, EBotStatNames InName);
 	void AddStatValue(int32 inValue, int32 StatIndex);
 	// Get Stat Max
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		//int32 GetStatMax(EBotStatNames InName) const;
-		int32 GetStatMax(int32 StatIndex) const;
+		int32 GetStatMax(EBotStatNames InName) const;
+	int32 GetStatMax(int32 StatIndex) const;
 	// Set Stat Max
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		//void SetStatMax(int32 newMax, EBotStatNames InName);
+		void SetStatMax(int32 newMax, EBotStatNames InName);
 	void SetStatMax(int32 newMax, int32 StatIndex);
 	// Get Stat Min
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		//int32 GetStatMin(EBotStatNames InName) const;
+		int32 GetStatMin(EBotStatNames InName) const;
 	int32 GetStatMin(int32 StatIndex) const;
 	// Set Stat Min
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		//void SetStatMin(int32 newMin, EBotStatNames InName);
+		void SetStatMin(int32 newMin, EBotStatNames InName);
 	void SetStatMin(int32 newMin, int32 StatIndex);
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		//void SetStatDesire(int32 newDesire, EBotStatNames InName);
+		void SetStatDesire(int32 newDesire, EBotStatNames InName);
 	void SetStatDesire(int32 newDesire, int32 StatIndex);
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-		//int32 GetStatDesire(EBotStatNames InName) const;
+		int32 GetStatDesire(EBotStatNames InName) const;
 	int32 GetStatDesire(int32 StatIndex) const;
 	// IsUsable Interface
 public:

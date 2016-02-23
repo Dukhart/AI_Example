@@ -3,8 +3,8 @@
 #include "AI_Example.h"
 #include "AIE_StaminaCheck_BTService.h"
 
-UAIE_StaminaCheck_BTService::UAIE_StaminaCheck_BTService(const FObjectInitializer& ObjectInittializer)
-	: Super(ObjectInittializer) {
+UAIE_StaminaCheck_BTService::UAIE_StaminaCheck_BTService(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer) {
 	NodeName = "UAIE_StaminaCheck_BTService";
 }
 

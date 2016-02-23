@@ -27,9 +27,9 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	// set the draw size of our ui
 	UI_Stat_Component->SetDrawSize(FVector2D(450.0f, 266.0f));
 	UI_Stat_Component->SetRelativeLocation(FVector(0, 0, 100));
-	
-		//BotUI->SetWidget(UIAsset.Object);
-	// get the refrence to our skeletal mesh
+
+	//BotUI->SetWidget(UIAsset.Object);
+// get the refrence to our skeletal mesh
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(*FAIE_Asset_Paths::DefaultBotMesh);
 	// check that we got the mesh and a mesh component exists
 	if (MeshObj.Object && GetMesh() != NULL) {
@@ -146,7 +146,7 @@ void AAIE_BotCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Oth
 // handles damage Input 
 // won't be bound if bOverideNativeOnTakeAnyDamage is set to true
 void AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, class AActor* DamageCauser) {
-	
+
 	// remove incoming damage from total health
 	AddStatValue(-FMath::CeilToInt(Damage), 0);
 	// check if the bot has died from the incoming damage
@@ -178,7 +178,7 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 		int32 stamRef = GetStatValue(1);
 		// set stamRef to the new stamina
 		stamRef = stamRef - staminaDrainValue;
-		
+
 		// Check if our Bot has run out of stamina
 		if (stamRef < GetStatMin(1)) {
 			// if it has subtract the min from our new current to get the difference
@@ -202,7 +202,6 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 	}
 }
 // get a stat
-/*
 FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(EBotStatNames InName) const {
 	FAIE_BotStat_Struct stat;
 	switch (InName) {
@@ -223,7 +222,7 @@ FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(EBotStatNames InName) const {
 	}
 	return stat;
 }
-*/
+
 FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(int32 StatIndex) const {
 	FAIE_BotStat_Struct stat;
 	// check we have a valid index
@@ -233,7 +232,6 @@ FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(int32 StatIndex) const {
 	return stat;
 }
 // Get Stat Value
-/*
 int32 AAIE_BotCharacter::GetStatValue(EBotStatNames InName) const {
 	int32 val = -1;
 	switch (InName) {
@@ -254,14 +252,13 @@ int32 AAIE_BotCharacter::GetStatValue(EBotStatNames InName) const {
 	}
 	return val;
 }
-*/
+
 int32 AAIE_BotCharacter::GetStatValue(int32 StatIndex) const {
 	// check we have a valid index
 	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].Value : NULL;
 	return value;
 }
 //Set Stat Value
-/*
 void AAIE_BotCharacter::SetStatValue(int32 newValue, EBotStatNames InName) {
 	switch (InName) {
 	case EBotStatNames::SName_Health:
@@ -280,7 +277,6 @@ void AAIE_BotCharacter::SetStatValue(int32 newValue, EBotStatNames InName) {
 		break;
 	}
 }
-*/
 void AAIE_BotCharacter::SetStatValue(int32 newValue, int32 StatIndex) {
 	// check we have a valid index
 	if (Stats.IsValidIndex(StatIndex)) {
@@ -293,7 +289,6 @@ void AAIE_BotCharacter::SetStatValue(int32 newValue, int32 StatIndex) {
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
 //Add to Stat Value
-/*
 void AAIE_BotCharacter::AddStatValue(int32 inValue, EBotStatNames InName) {
 	switch (InName) {
 	case EBotStatNames::SName_Health:
@@ -312,7 +307,6 @@ void AAIE_BotCharacter::AddStatValue(int32 inValue, EBotStatNames InName) {
 		break;
 	}
 }
-*/
 void AAIE_BotCharacter::AddStatValue(int32 inValue, int32 StatIndex) {
 	// check we have a valid index
 	if (Stats.IsValidIndex(StatIndex)) {
@@ -323,7 +317,6 @@ void AAIE_BotCharacter::AddStatValue(int32 inValue, int32 StatIndex) {
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
 // Get Stat Max
-/*
 int32 AAIE_BotCharacter::GetStatMax(EBotStatNames InName) const {
 	int32 val = -1;
 	switch (InName) {
@@ -344,14 +337,12 @@ int32 AAIE_BotCharacter::GetStatMax(EBotStatNames InName) const {
 	}
 	return val;
 }
-*/
 int32 AAIE_BotCharacter::GetStatMax(int32 StatIndex) const {
 	// check we have a valid index
 	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].MaxValue : NULL;
 	return value;
 }
 // Set Stat Max
-/*
 void AAIE_BotCharacter::SetStatMax(int32 newMax, EBotStatNames InName) {
 	switch (InName) {
 	case EBotStatNames::SName_Health:
@@ -370,7 +361,6 @@ void AAIE_BotCharacter::SetStatMax(int32 newMax, EBotStatNames InName) {
 		break;
 	}
 }
-*/
 void AAIE_BotCharacter::SetStatMax(int32 newMax, int32 StatIndex) {
 	// check we have a valid index
 	if (Stats.IsValidIndex(StatIndex)) {
@@ -381,7 +371,6 @@ void AAIE_BotCharacter::SetStatMax(int32 newMax, int32 StatIndex) {
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
 // Get Stat Min
-/*
 int32 AAIE_BotCharacter::GetStatMin(EBotStatNames InName) const {
 	int32 val = -1;
 	switch (InName) {
@@ -402,14 +391,12 @@ int32 AAIE_BotCharacter::GetStatMin(EBotStatNames InName) const {
 	}
 	return val;
 }
-*/
 int32 AAIE_BotCharacter::GetStatMin(int32 StatIndex) const {
 	// check we have a valid index
 	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].MinValue : NULL;
 	return value;
 }
 // Set Stat Min
-/*
 void AAIE_BotCharacter::SetStatMin(int32 newMin, EBotStatNames InName) {
 	switch (InName) {
 	case EBotStatNames::SName_Health:
@@ -428,7 +415,6 @@ void AAIE_BotCharacter::SetStatMin(int32 newMin, EBotStatNames InName) {
 		break;
 	}
 }
-*/
 void AAIE_BotCharacter::SetStatMin(int32 newMin, int32 StatIndex) {
 	// check we have a valid index
 	if (Stats.IsValidIndex(StatIndex)) {
@@ -439,7 +425,6 @@ void AAIE_BotCharacter::SetStatMin(int32 newMin, int32 StatIndex) {
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
 // set Stat desire
-/*
 void AAIE_BotCharacter::SetStatDesire(int32 newDesire, EBotStatNames InName) {
 	switch (InName) {
 	case EBotStatNames::SName_Health:
@@ -458,7 +443,6 @@ void AAIE_BotCharacter::SetStatDesire(int32 newDesire, EBotStatNames InName) {
 		break;
 	}
 }
-*/
 void AAIE_BotCharacter::SetStatDesire(int32 newDesire, int32 StatIndex) {
 	// check we have a valid index
 	if (Stats.IsValidIndex(StatIndex)) {
@@ -468,7 +452,6 @@ void AAIE_BotCharacter::SetStatDesire(int32 newDesire, int32 StatIndex) {
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
 // get Desire
-/*
 int32 AAIE_BotCharacter::GetStatDesire(EBotStatNames InName) const {
 	int32 val = -1;
 	switch (InName) {
@@ -489,7 +472,6 @@ int32 AAIE_BotCharacter::GetStatDesire(EBotStatNames InName) const {
 	}
 	return val;
 }
-*/
 int32 AAIE_BotCharacter::GetStatDesire(int32 StatIndex) const {
 	// check we have a valid index
 	int32 value = Stats.IsValidIndex(StatIndex) ? Stats[StatIndex].DesireMultiplier : NULL;
@@ -497,7 +479,7 @@ int32 AAIE_BotCharacter::GetStatDesire(int32 StatIndex) const {
 }
 
 // IsUsable interface
-void AAIE_BotCharacter::UseItem_Implementation(AAIE_BotCharacter* BotUsing){}
+void AAIE_BotCharacter::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {}
 
 void AAIE_BotCharacter::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
 	// checks we have a valid actor AND that actor implements our IsUsable Interface
