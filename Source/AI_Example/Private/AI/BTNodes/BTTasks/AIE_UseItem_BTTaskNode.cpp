@@ -41,7 +41,7 @@ EBTNodeResult::Type UAIE_UseItem_BTTaskNode::ExecuteTask(UBehaviorTreeComponent&
 				FHitResult hit;
 				// fire the trace and check if we hit something
 				
-				if (UAIE_StaticLibrary::Trace(GetWorld(), actorsToIgnore, BotCharacter->GetActorLocation(), desiredObjectActor->GetActorLocation(), hit, ECollisionChannel::ECC_WorldDynamic)) {
+				if (UAIE_StaticLibrary::Trace(GetWorld(), actorsToIgnore, BotCharacter->GetActorLocation(), desiredObjectActor->GetActorLocation(), hit, ECollisionChannel::ECC_WorldDynamic, false, true)) {
 #if !UE_BUILD_SHIPPING
 					GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, hit.GetActor()->GetName() + "  grab object");
 #endif

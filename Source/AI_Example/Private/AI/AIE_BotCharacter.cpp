@@ -101,9 +101,9 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	// Speed
 	FAIE_BotStat_Struct Speed(EBotStatNames::SName_Speed, 10, 25, 1);
 	// add atributes to the array
-	Attributes.Add(Strength);
-	Attributes.Add(Intelligence);
-	Attributes.Add(Speed);
+	Stats.Add(Strength);
+	Stats.Add(Intelligence);
+	Stats.Add(Speed);
 
 }
 

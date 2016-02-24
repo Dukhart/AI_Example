@@ -3,6 +3,9 @@
 #pragma once
 
 #include "EnvironmentQuery/EnvQueryGenerator.h"
+
+#include "AIE_BotStat_Struct.h"
+
 #include "AIE_ItemOfStat_EQS_Gen.generated.h"
 
 /**
@@ -19,9 +22,9 @@ class AI_EXAMPLE_API UAIE_ItemOfStat_EQS_Gen : public UEnvQueryGenerator
 		TSubclassOf<AActor> SearchedActorClass;
 	UPROPERTY(EditDefaultsOnly, Category = Generator)
 		FAIDataProviderFloatValue SearchRadius;
-	UPROPERTY(EditDefaultsOnly, Category = Generator)
-		int32 StatIndex;
 
+	UPROPERTY(EditDefaultsOnly, Category = Generator)
+		EBotStatNames StatName;
 	/** context */
 	UPROPERTY(EditAnywhere, Category = Generator)
 		TSubclassOf<UEnvQueryContext> SearchCenter;
