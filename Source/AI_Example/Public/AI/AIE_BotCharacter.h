@@ -80,8 +80,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = "true"))
 		TArray<FAIE_BotStat_Struct> Stats;
 	// array to hold our atributes
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
-		TArray<FAIE_BotStat_Struct> Attributes;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attributes", meta = (AllowPrivateAccess = "true"))
+		//TArray<FAIE_BotStat_Struct> Attributes;
 public:
 
 	// our bots health regenValue

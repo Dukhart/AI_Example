@@ -3,6 +3,10 @@
 #pragma once
 
 #include "Object.h"
+
+// for debugging
+#include "DrawDebugHelpers.h"
+
 #include "AIE_StaticLibrary.generated.h"
 
 /**
@@ -20,6 +24,9 @@ public:
 	*	Credit goes to Rama
 	*	check the website below for more info
 	*	https://wiki.unrealengine.com/Trace_Functions
+	*	
+	*	I did ad minor edit to linetracesingle updating the function call
+	*	Also added debug draw line option
 	*/
 	static FORCEINLINE bool Trace(
 		UWorld* World,
@@ -28,14 +35,17 @@ public:
 		const FVector& End,
 		FHitResult& HitOut,
 		ECollisionChannel CollisionChannel = ECC_Pawn,
-		bool ReturnPhysMat = false
+		bool ReturnPhysMat = false, 
+		bool bDrawDebug = false, float debugDrawDuration = 10.0f
 		) {
 		if (!World)
 		{
 			return false;
 		}
+		
+		
 
-		FCollisionQueryParams TraceParams(FName(TEXT("VictoreCore Trace")), true, ActorToIgnore);
+		FCollisionQueryParams TraceParams(FName(TEXT("Trace")), true, ActorToIgnore);
 		TraceParams.bTraceComplex = true;
 		//TraceParams.bTraceAsyncScene = true;
 		TraceParams.bReturnPhysicalMaterial = ReturnPhysMat;
@@ -55,6 +65,13 @@ public:
 			CollisionChannel, //collision channel
 			TraceParams
 			);
+		// MYEDIT added debug draw
+		if (bDrawDebug) {
+			// where we hit
+			DrawDebugLine(World, Start, HitOut.ImpactPoint, FColor::Red, false, debugDrawDuration, 0, 5.0f);
+			// complete line from attemped trace start to end
+			DrawDebugLine(World, Start, End, FColor::Yellow, false, debugDrawDuration);
+		}
 
 		//Hit any Actor?
 		return (HitOut.GetActor() != NULL);
@@ -68,14 +85,15 @@ public:
 		const FVector& End,
 		FHitResult& HitOut,
 		ECollisionChannel CollisionChannel = ECC_Pawn,
-		bool ReturnPhysMat = false
+		bool ReturnPhysMat = false,
+		bool bDrawDebug = false, float debugDrawDuration = 10.0f
 		) {
 		if (!World)
 		{
 			return false;
 		}
 
-		FCollisionQueryParams TraceParams(FName(TEXT("VictoryCore Trace")), true, ActorsToIgnore[0]);
+		FCollisionQueryParams TraceParams(FName(TEXT("Trace Ignore Array")), true, ActorsToIgnore[0]);
 		TraceParams.bTraceComplex = true;
 
 		//TraceParams.bTraceAsyncScene = true;
@@ -87,7 +105,7 @@ public:
 		//Re-initialize hit info
 		HitOut = FHitResult(ForceInit);
 
-		//EDIT: updated from LineTraceSingle to LineTraceSingleByChannel
+		//MYEDIT: updated from LineTraceSingle to LineTraceSingleByChannel
 		World->LineTraceSingleByChannel(
 			HitOut,		//result
 			Start,	//start
@@ -95,6 +113,13 @@ public:
 			CollisionChannel, //collision channel
 			TraceParams
 			);
+		// MYEDIT added debug draw
+		if (bDrawDebug) {
+			// where we hit
+			DrawDebugLine(World, Start, HitOut.ImpactPoint, FColor::Red, false, debugDrawDuration, 0, 5.0f);
+			// complete line from attemped trace start to end
+			DrawDebugLine(World, Start, End, FColor::Yellow, false, debugDrawDuration);
+		}
 
 		return (HitOut.GetActor() != NULL);
 	}
@@ -103,13 +128,14 @@ public:
 		UPrimitiveComponent* TheComp,
 		const FVector& Start,
 		const FVector& End,
-		FHitResult& HitOut
+		FHitResult& HitOut,
+		bool bDrawDebug = false, float debugDrawDuration = 10.0f
 		) {
 		if (!TheComp) return false;
 		if (!TheComp->IsValidLowLevel()) return false;
 		//~~~~~~~~~~~~~~~~~~~~~
 
-		FCollisionQueryParams TraceParams(FName(TEXT("VictoreCore Comp Trace")), true, NULL);
+		FCollisionQueryParams TraceParams(FName(TEXT("Comp Trace")), true, NULL);
 		TraceParams.bTraceComplex = true;
 		//TraceParams.bTraceAsyncScene = true;
 		TraceParams.bReturnPhysicalMaterial = false;
@@ -126,6 +152,15 @@ public:
 			End,
 			TraceParams
 			);
+		// MYEDIT added debug draw
+		UWorld* World = TheComp->GetWorld();
+		if (bDrawDebug && World) {
+			
+			// where we hit
+			DrawDebugLine(World, Start, HitOut.ImpactPoint, FColor::Red, false, debugDrawDuration, 0, 5.0f);
+			// complete line from attemped trace start to end
+			DrawDebugLine(World, Start, End, FColor::Yellow, false, debugDrawDuration);
+		}
 	}
 	/*	End Rama code
 	*	I did not make this code myself

@@ -28,8 +28,12 @@ struct AI_EXAMPLE_API FAIE_ItemStatEffect_Struct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		int32 StatDesireChange;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
+		bool bIsInverse;
+
 	FAIE_ItemStatEffect_Struct(EBotStatNames InStat = EBotStatNames::SName_None, int32 InStatChange = 0, int32 InStatMaxChange = 0, int32 InStatMinChange = 0, int32 InStatDesireChange = 0) {
 		Stat = InStat;
+		bIsInverse = false;
 		switch (InStat) {
 		case EBotStatNames::SName_Health:
 			StatIndex = 0;
@@ -38,6 +42,7 @@ struct AI_EXAMPLE_API FAIE_ItemStatEffect_Struct
 			StatIndex = 1;
 			break;
 		case EBotStatNames::SName_Hunger:
+			bIsInverse = true;
 			StatIndex = 2;
 			break;
 		case EBotStatNames::SName_Happiness:
@@ -45,13 +50,13 @@ struct AI_EXAMPLE_API FAIE_ItemStatEffect_Struct
 			break;
 
 		case EBotStatNames::SName_Strength:
-			StatIndex = 0;
+			StatIndex = 4;
 			break;
 		case EBotStatNames::SName_Intelligence:
-			StatIndex = 1;
+			StatIndex = 5;
 			break;
 		case EBotStatNames::SName_Speed:
-			StatIndex = 2;
+			StatIndex = 6;
 			break;
 		default:
 			break;

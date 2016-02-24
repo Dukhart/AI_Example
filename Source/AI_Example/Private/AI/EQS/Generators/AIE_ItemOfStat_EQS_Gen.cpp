@@ -16,8 +16,36 @@ UAIE_ItemOfStat_EQS_Gen::UAIE_ItemOfStat_EQS_Gen(const FObjectInitializer &Objec
 	SearchRadius.DefaultValue = 500.0f;
 	SearchCenter = UEnvQueryItemType_Actor::StaticClass();
 	ItemType = UEnvQueryItemType_Actor::StaticClass();
+
 }
 void UAIE_ItemOfStat_EQS_Gen::GenerateItems(FEnvQueryInstance& QueryInstance) const {
+	int32 StatIndex;
+	switch (StatName) {
+	case EBotStatNames::SName_Health:
+		StatIndex = 0;
+		break;
+	case EBotStatNames::SName_Stamina:
+		StatIndex = 1;
+		break;
+	case EBotStatNames::SName_Hunger:
+		StatIndex = 2;
+		break;
+	case EBotStatNames::SName_Happiness:
+		StatIndex = 3;
+		break;
+	case EBotStatNames::SName_Strength:
+		StatIndex = 4;
+		break;
+	case EBotStatNames::SName_Intelligence:
+		StatIndex = 5;
+		break;
+	case EBotStatNames::SName_Speed:
+		StatIndex = 6;
+		break;
+	default:
+		StatIndex = -1;
+		break;
+	}
 	// add our owner to the search rad data
 	SearchRadius.BindData(QueryInstance.Owner.Get(), QueryInstance.QueryID);
 	// get the world
@@ -45,10 +73,16 @@ void UAIE_ItemOfStat_EQS_Gen::GenerateItems(FEnvQueryInstance& QueryInstance) co
 				// filter out actors out of range
 				if (FVector::DistSquared(ContextLocations[ContextIndex], actorRef->GetActorLocation()) < RadiusSq)
 				{
-					// Check for the searched stat
+					// Check that the actor modifies the searched stat
 					for (int32 statIndex = 0; statIndex < actorRef->Stats.Num(); statIndex++) {
 						if (actorRef->Stats[statIndex].StatIndex == StatIndex) {
-							QueryInstance.AddItemData<UEnvQueryItemType_Actor>(actorRef);
+							// make sure the stat has a positive effect
+							if (actorRef->Stats[statIndex].StatChange > 0 && !actorRef->Stats[statIndex].bIsInverse) {
+								QueryInstance.AddItemData<UEnvQueryItemType_Actor>(actorRef);
+							}
+							else if (actorRef->Stats[statIndex].StatChange < 0 && actorRef->Stats[statIndex].bIsInverse) {
+								QueryInstance.AddItemData<UEnvQueryItemType_Actor>(actorRef);
+							}
 							break;
 						}
 					}
