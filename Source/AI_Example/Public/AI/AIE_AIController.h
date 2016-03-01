@@ -51,7 +51,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Perception")
 			void UpdateSenseConfig();
 
-	
+	UFUNCTION()
 	void AIPerceptionWasUpdated(TArray<AActor*> Actors);
 protected:
 	// Blackboard keys

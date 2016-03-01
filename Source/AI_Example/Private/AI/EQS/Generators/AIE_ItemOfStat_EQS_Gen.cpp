@@ -58,8 +58,8 @@ void UAIE_ItemOfStat_EQS_Gen::GenerateItems(FEnvQueryInstance& QueryInstance) co
 		return;
 	}
 
-	float RadiusValue = SearchRadius.GetValue();
-	const float RadiusSq = FMath::Square(RadiusValue);
+	//float RadiusValue = SearchRadius.GetValue();
+	//const float RadiusSq = FMath::Square(RadiusValue);
 
 	TArray<FVector> ContextLocations;
 	QueryInstance.PrepareContext(SearchCenter, ContextLocations);

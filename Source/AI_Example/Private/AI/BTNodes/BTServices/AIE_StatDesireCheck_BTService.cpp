@@ -4,7 +4,6 @@
 #include "AIE_StatDesireCheck_BTService.h"
 
 
-
 UAIE_StatDesireCheck_BTService::UAIE_StatDesireCheck_BTService(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 	NodeName = "Stat Desired BTService";
 }
