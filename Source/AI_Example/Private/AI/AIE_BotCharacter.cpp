@@ -167,7 +167,7 @@ void AAIE_BotCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Oth
 	// won't fire our native hit event if blueprints set the overide bool to true
 	if (bOverideNativeOnHitEvents == false) {
 #if !UE_BUILD_SHIPPING
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Native Hit Detection");
+		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Native Hit Detection");
 #endif
 	}
 	/*	super will call blueprint implementation See AActor implementation of NotifyHit

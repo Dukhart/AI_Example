@@ -8,6 +8,9 @@
 #include "EnvironmentQuery/Items/EnvQueryItemType_Actor.h"
 
 #include "AIE_BaseFood_Actor.h"
+#include "AIE_BotCharacter.h"
+#include "AIE_AIController.h"
+
 
 #define LOCTEXT_NAMESPACE "EnvQueryGenerator"
 
@@ -54,22 +57,59 @@ void UAIE_ItemOfStat_EQS_Gen::GenerateItems(FEnvQueryInstance& QueryInstance) co
 	{
 		return;
 	}
-	
+
 	float RadiusValue = SearchRadius.GetValue();
 	const float RadiusSq = FMath::Square(RadiusValue);
 
 	TArray<FVector> ContextLocations;
 	QueryInstance.PrepareContext(SearchCenter, ContextLocations);
-	
+
+
+	AAIE_BotCharacter* ownerRef = Cast<AAIE_BotCharacter>(QueryInstance.Owner.Get());
+
+	if (ownerRef) {
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, QueryInstance.Owner->GetName() + " getting items of stat");
+		AAIE_AIController* controlRef = Cast<AAIE_AIController>(ownerRef->GetController());
+		if (controlRef) {
+			TArray<AActor*> percievedActors;
+			controlRef->GetPerceptionComponent()->GetPerceivedActors(UAISenseConfig_Sight::StaticClass(), percievedActors);
+			for (int aIndex = 0; aIndex < percievedActors.Num(); ++aIndex)
+			{
+				AAIE_BaseFood_Actor* actorRef = Cast<AAIE_BaseFood_Actor>(percievedActors[aIndex]);
+
+				if (actorRef) {
+					// get all context locations to compare actors too
+					//for (int32 ContextIndex = 0; ContextIndex < ContextLocations.Num(); ++ContextIndex)
+					//{
+						// Check that the actor modifies the searched stat
+						for (int32 statIndex = 0; statIndex < actorRef->Stats.Num(); statIndex++) {
+							if (actorRef->Stats[statIndex].StatIndex == StatIndex) {
+								// make sure the stat has a positive effect
+								if (actorRef->Stats[statIndex].StatChange > 0 && !actorRef->Stats[statIndex].bIsInverse) {
+									QueryInstance.AddItemData<UEnvQueryItemType_Actor>(actorRef);
+								}
+								else if (actorRef->Stats[statIndex].StatChange < 0 && actorRef->Stats[statIndex].bIsInverse) {
+									QueryInstance.AddItemData<UEnvQueryItemType_Actor>(actorRef);
+								}
+								break;
+							}
+						}
+					//}
+				}
+			}
+
+		}
+	}
 	// get all actors of searched class
+	/*
 	for (TActorIterator<AActor> ActorItr(World, SearchedActorClass); ActorItr; ++ActorItr) {
 		AAIE_BaseFood_Actor* actorRef = Cast<AAIE_BaseFood_Actor>(*ActorItr);
-		
+
 		if (actorRef) {
 			// get all context locations to compare actors too
 			for (int32 ContextIndex = 0; ContextIndex < ContextLocations.Num(); ++ContextIndex)
 			{
-				
+
 				// filter out actors out of range
 				if (FVector::DistSquared(ContextLocations[ContextIndex], actorRef->GetActorLocation()) < RadiusSq)
 				{
@@ -90,9 +130,9 @@ void UAIE_ItemOfStat_EQS_Gen::GenerateItems(FEnvQueryInstance& QueryInstance) co
 				}
 			}
 		}
-		
-	}
 
+	}
+	*/
 }
 
 FText UAIE_ItemOfStat_EQS_Gen::GetDescriptionTitle() const {

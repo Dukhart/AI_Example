@@ -34,11 +34,10 @@ void UAIE_StatDesireCheck_BTService::TickNode(UBehaviorTreeComponent& OwnerComp,
 			// get percent and apply the multiplier brining the percent down even further if applicable
 			if (stats[i].bInverse) {
 				percent = (((val - min) / (max - min) * 100)) * desireMultiplier;
-				//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, " Desire Check " + FString::SanitizeFloat((float)i) + " " + FString::SanitizeFloat(percent));
 			}
 			else {
 				percent = (100 - (((val - min) / (max - min)) * 100)) * desireMultiplier;
-				
+				//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, " Desire Check " + FString::SanitizeFloat((float)i) + " " + FString::SanitizeFloat(percent));
 			}
 			// if current stats percent score to current lowest score
 			if (percent <= statLowValue && percent < lowestScore ) {
