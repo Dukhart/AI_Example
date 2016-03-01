@@ -16,6 +16,6 @@ class AI_EXAMPLE_API AAIE_PlantFood_Actor : public AAIE_BaseGoodFood_Actor
 public:
 	// constructor
 	AAIE_PlantFood_Actor(const FObjectInitializer& ObjectInitializer);
-	
-	
+
+
 };

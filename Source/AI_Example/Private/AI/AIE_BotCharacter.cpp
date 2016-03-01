@@ -10,10 +10,17 @@
 // Constructor
 AAIE_BotCharacter::AAIE_BotCharacter()
 {
+	
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	// set the default name of the bot
 	BotName = "Default Bot";
+
+	// Perception
+	sightRange = 500;
+	sightLossFalloff = 500;
+	sightPeripheralAngle = 90;
+
 	// get our default behavior tree
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BehaviorTreeAsset(*FAIE_Bp_Paths::DefaultBotBehaviorTree);
 	if (BehaviorTreeAsset.Object) {
@@ -62,15 +69,17 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 		// rotaton should be based on move direction
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 	}
-#if !UE_BUILD_SHIPPING
-	else {
-		UE_LOG(DebugLog, Error, TEXT("AIE_BotCharacter Missing Movement Component"));
-	}
-#endif // !UE_BUILD_SHIPPING
+
 	// rotaton should be based on move direction not controller
 	bUseControllerRotationYaw = false;
 	// set default AI contoller
-	AIControllerClass = AAIE_AIController::StaticClass();
+	ConstructorHelpers::FClassFinder<AAIController> controlRef(*FAIE_Bp_Paths::DefaultBotControllerBp);
+	if (controlRef.Class) {
+		AIControllerClass = controlRef.Class;
+	}
+	else {
+		AIControllerClass = AAIE_AIController::StaticClass();
+	}
 	// set auto possess AI param
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -78,7 +87,7 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	if (!bOverideNativeOnTakeAnyDamage) {
 		OnTakeAnyDamage.AddDynamic(this, &AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage);
 	}
-
+	
 	// set our bots default stats
 	// health
 	FAIE_BotStat_Struct Health(EBotStatNames::SName_Health);
@@ -105,6 +114,7 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	Stats.Add(Intelligence);
 	Stats.Add(Speed);
 
+
 }
 
 // Called when the game starts or when spawned
@@ -122,6 +132,20 @@ void AAIE_BotCharacter::BeginPlay()
 		UI_Stat_WidgetInstance->BuildWidget();
 		UI_Stat_WidgetInstance->UpdateWidget();
 	}
+	// was on controller possess caused error in editor when trying to open blueprint derived from our AAIE_BotCharacter
+	AAIE_AIController* controlRef = Cast<AAIE_AIController>(GetController());
+	if (controlRef) {
+		// get the black board from the pawn behavior tree
+		controlRef->BlackBoardComp->InitializeBlackboard(*(BotBehavior->BlackboardAsset));
+		// Get and set starting values of blackboard keys
+		FBlackboard::FKey lowStatEnumKey = controlRef->BlackBoardComp->GetKeyID("lowStat");
+		if (controlRef->BlackBoardComp->IsValidKey(lowStatEnumKey)) {
+			controlRef->BlackBoardComp->SetValue<UBlackboardKeyType_Enum>(lowStatEnumKey, static_cast<UBlackboardKeyType_Enum::FDataType>(EBotStatNames::SName_None));
+		}
+		// start the behvior tree from the pawn
+		controlRef->BehaviorTreeComp->StartTree(*(BotBehavior));
+	}
+	
 }
 
 // Called every frame
@@ -143,7 +167,7 @@ void AAIE_BotCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Oth
 	// won't fire our native hit event if blueprints set the overide bool to true
 	if (bOverideNativeOnHitEvents == false) {
 #if !UE_BUILD_SHIPPING
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Native Hit Detection");
+		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " Native Hit Detection");
 #endif
 	}
 	/*	super will call blueprint implementation See AActor implementation of NotifyHit
@@ -503,4 +527,46 @@ void AAIE_BotCharacter::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " trying to use invalid object IsUsable not Implemented");
 #endif
 	}
+}
+
+
+void AAIE_BotCharacter::SetSightRange(float newRange) {
+	AAIE_AIController* ControlRef = Cast<AAIE_AIController>(GetController());
+	if (ControlRef && ControlRef->SightConfig) {
+		sightRange = newRange;
+		ControlRef->SightConfig->SightRadius = sightRange;
+		
+		ControlRef->UpdateSenseConfig();
+	}
+}
+
+void AAIE_BotCharacter::SetSightLossFalloff(float newFalloff) {
+	AAIE_AIController* ControlRef = Cast<AAIE_AIController>(GetController());
+	if (ControlRef && ControlRef->SightConfig) {
+		sightLossFalloff = newFalloff;
+		ControlRef->SightConfig->LoseSightRadius = sightRange + sightLossFalloff;
+
+		ControlRef->UpdateSenseConfig();
+	}
+}
+
+void AAIE_BotCharacter::SetPeripheralVisionAngle(float newAngle) {
+	AAIE_AIController* ControlRef = Cast<AAIE_AIController>(GetController());
+	if (ControlRef && ControlRef->SightConfig) {
+		sightPeripheralAngle = newAngle;
+		ControlRef->SightConfig->PeripheralVisionAngleDegrees = sightPeripheralAngle;
+
+		ControlRef->UpdateSenseConfig();
+	}
+}
+float AAIE_BotCharacter::GetSightRange() {
+	return sightRange;
+}
+
+float AAIE_BotCharacter::GetSightLossFalloff() {
+	return sightLossFalloff;
+}
+
+float AAIE_BotCharacter::GetPeripheralVisionAngle() {
+	return sightPeripheralAngle;
 }

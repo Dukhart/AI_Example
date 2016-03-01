@@ -36,6 +36,29 @@ public:
 	// the name of our bot
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
 		FName BotName;
+	// perception data
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Perception")
+		float sightRange;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Perception")
+		float sightLossFalloff;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Perception")
+		float sightPeripheralAngle;
+
+	UFUNCTION(BlueprintCallable, Category = "Perception")
+		void SetSightRange(float newRange);
+	UFUNCTION(BlueprintCallable, Category = "Perception")
+		void SetSightLossFalloff(float newFalloff);
+	UFUNCTION(BlueprintCallable, Category = "Perception")
+		void SetPeripheralVisionAngle(float newAngle);
+	UFUNCTION(BlueprintCallable, Category = "Perception")
+		float GetSightRange();
+	UFUNCTION(BlueprintCallable, Category = "Perception")
+		float GetSightLossFalloff();
+	UFUNCTION(BlueprintCallable, Category = "Perception")
+		float GetPeripheralVisionAngle();
+
+
+
 	// COMPONENTS
 	// the behavior tree helping control our bots actions
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|AI")

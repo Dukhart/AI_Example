@@ -17,6 +17,8 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	RootComponent = SceneComponent;
 	// make the static mesh component
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
+	// attach the mesh to the root
+	Mesh->AttachTo(RootComponent);
 	// get our default mesh
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> FoodMeshAsset(*FAIE_Asset_Paths::DefaultFoodMesh);
 	// check if getting the mesh was successfull
@@ -24,10 +26,12 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 		// assign it to the static mesh
 		Mesh->SetStaticMesh(FoodMeshAsset.Object);
 	}
-	// attach the mesh to the root
-	Mesh->AttachTo(RootComponent);
+	Mesh->SetRelativeLocation(FVector(0, 0, -(Mesh->Bounds.SphereRadius / 2)));
 	// set to block all
 	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
+	StimuliSourceComp = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSource");
+	//StimuliSourceComp->
 
 	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(EBotStatNames::SName_Stamina, 5);
 	Stats.Add(stam);
@@ -38,6 +42,10 @@ void AAIE_BaseFood_Actor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	StimuliSourceComp->RegisterForSense(UAISense_Sight::StaticClass());
+
+	//UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, UAISense_Sight::StaticClass(), this);
+
 }
 
 // Called every frame
