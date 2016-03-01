@@ -4,10 +4,15 @@
 
 #include "AIController.h"
 
+// includes for behavior trees
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
+// includes for AI perception
+#include "Runtime/AIModule/Classes/Perception/AIPerceptionComponent.h"
+#include "AIE_AISenseConfig_Sight.h"
+
 
 #include "AIE_AIController.generated.h"
 
@@ -25,11 +30,29 @@ protected:
 	virtual void BeginPlay() override;
 	// handles what happens when the controller possess a pawn
 	virtual void Possess(APawn* InPawn) override;
+	// handles what happens when we Unpossess a pawn
+	virtual void UnPossess() override;
+
 public:
-	UPROPERTY(transient)
+	UPROPERTY()
 	UBehaviorTreeComponent* BehaviorTreeComp;
-	UPROPERTY(transient)
+	UPROPERTY()
 	UBlackboardComponent* BlackBoardComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Perception")
+		UAIE_AISenseConfig_Sight* SightConfig;
+
+	// handle perception update
+	UFUNCTION(BlueprintNativeEvent, Category = "Perception")
+		void OnPerceptionUpdate(TArray<AActor*>& Actors);
+		virtual void OnPerceptionUpdate_Implementation(TArray<AActor*>& Actors);
+		//void OnPerceptionUpdate();
+		//virtual void OnPerceptionUpdate_Implementation();
+	UFUNCTION(BlueprintCallable, Category = "Perception")
+			void UpdateSenseConfig();
+
+	
+	void AIPerceptionWasUpdated(TArray<AActor*> Actors);
 protected:
 	// Blackboard keys
 	uint8 EnemyKeyId;

@@ -12,5 +12,5 @@ const FString FAIE_Asset_Paths::BotHealthBehavior = FString("BehaviorTree'/Game/
 const FString FAIE_Asset_Paths::BotStaminaBehavior = FString("BehaviorTree'/Game/AI_Example/Blueprints/AI/StatBehaviors/Stamina_BT.Stamina_BT'");
 // Food items
 const FString FAIE_Asset_Paths::DefaultFoodMesh = FString("StaticMesh'/Game/InfinityBladeGrassLands/Environments/Misc/Exo_Deco01/StaticMesh/SM_WoodenBarrel_Intact.SM_WoodenBarrel_Intact'");
-const FString FAIE_Asset_Paths::PlantFoodMesh = FString("StaticMesh'/Game/InfinityBladeGrassLands/Environments/Earth/StaticMesh/SM_Cherry_Tree.SM_Cherry_Tree'");
+const FString FAIE_Asset_Paths::PlantFoodMesh = FString("StaticMesh'/Game/AI_Example/Assets/Meshes/Apple.Apple'");
 const FString FAIE_Asset_Paths::PoisonFoodMesh = FString("StaticMesh'/Game/InfinityBladeGrassLands/Environments/Plains/Env_Plains_Statues/StaticMesh/SM_Plains_Angel_Statue_01.SM_Plains_Angel_Statue_01'");

@@ -7,6 +7,10 @@
 #include "Components/SphereComponent.h"
 #include "AIE_IsUsable.h"
 #include "AIE_ItemStatEffect_Struct.h"
+// used for perception System
+#include "Runtime/AIModule/Classes/Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Runtime/AIModule/Classes/Perception/AISense_Sight.h"
+#include "Runtime/AIModule/Classes/Perception/AIPerceptionSystem.h"
 
 #include "AIE_BaseFood_Actor.generated.h"
 
@@ -14,6 +18,7 @@ UCLASS()
 class AI_EXAMPLE_API AAIE_BaseFood_Actor : public AActor, public IAIE_IsUsable
 {
 	GENERATED_BODY()
+
 
 
 public:	
@@ -24,13 +29,16 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	// root component of our food item
 	UPROPERTY(VisibleAnywhere, Category = "Actor")
 		USceneComponent* SceneComponent;
 	// the mesh that will display our food item
 	UPROPERTY(EditAnywhere, Category = "Actor")
 		UStaticMeshComponent* Mesh;
-	//UPROPERTY(EditAnywhere, Category = "Actor")
-		//USphereComponent* CollisionSphere;
+	// stimuli component will let the perception system know this component can be seen
+	//UPROPERTY(EditDefaultsOnly, Category = "Perception")
+	UAIPerceptionStimuliSourceComponent* StimuliSourceComp;
+
 	// how much health will be restored by picking up this food item
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		TArray<FAIE_ItemStatEffect_Struct> Stats;
