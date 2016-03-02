@@ -12,7 +12,7 @@ AAIE_PlantFood_Actor::AAIE_PlantFood_Actor(const FObjectInitializer& ObjectIniti
 		// assign it to the static mesh
 		Mesh->SetStaticMesh(FoodMeshAsset.Object);
 	}
-	Mesh->SetRelativeLocation(FVector(0, 0, -(Mesh->Bounds.SphereRadius / 2)));
+	
 	// clear our stats array
 	Stats.Empty();
 	// set the plants stam restore

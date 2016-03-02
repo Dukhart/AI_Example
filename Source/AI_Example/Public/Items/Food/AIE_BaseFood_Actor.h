@@ -7,12 +7,15 @@
 #include "Components/SphereComponent.h"
 #include "AIE_IsUsable.h"
 #include "AIE_ItemStatEffect_Struct.h"
+
 // used for perception System
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AISense_Sight.h"
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionSystem.h"
 
 #include "AIE_BaseFood_Actor.generated.h"
+
+
 
 UCLASS()
 class AI_EXAMPLE_API AAIE_BaseFood_Actor : public AActor, public IAIE_IsUsable
@@ -30,8 +33,10 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 	// root component of our food item
+	//UPROPERTY(VisibleAnywhere, Category = "Actor")
+		//USceneComponent* SceneComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Actor")
-		USceneComponent* SceneComponent;
+		USphereComponent* rootComp;
 	// the mesh that will display our food item
 	UPROPERTY(EditAnywhere, Category = "Actor")
 		UStaticMeshComponent* Mesh;
@@ -42,7 +47,10 @@ public:
 	// how much health will be restored by picking up this food item
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		TArray<FAIE_ItemStatEffect_Struct> Stats;
-
+protected:
+	// Forward declaration needed to get around circular dependancy
+	// spawner that spawned this food item
+	class AAIE_BaseFoodSpawner* ownedSpawner;
 // IsUsable interface functions
 public:
 	// use item

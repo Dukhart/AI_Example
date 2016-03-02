@@ -14,6 +14,7 @@ AAIE_PoisonFood_Actor::AAIE_PoisonFood_Actor(const FObjectInitializer& ObjectIni
 		Mesh->SetStaticMesh(meshObj.Object);
 
 		Mesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
+		Mesh->SetSimulatePhysics(true);
 	}
 	// clear our stats array
 	Stats.Empty();
