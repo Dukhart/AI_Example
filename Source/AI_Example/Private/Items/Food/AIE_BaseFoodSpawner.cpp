@@ -81,10 +81,9 @@ void AAIE_BaseFoodSpawner::OnSpawnFood() {
 
 
 void AAIE_BaseFoodSpawner::SpawnFood_Radial () {
-	//float outerBounds = MeshComp->Bounds.SphereRadius;
+	// setup location
 	float outerBounds = (MeshComp->Bounds.GetBox().GetSize().Y + MeshComp->Bounds.GetBox().GetSize().X) * 0.3;
 	float spawnHeight = MeshComp->Bounds.GetBox().GetSize().Z * 0.75f;
-
 
 	float randomOffset = FMath::FRandRange(1.0f, 1.5f);
 	//float spawnHeight = 400.0f;
@@ -108,16 +107,36 @@ void AAIE_BaseFoodSpawner::SpawnFood_Radial () {
 	FVector trace = GetActorLocation();
 	trace.Z += spawnHeight;
 	// complete line from attemped trace start to end
+#if !UE_BUILD_SHIPPING
 	DrawDebugLine(GetWorld(), trace, spawnLocation, FColor::Yellow, false, 10);
-
+#endif // !BUILD_SHIPPING
 	// spawn actor
 	AAIE_BaseFood_Actor* newActor = GetWorld()->SpawnActor<AAIE_BaseFood_Actor>(FoodToSpawn , spawnLocation, spawnRot);
+	activeActors.AddUnique(newActor);
+	newActor->ownedSpawner = this;
 }
 void AAIE_BaseFoodSpawner::SpawnFood_Fountain () {
-	FVector spawnLocation = FVector();
-	FRotator spawnRot = FRotator();
+	// setup location
+	float spawnHeight = MeshComp->Bounds.GetBox().GetSize().Z * 1.10f;
+	float randomOffset = FMath::FRandRange(1.0f, 1.2f);
+	FVector spawnLocation = FVector(GetActorLocation());
+	spawnLocation.Z += spawnHeight;
+	spawnLocation.Z *= randomOffset;
+
+	spawnLocation.X += FMath::FRandRange(-10.0f, 10.0f);
+	spawnLocation.Y += FMath::FRandRange(-10.0f, 10.0f);
+	// setup rotation
+	FRandomStream randStream;
+	randStream.GenerateNewSeed();
+	FVector rotV = randStream.VRand();
+	FRotator spawnRot = FRotator(rotV.X, rotV.Y, rotV.Z);
 	//AAIE_BaseFood_Actor* actorRef = ;
 	AAIE_BaseFood_Actor* newActor = GetWorld()->SpawnActor<AAIE_BaseFood_Actor>(FoodToSpawn, spawnLocation, spawnRot);
+	activeActors.AddUnique(newActor);
+	newActor->ownedSpawner = this;
+
+	newActor->rootComp->AddImpulse(FVector(randStream.FRandRange(100.0f, 10000.0f), randStream.FRandRange(100.0f, 10000.0f), randStream.FRandRange(1000.0f, 100000.0f)));
+	//newActor->Mesh->AddImpulse(FVector(randStream.FRandRange(1.0f, 100.0f), randStream.FRandRange(1.0f, 100.0f), randStream.FRandRange(1.0f, 100.0f)));
 }
 
 
@@ -142,4 +161,8 @@ bool AAIE_BaseFoodSpawner::GetIsLooping() {
 }
 int32 AAIE_BaseFoodSpawner::GetActorsSpawnedPerTick() {
 	return actorsSpawnedPerTick;
+}
+
+void AAIE_BaseFoodSpawner::RemoveActiveActor(AAIE_BaseFood_Actor* removeActor) {
+	activeActors.Remove(removeActor);
 }

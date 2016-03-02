@@ -41,6 +41,8 @@ public:
 
 	UPROPERTY()
 		TArray<AAIE_BaseFood_Actor*> activeActors;
+	void RemoveActiveActor(AAIE_BaseFood_Actor* removeActor);
+
 private:
 	// timerhandle for spawn
 	UPROPERTY()

@@ -4,6 +4,7 @@
 #include "AIE_BaseFood_Actor.h"
 
 #include "AIE_BotCharacter.h"
+#include "AIE_BaseFoodSpawner.h"
 
 
 
@@ -21,7 +22,7 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	rootComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	rootComp->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	rootComp->SetSimulatePhysics(true);
-	rootComp->SetSphereRadius(0.1f);
+	rootComp->SetSphereRadius(5.0f);
 	// make the static mesh component
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
 	// attach the mesh to the root
@@ -102,4 +103,13 @@ void AAIE_BaseFood_Actor::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {
 	}
 }
 void AAIE_BaseFood_Actor::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
+}
+
+void AAIE_BaseFood_Actor::BeginDestroy() {
+
+	if (ownedSpawner) {
+		ownedSpawner->RemoveActiveActor(this);
+	}
+
+	Super::BeginDestroy();
 }

@@ -31,7 +31,7 @@ public:
 	virtual void BeginPlay() override;
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
-
+	virtual void BeginDestroy() override;
 	// root component of our food item
 	//UPROPERTY(VisibleAnywhere, Category = "Actor")
 		//USceneComponent* SceneComponent;
@@ -47,10 +47,12 @@ public:
 	// how much health will be restored by picking up this food item
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		TArray<FAIE_ItemStatEffect_Struct> Stats;
+
+	class AAIE_BaseFoodSpawner* ownedSpawner;
 protected:
 	// Forward declaration needed to get around circular dependancy
 	// spawner that spawned this food item
-	class AAIE_BaseFoodSpawner* ownedSpawner;
+	
 // IsUsable interface functions
 public:
 	// use item
