@@ -19,8 +19,10 @@ public:
 	// execution
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	// bool used to force return success of task execution
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Params")
 	bool bForceSuccess = true;
 	// used to determin the search range for our new location
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Params")
 	float searchRadius = 3000.0f;
 
 };

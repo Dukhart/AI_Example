@@ -52,13 +52,10 @@ void AAIE_AIController::Possess(APawn* InPawn) {
 			SightConfig->SightRadius = BotPawn->sightRange;
 			SightConfig->LoseSightRadius = (BotPawn->sightRange + BotPawn->sightLossFalloff);
 			SightConfig->PeripheralVisionAngleDegrees = BotPawn->sightPeripheralAngle;
-
+			// binds the perception update function to call our custom perception update behavior
 			GetPerceptionComponent()->OnPerceptionUpdated.AddDynamic(this, &AAIE_AIController::AIPerceptionWasUpdated);
-
-
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "HavePerception");
 		}
-		else { GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "NoPerception"); }
+		
 	}
 
 }

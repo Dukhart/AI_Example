@@ -24,6 +24,8 @@ public:
 	// constructor
 	UAIE_BTService(const FObjectInitializer& ObjectInittializer);
 protected:
+
+	virtual void OnSearchStart(FBehaviorTreeSearchData& SearchData) override;
 	// handles tick events
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	// The behavior tree tied to this node
