@@ -4,6 +4,8 @@
 #include "AIE_BaseFood_Actor.h"
 
 #include "AIE_BotCharacter.h"
+#include "AIE_BaseFoodSpawner.h"
+
 
 
 // Sets default values
@@ -12,24 +14,35 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	// create the root component
-	SceneComponent = CreateDefaultSubobject<USceneComponent>("Scene Root");
+	//SceneComponent = CreateDefaultSubobject<USceneComponent>("Scene Root");
 	// make scene component the root component
-	RootComponent = SceneComponent;
+	//RootComponent = SceneComponent;
+	rootComp = CreateDefaultSubobject<USphereComponent>("Scene Root");
+	RootComponent = rootComp;
+	rootComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	rootComp->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	rootComp->SetSimulatePhysics(true);
+	rootComp->SetSphereRadius(5.0f);
 	// make the static mesh component
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Component");
 	// attach the mesh to the root
 	Mesh->AttachTo(RootComponent);
+	
+	//RootComponent = Mesh;
 	// get our default mesh
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> FoodMeshAsset(*FAIE_Asset_Paths::DefaultFoodMesh);
 	// check if getting the mesh was successfull
 	if (FoodMeshAsset.Object) {
 		// assign it to the static mesh
 		Mesh->SetStaticMesh(FoodMeshAsset.Object);
+		/* moved to begin play multiple instances of this was causing strange behavior when spawning
+		Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		//Mesh->SetSimulatePhysics(true);
+		Mesh->SetRelativeLocation(FVector(0, 0, -(Mesh->Bounds.SphereRadius / 2)));
+		Mesh->WeldTo(RootComponent);
+		*/
 	}
-	Mesh->SetRelativeLocation(FVector(0, 0, -(Mesh->Bounds.SphereRadius / 2)));
-	// set to block all
-	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-
 	StimuliSourceComp = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSource");
 	//StimuliSourceComp->
 
@@ -41,7 +54,14 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 void AAIE_BaseFood_Actor::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
+	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	//Mesh->SetSimulatePhysics(true);
+	Mesh->SetRelativeLocation(FVector(0, 0, -(Mesh->Bounds.SphereRadius / 2)));
+	Mesh->WeldTo(RootComponent);
+
 	StimuliSourceComp->RegisterForSense(UAISense_Sight::StaticClass());
 
 	//UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, UAISense_Sight::StaticClass(), this);
@@ -83,4 +103,13 @@ void AAIE_BaseFood_Actor::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {
 	}
 }
 void AAIE_BaseFood_Actor::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
+}
+
+void AAIE_BaseFood_Actor::BeginDestroy() {
+
+	if (ownedSpawner) {
+		ownedSpawner->RemoveActiveActor(this);
+	}
+
+	Super::BeginDestroy();
 }

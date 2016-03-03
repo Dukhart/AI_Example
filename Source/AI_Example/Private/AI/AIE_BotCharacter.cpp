@@ -10,17 +10,14 @@
 // Constructor
 AAIE_BotCharacter::AAIE_BotCharacter()
 {
-	
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	// set the default name of the bot
 	BotName = "Default Bot";
-
 	// Perception
 	sightRange = 500;
 	sightLossFalloff = 500;
 	sightPeripheralAngle = 90;
-
 	// get our default behavior tree
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BehaviorTreeAsset(*FAIE_Bp_Paths::DefaultBotBehaviorTree);
 	if (BehaviorTreeAsset.Object) {
@@ -35,7 +32,6 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	if (StaminaBTAsset.Object) {
 		BotStatBehavior.Add(StaminaBTAsset.Object);
 	}
-
 	// create the ui Component
 	UI_Stat_Component = CreateDefaultSubobject<UWidgetComponent>("Widget Component");
 	// attach our UI to the root
@@ -43,7 +39,6 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	// set the draw size of our ui
 	UI_Stat_Component->SetDrawSize(FVector2D(450.0f, 266.0f));
 	UI_Stat_Component->SetRelativeLocation(FVector(0, 0, 100));
-
 	//BotUI->SetWidget(UIAsset.Object);
 // get the refrence to our skeletal mesh
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(*FAIE_Asset_Paths::DefaultBotMesh);
@@ -69,7 +64,6 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 		// rotaton should be based on move direction
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 	}
-
 	// rotaton should be based on move direction not controller
 	bUseControllerRotationYaw = false;
 	// set default AI contoller
@@ -87,7 +81,6 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	if (!bOverideNativeOnTakeAnyDamage) {
 		OnTakeAnyDamage.AddDynamic(this, &AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage);
 	}
-	
 	// set our bots default stats
 	// health
 	FAIE_BotStat_Struct Health(EBotStatNames::SName_Health);
@@ -113,10 +106,7 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	Stats.Add(Strength);
 	Stats.Add(Intelligence);
 	Stats.Add(Speed);
-
-
 }
-
 // Called when the game starts or when spawned
 void AAIE_BotCharacter::BeginPlay()
 {
@@ -145,7 +135,6 @@ void AAIE_BotCharacter::BeginPlay()
 		// start the behvior tree from the pawn
 		controlRef->BehaviorTreeComp->StartTree(*(BotBehavior));
 	}
-	
 }
 
 // Called every frame
@@ -154,14 +143,12 @@ void AAIE_BotCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
 // Called to bind functionality to input
 void AAIE_BotCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
 	Super::SetupPlayerInputComponent(InputComponent);
 
 }
-
 // handles Hit detection
 void AAIE_BotCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) {
 	// won't fire our native hit event if blueprints set the overide bool to true
@@ -175,7 +162,6 @@ void AAIE_BotCharacter::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Oth
 	*/
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 }
-
 // handles damage Input 
 // won't be bound if bOverideNativeOnTakeAnyDamage is set to true
 void AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, class AActor* DamageCauser) {
@@ -188,7 +174,6 @@ void AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamag
 		Destroy_AIE_Bot();
 	}
 }
-
 // Handles Destroying the Bot
 void AAIE_BotCharacter::Destroy_AIE_Bot() {
 	// check that we have a controller

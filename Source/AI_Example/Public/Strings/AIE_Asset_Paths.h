@@ -24,4 +24,6 @@ public:
 	static const FString DefaultFoodMesh;
 	static const FString PlantFoodMesh;
 	static const FString PoisonFoodMesh;
+
+	static const FString TreeMesh;
 };
