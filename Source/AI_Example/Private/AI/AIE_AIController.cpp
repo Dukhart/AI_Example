@@ -79,7 +79,22 @@ void AAIE_AIController::AIPerceptionWasUpdated(TArray<AActor*> Actors) {
 
 // handles perception updated
 void AAIE_AIController::OnPerceptionUpdate_Implementation(TArray<AActor*>& Actors) {
+	for (int aIndex = 0; aIndex < Actors.Num(); ++aIndex) {
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "Perception Update Actor Name = " + Actors[aIndex]->GetName());
+		AAIE_BaseFoodSpawner* spawnerRef = Cast<AAIE_BaseFoodSpawner>(Actors[aIndex]);
+		if (spawnerRef) {
+			AAIE_BotCharacter* botRef = Cast<AAIE_BotCharacter>(GetPawn());
+			if (botRef) {
+				botRef->knownSpawners.AddUnique(spawnerRef);
+				if (botRef->knownSpawners.Num() > botRef->maxKnownSpawners && botRef->maxKnownSpawners != 0) {
+					botRef->knownSpawners.RemoveAt(0);
+				}
+			}
+		}
+	}
+	
 	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "start Perception Update Implementation");
+	/*
 	if (BlackBoardComp) {
 		bool bSeeFood = false;
 		FBlackboard::FKey seeFoodKey = BlackBoardComp->GetKeyID("bSeeFood");
@@ -102,6 +117,7 @@ void AAIE_AIController::OnPerceptionUpdate_Implementation(TArray<AActor*>& Actor
 
 		}
 	}
+	*/
 	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, "end Perception Update Implementation");
 }
 void AAIE_AIController::UpdateSenseConfig() {

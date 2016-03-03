@@ -13,6 +13,8 @@ AAIE_BaseFoodSpawner::AAIE_BaseFoodSpawner(const FObjectInitializer& ObjectIniti
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("Mesh Comp");
 	RootComponent = MeshComp;
 
+	StimuliSourceComp = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSource");
+
 	ConstructorHelpers::FObjectFinder<UStaticMesh> meshRef(*FAIE_Asset_Paths::TreeMesh);
 	if (meshRef.Object) {
 		MeshComp->StaticMesh = meshRef.Object;
@@ -27,6 +29,11 @@ AAIE_BaseFoodSpawner::AAIE_BaseFoodSpawner(const FObjectInitializer& ObjectIniti
 	bLoops = true;
 	// defaults to infinate
 	maxActors = 0;
+
+	fountainForce = 1000.0f;
+	upForceMultiplier = 50.0f;
+	upMinForceMultiplier = 0.001f;
+
 }
 // Called when the game starts or when spawned
 void AAIE_BaseFoodSpawner::BeginPlay()
@@ -39,6 +46,7 @@ void AAIE_BaseFoodSpawner::BeginPlay()
 	if (actorsSpawnedPerTick > 0) {
 		GetWorldTimerManager().SetTimer(SpawnTimerHandle, this, &AAIE_BaseFoodSpawner::OnSpawnFood, tickRate, bLoops);
 	}
+	StimuliSourceComp->RegisterForSense(UAISense_Sight::StaticClass());
 }
 // Called every frame
 /*
@@ -135,7 +143,7 @@ void AAIE_BaseFoodSpawner::SpawnFood_Fountain () {
 	activeActors.AddUnique(newActor);
 	newActor->ownedSpawner = this;
 
-	newActor->rootComp->AddImpulse(FVector(randStream.FRandRange(100.0f, 10000.0f), randStream.FRandRange(100.0f, 10000.0f), randStream.FRandRange(1000.0f, 100000.0f)));
+	newActor->rootComp->AddImpulse(FVector(randStream.FRandRange(-fountainForce, fountainForce), randStream.FRandRange(-fountainForce, fountainForce), randStream.FRandRange(fountainForce * upMinForceMultiplier, fountainForce * upForceMultiplier)));
 	//newActor->Mesh->AddImpulse(FVector(randStream.FRandRange(1.0f, 100.0f), randStream.FRandRange(1.0f, 100.0f), randStream.FRandRange(1.0f, 100.0f)));
 }
 

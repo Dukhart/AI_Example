@@ -41,7 +41,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Actor")
 		UStaticMeshComponent* Mesh;
 	// stimuli component will let the perception system know this component can be seen
-	//UPROPERTY(EditDefaultsOnly, Category = "Perception")
+	UPROPERTY(EditDefaultsOnly, Category = "Perception")
 	UAIPerceptionStimuliSourceComponent* StimuliSourceComp;
 
 	// how much health will be restored by picking up this food item

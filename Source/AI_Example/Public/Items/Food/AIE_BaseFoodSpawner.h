@@ -32,12 +32,21 @@ public:
 	// the mesh of our spawner
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	UStaticMeshComponent* MeshComp;
+	UPROPERTY(EditDefaultsOnly, Category = "Perception")
+	UAIPerceptionStimuliSourceComponent* StimuliSourceComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner")
 		TSubclassOf<AAIE_BaseFood_Actor> FoodToSpawn;
 	// tells the spawner to keep spawning every tick
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner")
 		bool bLoops;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Fountain")
+		float fountainForce;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Fountain")
+		float upForceMultiplier;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Fountain")
+		float upMinForceMultiplier;
 
 	UPROPERTY()
 		TArray<AAIE_BaseFood_Actor*> activeActors;
@@ -50,17 +59,17 @@ private:
 protected:
 	// holds spawner type
 	// use get set functions to change
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SpawnStats", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spawner|Stats", meta = (AllowPrivateAccess = "true"))
 		ESpawnerType SpawnerType;
 	// number of acrots to spawn per tick
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SpawnStats", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Stats", meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 		int32 actorsSpawnedPerTick;
 	// how often to spawn actors
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SpawnStats", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spawner|Stats", meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 		float tickRate;
 	// max number of spawned actors
 	// 0 ir less will be infinate
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "SpawnStats", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Stats", meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 		int32 maxActors;
 
 	FSpawnFood SpawnFood;

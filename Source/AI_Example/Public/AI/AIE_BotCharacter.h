@@ -14,6 +14,8 @@
 #include "AIE_IsUsable.h"
 #include "AIE_BotStat_Struct.h"
 
+#include "AIE_BaseFoodSpawner.h"
+
 #include "AIE_BotCharacter.generated.h"
 
 
@@ -43,6 +45,11 @@ public:
 		float sightLossFalloff;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Perception")
 		float sightPeripheralAngle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Perception")
+		int32 maxKnownSpawners;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Perception")
+		TArray<AAIE_BaseFoodSpawner*> knownSpawners;
 
 	UFUNCTION(BlueprintCallable, Category = "Perception")
 		void SetSightRange(float newRange);
