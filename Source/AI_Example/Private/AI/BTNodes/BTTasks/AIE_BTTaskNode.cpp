@@ -7,6 +7,7 @@
 UAIE_BTTaskNode::UAIE_BTTaskNode(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 	// the default name for our custom BTTask nodes
 	NodeName = "AIE_BTTaskNode";
+	bCreateNodeInstance = true;
 }
 
 // execution
