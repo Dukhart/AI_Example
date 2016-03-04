@@ -13,6 +13,7 @@
 
 #include "AIE_IsUsable.h"
 #include "AIE_BotStat_Struct.h"
+#include "AIE_DialogueComponent.h"
 
 #include "AIE_BaseFoodSpawner.h"
 
@@ -81,9 +82,9 @@ public:
 		TSubclassOf<UAIE_StatBox_UserWidget> UI_Stat_WidgetTemplate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components|UI")
 		UAIE_StatBox_UserWidget* UI_Stat_WidgetInstance;
-
-
-
+	// dialogue component
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|Dialogue")
+		UAIE_DialogueComponent* DialogueComp;
 
 	// if set to true native on hit events won't trigger only blueprint version will be called
 	UPROPERTY(EditAnywhere, Category = "Hit Detection")
@@ -91,9 +92,11 @@ public:
 	// if set to true native on take any damage events won't trigger only blueprint version will be called
 	UPROPERTY(EditAnywhere, Category = "Hit Detection")
 		bool bOverideNativeOnTakeAnyDamage = false;
-	// Destroys our Bot
-	UFUNCTION(BlueprintCallable, Category = "Actor")
-		void Destroy_AIE_Bot();
+	
+	// handles extra things to do when destroying our bot Destroys our Bot
+	//UFUNCTION(BlueprintCallable, Category = "Actor")
+		//void Destroy_AIE_Bot();
+	virtual void BeginDestroy() override;
 protected:
 	// handles hit detection
 	virtual void NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;

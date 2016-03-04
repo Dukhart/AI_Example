@@ -81,6 +81,7 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	if (!bOverideNativeOnTakeAnyDamage) {
 		OnTakeAnyDamage.AddDynamic(this, &AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage);
 	}
+	DialogueComp = CreateDefaultSubobject<UAIE_DialogueComponent>("Dialogue Component");
 	// set our bots default stats
 	// health
 	FAIE_BotStat_Struct Health(EBotStatNames::SName_Health);
@@ -171,20 +172,33 @@ void AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamag
 	// check if the bot has died from the incoming damage
 	if (GetStatValue(0) <= GetStatMin(0)) {
 		// destroys the bot
-		Destroy_AIE_Bot();
+		Destroy();
 	}
 }
 // Handles Destroying the Bot
+/*
 void AAIE_BotCharacter::Destroy_AIE_Bot() {
+
+	// Destroy this Actor
+	Destroy();
+}
+*/
+void AAIE_BotCharacter::BeginDestroy() {
 	// check that we have a controller
 	if (GetController()) {
 		// tell the controller to UnPossess the pawn
 		GetController()->UnPossess();
 	}
 	// Remove any timers this bot has active from the manager
-	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
-	// Destroy this Actor
-	Destroy();
+	if (GetWorld()) {
+		GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+		
+	}
+	if (UI_Stat_Component) {
+		UI_Stat_Component->DestroyComponent();
+	}
+	// call the super
+	Super::BeginDestroy();
 }
 
 // Handles Natural Stamina Drain
