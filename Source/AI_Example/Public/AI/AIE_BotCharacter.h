@@ -171,6 +171,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 		int32 GetStatDesire(EBotStatNames InName) const;
 	int32 GetStatDesire(int32 StatIndex) const;
+
+	// DIALOGUE
+	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")
+		void DialogCallout(AActor* thingTalkingAbout);
+
 	// IsUsable Interface
 public:
 	void UseItem_Implementation(AAIE_BotCharacter* BotUsing);

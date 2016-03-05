@@ -20,8 +20,9 @@ public:
 	static const FString BotHealthBehavior;
 	static const FString BotStaminaBehavior;
 
-	// Items
+	// Audio
 	static const FString DefaultDialogVoice;
+	static const FString BotFoundItWave;
 	//Food
 	static const FString DefaultFoodMesh;
 	static const FString PlantFoodMesh;

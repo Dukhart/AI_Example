@@ -8,6 +8,8 @@
 #include "AIE_IsUsable.h"
 #include "AIE_ItemStatEffect_Struct.h"
 
+#include "AIE_DialogueComponent.h"
+
 // used for perception System
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AISense_Sight.h"
@@ -43,7 +45,8 @@ public:
 	// stimuli component will let the perception system know this component can be seen
 	UPROPERTY(EditDefaultsOnly, Category = "Perception")
 	UAIPerceptionStimuliSourceComponent* StimuliSourceComp;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|Dialogue")
+		UAIE_DialogueComponent* DialogueComp;
 	// how much health will be restored by picking up this food item
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		TArray<FAIE_ItemStatEffect_Struct> Stats;

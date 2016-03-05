@@ -13,8 +13,10 @@ const FString FAIE_Asset_Paths::DefaultBotUI = FString("WidgetBlueprint'/Game/AI
 const FString FAIE_Asset_Paths::BotHealthBehavior = FString("BehaviorTree'/Game/AI_Example/Blueprints/AI/BehaviorTrees/StatBehaviors/Health_BT.Health_BT'");
 const FString FAIE_Asset_Paths::BotStaminaBehavior = FString("BehaviorTree'/Game/AI_Example/Blueprints/AI/BehaviorTrees/StatBehaviors/Stamina_BT.Stamina_BT'");
 
-// items
-const FString FAIE_Asset_Paths::DefaultDialogVoice = FString("DialogueVoice'/Game/AI_Example/Blueprints/AI/Audio/NeutSing.NeutSing'");
+// audio
+const FString FAIE_Asset_Paths::DefaultDialogVoice = FString("DialogueVoice'/Game/AI_Example/Blueprints/AI/Audio/Voices/NeutSing.NeutSing'");
+const FString FAIE_Asset_Paths::BotFoundItWave = FString("DialogueWave'/Game/AI_Example/Blueprints/AI/Audio/Waves/FoundStuff_DW.FoundStuff_DW'");
+
 // Food items
 const FString FAIE_Asset_Paths::DefaultFoodMesh = FString("StaticMesh'/Game/InfinityBladeGrassLands/Environments/Misc/Exo_Deco01/StaticMesh/SM_WoodenBarrel_Intact.SM_WoodenBarrel_Intact'");
 const FString FAIE_Asset_Paths::PlantFoodMesh = FString("StaticMesh'/Game/AI_Example/Assets/Meshes/Apple.Apple'");

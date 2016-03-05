@@ -194,9 +194,6 @@ void AAIE_BotCharacter::BeginDestroy() {
 		GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 		
 	}
-	if (UI_Stat_Component) {
-		UI_Stat_Component->DestroyComponent();
-	}
 	// call the super
 	Super::BeginDestroy();
 }
@@ -561,11 +558,32 @@ void AAIE_BotCharacter::SetPeripheralVisionAngle(float newAngle) {
 float AAIE_BotCharacter::GetSightRange() {
 	return sightRange;
 }
-
 float AAIE_BotCharacter::GetSightLossFalloff() {
 	return sightLossFalloff;
 }
 
 float AAIE_BotCharacter::GetPeripheralVisionAngle() {
 	return sightPeripheralAngle;
+}
+
+// DIALOGUE
+void AAIE_BotCharacter::DialogCallout_Implementation(AActor* thingTalkingAbout) {
+	// get a refrence to the dialog component of the actor we are trying to talk about / to
+	UAIE_DialogueComponent* thingDialogueCompRef = Cast<UAIE_DialogueComponent>(thingTalkingAbout->GetComponentByClass(UAIE_DialogueComponent::StaticClass()));
+	if (thingDialogueCompRef) {
+		// get the voice type of the actor we are trying to talk to / about
+		UDialogueVoice* thingVoice = thingDialogueCompRef->DialogueVoice;
+		// make a dialogue context with our bot as the speaker and the actor we are trying to talk about / to
+		FDialogueContext dContext;
+		dContext.Speaker = DialogueComp->DialogueVoice;
+		dContext.Targets.Add(thingVoice);
+		// look for the wave file that contains our audio
+		ConstructorHelpers::FObjectFinder<UDialogueWave> waveToPlay(*FAIE_Asset_Paths::BotFoundItWave);
+		// if we found the wave
+		if (waveToPlay.Succeeded()) {
+			// spawn the wave with the given context attached to our bot
+			UGameplayStatics::SpawnDialogueAttached(waveToPlay.Object, dContext, GetMesh(), FName("head"));
+		}
+	}
+	
 }
