@@ -45,7 +45,7 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	}
 	StimuliSourceComp = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSource");
 	//StimuliSourceComp->
-
+	DialogueComp = CreateDefaultSubobject<UAIE_DialogueComponent>("Dialogue Component");
 	FAIE_ItemStatEffect_Struct stam = FAIE_ItemStatEffect_Struct(EBotStatNames::SName_Stamina, 5);
 	Stats.Add(stam);
 }

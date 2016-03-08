@@ -75,13 +75,15 @@ ESpawnerType AAIE_BaseFoodSpawner::GetSpawnerType() {
 }
 // called by the spawn timer
 void AAIE_BaseFoodSpawner::OnSpawnFood() {
-	// spawn an actor for every actor spawned per tick
-	for (int i = 0; i < actorsSpawnedPerTick; ++i) {
-		// if actors hasn't reached max cap spawn an actor
-		// or if max cap is infinate spawn an actor
-		if (activeActors.Num() <= maxActors || maxActors <= 0) {
-			// calls bound spawn method
-			SpawnFood.ExecuteIfBound();
+	if (FoodToSpawn) {
+		// spawn an actor for every actor spawned per tick
+		for (int i = 0; i < actorsSpawnedPerTick; ++i) {
+			// if actors hasn't reached max cap spawn an actor
+			// or if max cap is infinate spawn an actor
+			if (activeActors.Num() <= maxActors || maxActors <= 0) {
+				// calls bound spawn method
+				SpawnFood.ExecuteIfBound();
+			}
 		}
 	}
 }

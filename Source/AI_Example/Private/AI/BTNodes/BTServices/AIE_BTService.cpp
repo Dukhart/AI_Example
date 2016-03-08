@@ -7,6 +7,8 @@
 UAIE_BTService::UAIE_BTService(const FObjectInitializer& ObjectInittializer)
 	: Super(ObjectInittializer) {
 	NodeName = "UAIE_BTService";
+	bCreateNodeInstance = true;
+		//bCreateNodeInstance
 }
 
 void UAIE_BTService::OnSearchStart(FBehaviorTreeSearchData& SearchData) {
@@ -26,6 +28,7 @@ void UAIE_BTService::OnSearchStart(FBehaviorTreeSearchData& SearchData) {
 			BotCharacter = Cast<AAIE_BotCharacter>(BotController->GetPawn());
 		}
 	}
+	Super::OnSearchStart(SearchData);
 }
 
 void UAIE_BTService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) {

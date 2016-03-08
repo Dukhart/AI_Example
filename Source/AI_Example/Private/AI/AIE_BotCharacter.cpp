@@ -81,6 +81,11 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	if (!bOverideNativeOnTakeAnyDamage) {
 		OnTakeAnyDamage.AddDynamic(this, &AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage);
 	}
+	DialogueComp = CreateDefaultSubobject<UAIE_DialogueComponent>("Dialogue Component");
+	ConstructorHelpers::FObjectFinder<UDialogueVoice> voiceRef(*FAIE_Asset_Paths::DefaultBotVoice);
+	if (voiceRef.Object) {
+		DialogueComp->DialogueVoice = voiceRef.Object;
+	}
 	// set our bots default stats
 	// health
 	FAIE_BotStat_Struct Health(EBotStatNames::SName_Health);
@@ -106,6 +111,12 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	Stats.Add(Strength);
 	Stats.Add(Intelligence);
 	Stats.Add(Speed);
+
+
+	//ConstructorHelpers::FObjectFinder<UDialogueWave> waveToRef(*FAIE_Asset_Paths::BotFoundItWave);
+	//if (waveToRef.Object) {
+	//	waveToPlay = waveToRef.Object;
+	//}
 }
 // Called when the game starts or when spawned
 void AAIE_BotCharacter::BeginPlay()
@@ -171,20 +182,30 @@ void AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamag
 	// check if the bot has died from the incoming damage
 	if (GetStatValue(0) <= GetStatMin(0)) {
 		// destroys the bot
-		Destroy_AIE_Bot();
+		Destroy();
 	}
 }
 // Handles Destroying the Bot
+/*
 void AAIE_BotCharacter::Destroy_AIE_Bot() {
+
+	// Destroy this Actor
+	Destroy();
+}
+*/
+void AAIE_BotCharacter::BeginDestroy() {
 	// check that we have a controller
 	if (GetController()) {
 		// tell the controller to UnPossess the pawn
 		GetController()->UnPossess();
 	}
 	// Remove any timers this bot has active from the manager
-	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
-	// Destroy this Actor
-	Destroy();
+	if (GetWorld()) {
+		GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+		
+	}
+	// call the super
+	Super::BeginDestroy();
 }
 
 // Handles Natural Stamina Drain
@@ -547,11 +568,55 @@ void AAIE_BotCharacter::SetPeripheralVisionAngle(float newAngle) {
 float AAIE_BotCharacter::GetSightRange() {
 	return sightRange;
 }
-
 float AAIE_BotCharacter::GetSightLossFalloff() {
 	return sightLossFalloff;
 }
 
 float AAIE_BotCharacter::GetPeripheralVisionAngle() {
 	return sightPeripheralAngle;
+}
+
+// DIALOGUE
+void AAIE_BotCharacter::DialogCallout_Implementation(AActor* thingTalkingAbout) {
+	// get the game instance
+	UAIE_GameInstance* AIE_GI = Cast<UAIE_GameInstance>(GetGameInstance());
+	// get a refrence to the dialog component of the actor we are trying to talk about / to
+	UAIE_DialogueComponent* thingDialogueCompRef = Cast<UAIE_DialogueComponent>(thingTalkingAbout->GetComponentByClass(UAIE_DialogueComponent::StaticClass()));
+	// check we have a game instance and a dialog refrence
+	if (thingDialogueCompRef && AIE_GI) {
+		// get the voice type of the actor we are trying to talk to / about
+		UDialogueVoice* thingVoice = thingDialogueCompRef->DialogueVoice;
+		// make a dialogue context with our bot as the speaker and the actor we are trying to talk about / to
+		FDialogueContext dContext = FDialogueContext::FDialogueContext();
+		dContext.Speaker = DialogueComp->DialogueVoice;
+		TArray<UDialogueVoice*> targ;
+		targ.AddUnique(thingVoice);
+		//dContext.Targets.Add(thingVoice);
+		dContext.Targets = targ;
+
+		// look for the wave file that contains our audio
+		FStringAssetReference waveRef(*FAIE_Asset_Paths::BotFoundItWave);
+		// load the wave
+		UDialogueWave* waveToPlay = Cast<UDialogueWave>(AIE_GI->StreamableManager.SynchronousLoad(waveRef));
+		// if we found the wave and it supports our context
+		if (waveToPlay && waveToPlay->SupportsContext(dContext)) {
+			// make the audio component
+			UAudioComponent* aud = NewObject<UAudioComponent>(this, "Audio");
+			// make sure we made the audio comp
+			if (aud) {
+				// register the component
+				aud->RegisterComponent();
+				// attach the component to the bot
+				aud->AttachTo(RootComponent);
+				aud->SetRelativeLocation(FVector());
+				// set the wave based on our context
+				aud->SetSound(waveToPlay->GetWaveFromContext(dContext));
+				// play the audio
+				aud->Play();
+				// destroys the component when sound is done playing
+				aud->bAutoDestroy = true;
+			}
+			
+		}
+	}
 }
