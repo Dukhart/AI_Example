@@ -106,9 +106,12 @@ protected:
 	UFUNCTION()
 		virtual void AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, class AActor* DamageCauser);
 	// holds stamina timer data for the TimerManager
-	FTimerHandle StaminaTimerHandle;
+	//FTimerHandle StaminaTimerHandle;
+	FTimerHandle StatTimerHandle;
 	// Handles stamina Drain
-	void AutoStaminaDrain();
+	//void AutoStaminaDrain();
+
+	void AutoStatDrain();
 
 private:
 	// array to hold our stats
@@ -122,12 +125,14 @@ public:
 	// our bots health regenValue
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Health")
 		int32 HealthRegenValue = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
+		int32 AutoDrainRate = 1;
 	// sets the rate at which stamina will fall, see drain value for how much stamina will fall
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
-		int32 staminaDrainRate = 1;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
+		//int32 staminaDrainRate = 1;
 	// sets how much the stamina will fall, see Drain Rate for how often stamina will fall
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
-		int32 staminaDrainValue = 1;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
+		//int32 staminaDrainValue = 1;
 	// the amount of damage a bot will take for having no stamina on health drain
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
 		int32 zeroStaminaHealthDrainValue = 5;

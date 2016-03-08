@@ -90,11 +90,26 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	// health
 	FAIE_BotStat_Struct Health(EBotStatNames::SName_Health);
 	// Stamina
-	FAIE_BotStat_Struct Stamina(EBotStatNames::SName_Stamina);
+	FAIE_BotStat_Struct Stamina(EBotStatNames::SName_Stamina, 100, 100,0, 2);
+	FAIE_StatEffect_Struct ref;
+	// add health drain when we don't have stam
+	ref.Stat = EBotStatNames::SName_Health;
+	ref.takesEffectLessThen = 0;
+	ref.value = -5;
+	Stamina.EffectStats.Add(ref);
+	// add health increaxe when we have stam
+	ref = FAIE_StatEffect_Struct();
+	ref.Stat = EBotStatNames::SName_Health;
+	ref.takesEffectGreaterThen = 10;
+	ref.value = 5;
+	Stamina.EffectStats.Add(ref);
 	// Hunger
-	FAIE_BotStat_Struct Hunger(EBotStatNames::SName_Hunger, 0, 100, 0, 1, true);
+	FAIE_BotStat_Struct Hunger(EBotStatNames::SName_Hunger, 0, 100, 0, 1, 1, true);
 	// Happiness
-	FAIE_BotStat_Struct Happiness(EBotStatNames::SName_Happiness, 75, 100, -100);
+	FAIE_BotStat_Struct Happiness(EBotStatNames::SName_Happiness, 75, 100, -100, 1);
+
+	
+
 	// add stats to the array
 	Stats.Add(Health);
 	Stats.Add(Stamina);
@@ -123,7 +138,8 @@ void AAIE_BotCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	// set our Bots Natural Stamina drain to be triggered by the timer manager
-	GetWorldTimerManager().SetTimer(StaminaTimerHandle, this, &AAIE_BotCharacter::AutoStaminaDrain, staminaDrainRate, true);
+	//GetWorldTimerManager().SetTimer(StaminaTimerHandle, this, &AAIE_BotCharacter::AutoStaminaDrain, staminaDrainRate, true);
+	GetWorldTimerManager().SetTimer(StatTimerHandle, this, &AAIE_BotCharacter::AutoStatDrain, AutoDrainRate, true);
 	// set health to max health
 	SetStatValue(GetStatMax(0), 0);
 	//UIWidgetInstance
@@ -185,14 +201,7 @@ void AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamag
 		Destroy();
 	}
 }
-// Handles Destroying the Bot
-/*
-void AAIE_BotCharacter::Destroy_AIE_Bot() {
-
-	// Destroy this Actor
-	Destroy();
-}
-*/
+// extra destroy behavior
 void AAIE_BotCharacter::BeginDestroy() {
 	// check that we have a controller
 	if (GetController()) {
@@ -207,7 +216,35 @@ void AAIE_BotCharacter::BeginDestroy() {
 	// call the super
 	Super::BeginDestroy();
 }
-
+// handles draining stats automaticly over time
+void AAIE_BotCharacter::AutoStatDrain() {
+	for (int32 index = 0; index < Stats.Num(); ++index) {
+		if (Stats[index].DrainRate != 0) {
+			// get the percent of the stat
+			float percent = Stats[index].GetPercent();
+			if (Stats[index].EffectStats.Num() > 0) {
+				for (int32 eIndex = 0; eIndex < Stats[index].EffectStats.Num(); ++eIndex) {
+					// check if the current percent is equal to or greater than the greater effect percent
+					// or if the current percent is equal to or less than the less effect percent
+					if (percent >= Stats[index].EffectStats[eIndex].takesEffectGreaterThen || percent <= Stats[index].EffectStats[eIndex].takesEffectLessThen) {
+						// apply stat effect
+						AddStatValue(Stats[index].EffectStats[eIndex].value, Stats[index].EffectStats[eIndex].Stat);
+					}
+				}
+			}
+			// drain the stat
+			if (Stats[index].bInverse) {
+				Stats[index].AddStatValue(Stats[index].DrainRate);
+			}
+			else {
+				Stats[index].AddStatValue(Stats[index].DrainRate * -1);
+			}
+		}
+	}
+	// update display widget
+	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
+}
+/*
 // Handles Natural Stamina Drain
 void AAIE_BotCharacter::AutoStaminaDrain() {
 	// we might make a Damage type later use this for now as take any damage must have a damage type input
@@ -240,6 +277,7 @@ void AAIE_BotCharacter::AutoStaminaDrain() {
 		OnTakeAnyDamage.Broadcast(zeroStaminaHealthDrainValue, NULL, GetController(), this);
 	}
 }
+*/
 TArray<FAIE_BotStat_Struct> AAIE_BotCharacter::GetStats() const {
 	return Stats;
 }

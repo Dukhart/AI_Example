@@ -33,7 +33,8 @@ public:
 	virtual void BeginPlay() override;
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
-	virtual void BeginDestroy() override;
+	// extra end play behavior
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	// root component of our food item
 	//UPROPERTY(VisibleAnywhere, Category = "Actor")
 		//USceneComponent* SceneComponent;

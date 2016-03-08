@@ -20,6 +20,28 @@ enum class EBotStatNames : uint8 {
 	SName_None UMETA(DisplayName = "None")
 };
 
+USTRUCT(BlueprintType)
+struct AI_EXAMPLE_API FAIE_StatEffect_Struct
+{
+	GENERATED_USTRUCT_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Effects")
+		EBotStatNames Stat;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Effects")
+		int32 value;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Effects")
+		int32 takesEffectGreaterThen;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Effects")
+		int32 takesEffectLessThen;
+
+	FAIE_StatEffect_Struct(EBotStatNames inName = EBotStatNames::SName_None, int32 inValue = 0) {
+		Stat = inName;
+		value = inValue;
+
+		takesEffectGreaterThen = 101;
+		takesEffectLessThen = -1;
+	}
+};
 /**
  * 
  */
@@ -42,16 +64,21 @@ struct AI_EXAMPLE_API FAIE_BotStat_Struct
 		// the Minimum value of our stat
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 			int32 MinValue;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+			int32 DrainRate;
 		// the desire multiplier for our stat
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 			int32 DesireMultiplier;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 			bool bInverse;
+		// stats effected when drained
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Effects")
+		TArray<FAIE_StatEffect_Struct> EffectStats;
 
 
 		// sets default values
-	FAIE_BotStat_Struct(EBotStatNames InStat = EBotStatNames::SName_None, int32 inValue = 100, int32 inMax = 100, int32 inMin = 0, int32 inDesire = 1, bool bInInverse = false) {
+	FAIE_BotStat_Struct(EBotStatNames InStat = EBotStatNames::SName_None, int32 inValue = 100, int32 inMax = 100, int32 inMin = 0, int32 inDrainRate = 0, int32 inDesire = 1, bool bInInverse = false) {
 		Stat = InStat;
 		switch (InStat) {
 		case EBotStatNames::SName_Health:
@@ -82,7 +109,29 @@ struct AI_EXAMPLE_API FAIE_BotStat_Struct
 		Value = inValue;
 		MaxValue = inMax;
 		MinValue = inMin;
+		DrainRate = inDrainRate;
 		DesireMultiplier = inDesire;
 		bInverse = bInInverse;
+
+		EffectStats = TArray<FAIE_StatEffect_Struct>();
+	}
+
+	void SetStatValue(int32 newValue) {
+		Value = FMath::Clamp(newValue, MinValue, MaxValue);
+	}
+	void AddStatValue(int32 addValue) {
+		Value = FMath::Clamp(Value + addValue, MinValue, MaxValue);
+	}
+	int32 GetStatValue() {
+		return Value;
+	}
+	float GetPercent() {
+		float percent;
+
+		percent = ((float(Value) - float(MinValue)) / (float(MaxValue) - float(MinValue)) * 100.0f);
+
+		return percent;
 	}
 };
+
+
