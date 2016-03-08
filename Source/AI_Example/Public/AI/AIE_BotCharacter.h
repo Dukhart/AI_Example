@@ -51,6 +51,8 @@ public:
 		int32 maxKnownSpawners;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Perception")
 		TArray<AAIE_BaseFoodSpawner*> knownSpawners;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	//UDialogueWave* waveToPlay;
 
 	UFUNCTION(BlueprintCallable, Category = "Perception")
 		void SetSightRange(float newRange);

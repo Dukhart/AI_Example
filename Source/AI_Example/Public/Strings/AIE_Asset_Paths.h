@@ -15,6 +15,7 @@ public:
 	static const FString DefaultBotMesh;
 	static const FString DefaultBotAnim;
 	static const FString DefaultBotUI;
+	static const FString DefaultBotVoice;
 	
 	// Bot BehaviorTrees
 	static const FString BotHealthBehavior;

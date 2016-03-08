@@ -8,6 +8,8 @@
 #include "AIE_PlayerPawn.h"
 #include "AIE_PlayerController.h"
 
+#include "AIE_GameInstance.h"
+
 // strings
 #include "AIE_Bp_Paths.h"
 #include "AIE_Asset_Paths.h"

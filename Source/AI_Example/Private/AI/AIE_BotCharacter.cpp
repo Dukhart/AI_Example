@@ -82,6 +82,10 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 		OnTakeAnyDamage.AddDynamic(this, &AAIE_BotCharacter::AIE_Bot_OnTakeAnyDamage);
 	}
 	DialogueComp = CreateDefaultSubobject<UAIE_DialogueComponent>("Dialogue Component");
+	ConstructorHelpers::FObjectFinder<UDialogueVoice> voiceRef(*FAIE_Asset_Paths::DefaultBotVoice);
+	if (voiceRef.Object) {
+		DialogueComp->DialogueVoice = voiceRef.Object;
+	}
 	// set our bots default stats
 	// health
 	FAIE_BotStat_Struct Health(EBotStatNames::SName_Health);
@@ -107,6 +111,12 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	Stats.Add(Strength);
 	Stats.Add(Intelligence);
 	Stats.Add(Speed);
+
+
+	//ConstructorHelpers::FObjectFinder<UDialogueWave> waveToRef(*FAIE_Asset_Paths::BotFoundItWave);
+	//if (waveToRef.Object) {
+	//	waveToPlay = waveToRef.Object;
+	//}
 }
 // Called when the game starts or when spawned
 void AAIE_BotCharacter::BeginPlay()
@@ -568,22 +578,45 @@ float AAIE_BotCharacter::GetPeripheralVisionAngle() {
 
 // DIALOGUE
 void AAIE_BotCharacter::DialogCallout_Implementation(AActor* thingTalkingAbout) {
+	// get the game instance
+	UAIE_GameInstance* AIE_GI = Cast<UAIE_GameInstance>(GetGameInstance());
 	// get a refrence to the dialog component of the actor we are trying to talk about / to
 	UAIE_DialogueComponent* thingDialogueCompRef = Cast<UAIE_DialogueComponent>(thingTalkingAbout->GetComponentByClass(UAIE_DialogueComponent::StaticClass()));
-	if (thingDialogueCompRef) {
+	// check we have a game instance and a dialog refrence
+	if (thingDialogueCompRef && AIE_GI) {
 		// get the voice type of the actor we are trying to talk to / about
 		UDialogueVoice* thingVoice = thingDialogueCompRef->DialogueVoice;
 		// make a dialogue context with our bot as the speaker and the actor we are trying to talk about / to
-		FDialogueContext dContext;
+		FDialogueContext dContext = FDialogueContext::FDialogueContext();
 		dContext.Speaker = DialogueComp->DialogueVoice;
-		dContext.Targets.Add(thingVoice);
+		TArray<UDialogueVoice*> targ;
+		targ.AddUnique(thingVoice);
+		//dContext.Targets.Add(thingVoice);
+		dContext.Targets = targ;
+
 		// look for the wave file that contains our audio
-		ConstructorHelpers::FObjectFinder<UDialogueWave> waveToPlay(*FAIE_Asset_Paths::BotFoundItWave);
-		// if we found the wave
-		if (waveToPlay.Succeeded()) {
-			// spawn the wave with the given context attached to our bot
-			UGameplayStatics::SpawnDialogueAttached(waveToPlay.Object, dContext, GetMesh(), FName("head"));
+		FStringAssetReference waveRef(*FAIE_Asset_Paths::BotFoundItWave);
+		// load the wave
+		UDialogueWave* waveToPlay = Cast<UDialogueWave>(AIE_GI->StreamableManager.SynchronousLoad(waveRef));
+		// if we found the wave and it supports our context
+		if (waveToPlay && waveToPlay->SupportsContext(dContext)) {
+			// make the audio component
+			UAudioComponent* aud = NewObject<UAudioComponent>(this, "Audio");
+			// make sure we made the audio comp
+			if (aud) {
+				// register the component
+				aud->RegisterComponent();
+				// attach the component to the bot
+				aud->AttachTo(RootComponent);
+				aud->SetRelativeLocation(FVector());
+				// set the wave based on our context
+				aud->SetSound(waveToPlay->GetWaveFromContext(dContext));
+				// play the audio
+				aud->Play();
+				// destroys the component when sound is done playing
+				aud->bAutoDestroy = true;
+			}
+			
 		}
 	}
-	
 }
