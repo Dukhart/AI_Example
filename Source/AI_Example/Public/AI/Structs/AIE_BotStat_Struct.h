@@ -75,6 +75,8 @@ struct AI_EXAMPLE_API FAIE_BotStat_Struct
 		// stats effected when drained
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Effects")
 		TArray<FAIE_StatEffect_Struct> EffectStats;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Behavior")
+			UBehaviorTree* StatBehavior;
 
 
 		// sets default values
@@ -114,6 +116,7 @@ struct AI_EXAMPLE_API FAIE_BotStat_Struct
 		bInverse = bInInverse;
 
 		EffectStats = TArray<FAIE_StatEffect_Struct>();
+		StatBehavior = NULL;
 	}
 
 	void SetStatValue(int32 newValue) {

@@ -228,7 +228,13 @@ void AAIE_BotCharacter::AutoStatDrain() {
 					// or if the current percent is equal to or less than the less effect percent
 					if (percent >= Stats[index].EffectStats[eIndex].takesEffectGreaterThen || percent <= Stats[index].EffectStats[eIndex].takesEffectLessThen) {
 						// apply stat effect
-						AddStatValue(Stats[index].EffectStats[eIndex].value, Stats[index].EffectStats[eIndex].Stat);
+						if (Stats[index].EffectStats[eIndex].Stat == EBotStatNames::SName_Health && Stats[index].EffectStats[eIndex].value < 0) {
+							OnTakeAnyDamage.Broadcast(Stats[index].EffectStats[eIndex].value * -1, NULL, GetController(), this);
+						}
+						else {
+							AddStatValue(Stats[index].EffectStats[eIndex].value, Stats[index].EffectStats[eIndex].Stat);
+						}
+						
 					}
 				}
 			}
