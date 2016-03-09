@@ -289,7 +289,9 @@ TArray<FAIE_BotStat_Struct> AAIE_BotCharacter::GetStats() const {
 }
 // get a stat
 FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(EBotStatNames InName) const {
-	FAIE_BotStat_Struct stat;
+	FAIE_BotStat_Struct stat = GetStat((uint8)InName);
+	//stat 
+	/*
 	switch (InName) {
 	case EBotStatNames::SName_Health:
 		stat = GetStat(0);
@@ -306,6 +308,7 @@ FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(EBotStatNames InName) const {
 	default:
 		break;
 	}
+	*/
 	return stat;
 }
 
@@ -319,6 +322,8 @@ FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(int32 StatIndex) const {
 }
 // Get Stat Value
 int32 AAIE_BotCharacter::GetStatValue(EBotStatNames InName) const {
+	int32 val = GetStatValue((uint8)InName);
+	/*
 	int32 val = -1;
 	switch (InName) {
 	case EBotStatNames::SName_Health:
@@ -336,6 +341,7 @@ int32 AAIE_BotCharacter::GetStatValue(EBotStatNames InName) const {
 	default:
 		break;
 	}
+	*/
 	return val;
 }
 
@@ -346,6 +352,9 @@ int32 AAIE_BotCharacter::GetStatValue(int32 StatIndex) const {
 }
 //Set Stat Value
 void AAIE_BotCharacter::SetStatValue(int32 newValue, EBotStatNames InName) {
+
+	SetStatValue(newValue, (uint8)InName);
+	/*
 	switch (InName) {
 	case EBotStatNames::SName_Health:
 		SetStatValue(newValue, 0);
@@ -362,6 +371,7 @@ void AAIE_BotCharacter::SetStatValue(int32 newValue, EBotStatNames InName) {
 	default:
 		break;
 	}
+	*/
 }
 void AAIE_BotCharacter::SetStatValue(int32 newValue, int32 StatIndex) {
 	// check we have a valid index
@@ -376,6 +386,8 @@ void AAIE_BotCharacter::SetStatValue(int32 newValue, int32 StatIndex) {
 }
 //Add to Stat Value
 void AAIE_BotCharacter::AddStatValue(int32 inValue, EBotStatNames InName) {
+	AddStatValue(inValue, (uint8)InName);
+	/*
 	switch (InName) {
 	case EBotStatNames::SName_Health:
 		AddStatValue(inValue, 0);
@@ -392,6 +404,7 @@ void AAIE_BotCharacter::AddStatValue(int32 inValue, EBotStatNames InName) {
 	default:
 		break;
 	}
+	*/
 }
 void AAIE_BotCharacter::AddStatValue(int32 inValue, int32 StatIndex) {
 	// check we have a valid index
@@ -404,6 +417,8 @@ void AAIE_BotCharacter::AddStatValue(int32 inValue, int32 StatIndex) {
 }
 // Get Stat Max
 int32 AAIE_BotCharacter::GetStatMax(EBotStatNames InName) const {
+	int32 val = GetStatMax((uint8)InName);
+	/*
 	int32 val = -1;
 	switch (InName) {
 	case EBotStatNames::SName_Health:
@@ -421,6 +436,7 @@ int32 AAIE_BotCharacter::GetStatMax(EBotStatNames InName) const {
 	default:
 		break;
 	}
+	*/
 	return val;
 }
 int32 AAIE_BotCharacter::GetStatMax(int32 StatIndex) const {
@@ -430,6 +446,8 @@ int32 AAIE_BotCharacter::GetStatMax(int32 StatIndex) const {
 }
 // Set Stat Max
 void AAIE_BotCharacter::SetStatMax(int32 newMax, EBotStatNames InName) {
+	SetStatMax(newMax, (uint8)InName);
+	/*
 	switch (InName) {
 	case EBotStatNames::SName_Health:
 		SetStatMax(newMax, 0);
@@ -446,6 +464,7 @@ void AAIE_BotCharacter::SetStatMax(int32 newMax, EBotStatNames InName) {
 	default:
 		break;
 	}
+	*/
 }
 void AAIE_BotCharacter::SetStatMax(int32 newMax, int32 StatIndex) {
 	// check we have a valid index
@@ -458,6 +477,8 @@ void AAIE_BotCharacter::SetStatMax(int32 newMax, int32 StatIndex) {
 }
 // Get Stat Min
 int32 AAIE_BotCharacter::GetStatMin(EBotStatNames InName) const {
+	int32 val = GetStatMin((uint8)InName);
+	/*
 	int32 val = -1;
 	switch (InName) {
 	case EBotStatNames::SName_Health:
@@ -475,6 +496,7 @@ int32 AAIE_BotCharacter::GetStatMin(EBotStatNames InName) const {
 	default:
 		break;
 	}
+	*/
 	return val;
 }
 int32 AAIE_BotCharacter::GetStatMin(int32 StatIndex) const {
@@ -484,6 +506,8 @@ int32 AAIE_BotCharacter::GetStatMin(int32 StatIndex) const {
 }
 // Set Stat Min
 void AAIE_BotCharacter::SetStatMin(int32 newMin, EBotStatNames InName) {
+	SetStatMin(newMin, (uint8)InName);
+	/*
 	switch (InName) {
 	case EBotStatNames::SName_Health:
 		SetStatMin(newMin, 0);
@@ -500,6 +524,7 @@ void AAIE_BotCharacter::SetStatMin(int32 newMin, EBotStatNames InName) {
 	default:
 		break;
 	}
+	*/
 }
 void AAIE_BotCharacter::SetStatMin(int32 newMin, int32 StatIndex) {
 	// check we have a valid index
@@ -512,6 +537,8 @@ void AAIE_BotCharacter::SetStatMin(int32 newMin, int32 StatIndex) {
 }
 // set Stat desire
 void AAIE_BotCharacter::SetStatDesire(int32 newDesire, EBotStatNames InName) {
+	SetStatDesire(newDesire, (uint8)InName);
+	/*
 	switch (InName) {
 	case EBotStatNames::SName_Health:
 		SetStatDesire(newDesire, 0);
@@ -528,6 +555,7 @@ void AAIE_BotCharacter::SetStatDesire(int32 newDesire, EBotStatNames InName) {
 	default:
 		break;
 	}
+	*/
 }
 void AAIE_BotCharacter::SetStatDesire(int32 newDesire, int32 StatIndex) {
 	// check we have a valid index
@@ -539,6 +567,8 @@ void AAIE_BotCharacter::SetStatDesire(int32 newDesire, int32 StatIndex) {
 }
 // get Desire
 int32 AAIE_BotCharacter::GetStatDesire(EBotStatNames InName) const {
+	int32 val = GetStatDesire((uint8)InName);
+	/*
 	int32 val = -1;
 	switch (InName) {
 	case EBotStatNames::SName_Health:
@@ -556,6 +586,7 @@ int32 AAIE_BotCharacter::GetStatDesire(EBotStatNames InName) const {
 	default:
 		break;
 	}
+	*/
 	return val;
 }
 int32 AAIE_BotCharacter::GetStatDesire(int32 StatIndex) const {
@@ -578,8 +609,21 @@ void AAIE_BotCharacter::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
 #endif
 	}
 }
+// AIAnimation Interface
+void AAIE_BotCharacter::TaskToController_Implementation(EMontageNames eAnimName) {
+
+}
+void AAIE_BotCharacter::ControllerToCharacter_Implementation(EMontageNames eAnimName) {
+	if (GetMesh() && GetMesh()->GetAnimInstance() != NULL && GetMesh()->GetAnimInstance()->Implements<UAIE_AIAnimationInterface>()){
+		IAIE_AIAnimationInterface::Execute_CharacterToAnimBp(GetMesh()->GetAnimInstance(), eAnimName);
+	}
+}
+void AAIE_BotCharacter::CharacterToAnimBp_Implementation(EMontageNames eAnimName) {
+
+}
 
 
+// PERCEPTION
 void AAIE_BotCharacter::SetSightRange(float newRange) {
 	AAIE_AIController* ControlRef = Cast<AAIE_AIController>(GetController());
 	if (ControlRef && ControlRef->SightConfig) {
