@@ -32,10 +32,11 @@ void UAIE_StatDesireCheck_BTService::TickNode(UBehaviorTreeComponent& OwnerComp,
 			desireMultiplier = 1 / desireMultiplier;
 			// get percent and apply the multiplier brining the percent down even further if applicable
 			if (stats[i].bInverse) {
-				percent = (((val - min) / (max - min) * 100)) * desireMultiplier;
+				percent = (float)stats[i].GetPercent() * desireMultiplier;
+				//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, " Desire Check " + FString::SanitizeFloat((float)i) + " " + FString::SanitizeFloat(percent));
 			}
 			else {
-				percent = (100 - (((val - min) / (max - min)) * 100)) * desireMultiplier;
+				percent = (100.0f - (float)stats[i].GetPercent()) * desireMultiplier;
 				//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, " Desire Check " + FString::SanitizeFloat((float)i) + " " + FString::SanitizeFloat(percent));
 			}
 			// if current stats percent score to current lowest score

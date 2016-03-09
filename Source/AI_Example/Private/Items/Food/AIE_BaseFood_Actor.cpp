@@ -35,13 +35,6 @@ AAIE_BaseFood_Actor::AAIE_BaseFood_Actor(const FObjectInitializer& ObjectInitial
 	if (FoodMeshAsset.Object) {
 		// assign it to the static mesh
 		Mesh->SetStaticMesh(FoodMeshAsset.Object);
-		/* moved to begin play multiple instances of this was causing strange behavior when spawning
-		Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		//Mesh->SetSimulatePhysics(true);
-		Mesh->SetRelativeLocation(FVector(0, 0, -(Mesh->Bounds.SphereRadius / 2)));
-		Mesh->WeldTo(RootComponent);
-		*/
 	}
 	StimuliSourceComp = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSource");
 	//StimuliSourceComp->
@@ -98,18 +91,18 @@ void AAIE_BaseFood_Actor::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {
 			// apply stat affects to Desire
 			BotUsing->SetStatDesire(BotUsing->GetStatDesire(s) + Stats[i].StatDesireChange, s);
 		}
+		
 		// Destroy the food item as it has been consumed
 		Destroy();
+		GetWorld()->ForceGarbageCollection(true);
 	}
 }
 void AAIE_BaseFood_Actor::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
 }
-
-void AAIE_BaseFood_Actor::BeginDestroy() {
-
+// extra end play behavior
+void AAIE_BaseFood_Actor::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 	if (ownedSpawner) {
 		ownedSpawner->RemoveActiveActor(this);
 	}
-
-	Super::BeginDestroy();
+	Super::EndPlay(EndPlayReason);
 }

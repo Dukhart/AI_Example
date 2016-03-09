@@ -80,7 +80,7 @@ void AAIE_BaseFoodSpawner::OnSpawnFood() {
 		for (int i = 0; i < actorsSpawnedPerTick; ++i) {
 			// if actors hasn't reached max cap spawn an actor
 			// or if max cap is infinate spawn an actor
-			if (activeActors.Num() <= maxActors || maxActors <= 0) {
+			if (activeActors.Num() <= maxActors - 1 || maxActors < 0) {
 				// calls bound spawn method
 				SpawnFood.ExecuteIfBound();
 			}
@@ -174,5 +174,7 @@ int32 AAIE_BaseFoodSpawner::GetActorsSpawnedPerTick() {
 }
 
 void AAIE_BaseFoodSpawner::RemoveActiveActor(AAIE_BaseFood_Actor* removeActor) {
+	// remove the actor
 	activeActors.Remove(removeActor);
+	//activeActors.Shrink();
 }
