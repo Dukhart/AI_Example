@@ -122,3 +122,17 @@ void AAIE_AIController::UpdateSenseConfig() {
 		GetPerceptionComponent()->ConfigureSense(*SightConfig);
 	}
 }
+
+// INTERFACES
+// AIAnimation Interface
+void AAIE_AIController::TaskToController_Implementation(EMontageNames eAnimName) {
+	if (GetPawn() && GetPawn()->Implements<UAIE_AIAnimationInterface>()) {
+		IAIE_AIAnimationInterface::Execute_ControllerToCharacter(GetPawn(), eAnimName);
+	}
+}
+void AAIE_AIController::ControllerToCharacter_Implementation(EMontageNames eAnimName) {
+
+}
+void AAIE_AIController::CharacterToAnimBp_Implementation(EMontageNames eAnimName) {
+
+}

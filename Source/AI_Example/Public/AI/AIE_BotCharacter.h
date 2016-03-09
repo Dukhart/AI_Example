@@ -11,7 +11,10 @@
 #include "AIE_StatBar_UserWidget.h"
 #include "AIE_StatBox_UserWidget.h"
 
+// interfaces
+#include "AIE_AIAnimationInterface.h"
 #include "AIE_IsUsable.h"
+
 #include "AIE_BotStat_Struct.h"
 #include "AIE_DialogueComponent.h"
 
@@ -22,7 +25,7 @@
 
 
 UCLASS()
-class AI_EXAMPLE_API AAIE_BotCharacter : public ACharacter, public IAIE_IsUsable
+class AI_EXAMPLE_API AAIE_BotCharacter : public ACharacter, public IAIE_IsUsable, public IAIE_AIAnimationInterface
 {
 	GENERATED_BODY()
 
@@ -183,9 +186,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")
 		void DialogCallout(AActor* thingTalkingAbout);
 
-	// IsUsable Interface
+	//INTERFACES
 public:
+	// IsUsable Interface
 	void UseItem_Implementation(AAIE_BotCharacter* BotUsing);
 	void AI_ActivateUseItem_Implementation(AActor* ActorToUse);
+	// animation interface
+	void TaskToController_Implementation(EMontageNames eAnimName);
+	void ControllerToCharacter_Implementation(EMontageNames eAnimName);
+	void CharacterToAnimBp_Implementation(EMontageNames eAnimName);
 
 };

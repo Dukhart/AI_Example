@@ -13,6 +13,8 @@
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionComponent.h"
 #include "AIE_AISenseConfig_Sight.h"
 
+// interfaces
+#include "AIE_AIAnimationInterface.h"
 
 #include "AIE_AIController.generated.h"
 
@@ -20,7 +22,7 @@
  * 
  */
 UCLASS()
-class AI_EXAMPLE_API AAIE_AIController : public AAIController
+class AI_EXAMPLE_API AAIE_AIController : public AAIController, public IAIE_AIAnimationInterface
 {
 	GENERATED_BODY()
 
@@ -57,4 +59,10 @@ protected:
 	// Blackboard keys
 	uint8 EnemyKeyId;
 	uint8 EnemyLocationId;
+//INTERFACES
+public:
+	// animation interface
+	void TaskToController_Implementation(EMontageNames eAnimName);
+	void ControllerToCharacter_Implementation(EMontageNames eAnimName);
+	void CharacterToAnimBp_Implementation(EMontageNames eAnimName);
 };
