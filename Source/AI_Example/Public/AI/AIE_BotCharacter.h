@@ -69,8 +69,7 @@ public:
 		float GetSightLossFalloff();
 	UFUNCTION(BlueprintCallable, Category = "Perception")
 		float GetPeripheralVisionAngle();
-
-
+	
 
 	// COMPONENTS
 	// the behavior tree helping control our bots actions
@@ -108,12 +107,9 @@ protected:
 	// handles damage dealt to the bot
 	UFUNCTION()
 		virtual void AIE_Bot_OnTakeAnyDamage(float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, class AActor* DamageCauser);
-	// holds stamina timer data for the TimerManager
-	//FTimerHandle StaminaTimerHandle;
+	// holds stat timer data for the TimerManager
 	FTimerHandle StatTimerHandle;
-	// Handles stamina Drain
-	//void AutoStaminaDrain();
-
+	// automaticly drains stats (Bound to a timer)
 	void AutoStatDrain();
 
 private:
@@ -126,20 +122,18 @@ private:
 public:
 
 	// our bots health regenValue
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Health")
-		int32 HealthRegenValue = 1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Health")
+		//int32 HealthRegenValue = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		int32 AutoDrainRate = 1;
-	// sets the rate at which stamina will fall, see drain value for how much stamina will fall
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
-		//int32 staminaDrainRate = 1;
-	// sets how much the stamina will fall, see Drain Rate for how often stamina will fall
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
-		//int32 staminaDrainValue = 1;
-	// the amount of damage a bot will take for having no stamina on health drain
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Stamina")
-		int32 zeroStaminaHealthDrainValue = 5;
+		//int32 zeroStaminaHealthDrainValue = 5;
 public:
+	// gets the currently most desired stat of the bot
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		EBotStatNames GetMostDesiredStat() const;
+	// STAT GETTERS And SETTERS
 	// Get all stats
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 		TArray<FAIE_BotStat_Struct> GetStats() const;

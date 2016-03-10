@@ -106,3 +106,18 @@ void AAIE_BaseFood_Actor::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 	}
 	Super::EndPlay(EndPlayReason);
 }
+
+int32 AAIE_BaseFood_Actor::GetStatEffectByName(EBotStatNames inName) const {
+	int32 effectVal = NULL;
+	// iterate through the stats this item effects
+	for (int32 statIndex = 0; statIndex < Stats.Num(); ++statIndex) {
+		// when we find one that matches the searched name
+		if (Stats[statIndex].Stat == inName) {
+			// put the amount it effects the stat in the effect val
+			effectVal = Stats[statIndex].StatChange;
+			// break out of the loop as we have found what we are looking for
+			break;
+		}
+	}
+	return effectVal;
+}

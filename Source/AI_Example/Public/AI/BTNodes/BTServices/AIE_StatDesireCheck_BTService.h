@@ -18,6 +18,6 @@ public:
 protected:
 		virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 private:
-	UPROPERTY(EditAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
-		float statLowValue = 50.0f;
+	//UPROPERTY(EditAnywhere, Category = "Stats", meta = (AllowPrivateAccess = "true"))
+		//float statLowValue = 50.0f;
 };

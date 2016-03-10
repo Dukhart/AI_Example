@@ -250,65 +250,14 @@ void AAIE_BotCharacter::AutoStatDrain() {
 	// update display widget
 	if (UI_Stat_WidgetInstance) { UI_Stat_WidgetInstance->UpdateWidget(); }
 }
-/*
-// Handles Natural Stamina Drain
-void AAIE_BotCharacter::AutoStaminaDrain() {
-	// we might make a Damage type later use this for now as take any damage must have a damage type input
-	// if stamina is currently greater then zero drian stamina
-	if (GetStatValue(1) > GetStatMin(1)) {
-		// store the stamina before we drain it
-		int32 stamRef = GetStatValue(1);
-		// set stamRef to the new stamina
-		stamRef = stamRef - staminaDrainValue;
 
-		// Check if our Bot has run out of stamina
-		if (stamRef < GetStatMin(1)) {
-			// if it has subtract the min from our new current to get the difference
-			// and clamp it to zeroStaminaDrainValue so we don't do more damage then if we already had zero stamina
-			int32 stamDamage = FMath::Clamp(stamRef - GetStatMin(1), 0, zeroStaminaHealthDrainValue);
-			// TODO:: Make Exhaustion Damage Type
-			//UDamageType* DamageType = Cast<UDamageType>(UDamageType::StaticClass());
-			// apply the damage to the Bot
-			OnTakeAnyDamage.Broadcast(stamDamage, NULL, GetController(), this);
-		}
-		else { // else stamina stayed above zero so we can allow health regen
-			// add the regen value to health
-			AddStatValue(HealthRegenValue, 0);
-		}
-		// set the stamina to our new value
-		SetStatValue(stamRef, 1);
-	}
-	else { // else stamina is already at zero so the Bot will take damage for being over exhausted
-	 // apply the damage to the Bot
-		OnTakeAnyDamage.Broadcast(zeroStaminaHealthDrainValue, NULL, GetController(), this);
-	}
-}
-*/
 TArray<FAIE_BotStat_Struct> AAIE_BotCharacter::GetStats() const {
 	return Stats;
 }
 // get a stat
 FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(EBotStatNames InName) const {
 	FAIE_BotStat_Struct stat = GetStat((uint8)InName);
-	//stat 
-	/*
-	switch (InName) {
-	case EBotStatNames::SName_Health:
-		stat = GetStat(0);
-		break;
-	case EBotStatNames::SName_Stamina:
-		stat = GetStat(1);
-		break;
-	case EBotStatNames::SName_Hunger:
-		stat = GetStat(2);
-		break;
-	case EBotStatNames::SName_Happiness:
-		stat = GetStat(3);
-		break;
-	default:
-		break;
-	}
-	*/
+	
 	return stat;
 }
 
@@ -323,25 +272,6 @@ FAIE_BotStat_Struct AAIE_BotCharacter::GetStat(int32 StatIndex) const {
 // Get Stat Value
 int32 AAIE_BotCharacter::GetStatValue(EBotStatNames InName) const {
 	int32 val = GetStatValue((uint8)InName);
-	/*
-	int32 val = -1;
-	switch (InName) {
-	case EBotStatNames::SName_Health:
-		val = GetStatValue(0);
-		break;
-	case EBotStatNames::SName_Stamina:
-		val = GetStatValue(1);
-		break;
-	case EBotStatNames::SName_Hunger:
-		val = GetStatValue(2);
-		break;
-	case EBotStatNames::SName_Happiness:
-		val = GetStatValue(3);
-		break;
-	default:
-		break;
-	}
-	*/
 	return val;
 }
 
@@ -354,24 +284,6 @@ int32 AAIE_BotCharacter::GetStatValue(int32 StatIndex) const {
 void AAIE_BotCharacter::SetStatValue(int32 newValue, EBotStatNames InName) {
 
 	SetStatValue(newValue, (uint8)InName);
-	/*
-	switch (InName) {
-	case EBotStatNames::SName_Health:
-		SetStatValue(newValue, 0);
-		break;
-	case EBotStatNames::SName_Stamina:
-		SetStatValue(newValue, 1);
-		break;
-	case EBotStatNames::SName_Hunger:
-		SetStatValue(newValue, 2);
-		break;
-	case EBotStatNames::SName_Happiness:
-		SetStatValue(newValue, 3);
-		break;
-	default:
-		break;
-	}
-	*/
 }
 void AAIE_BotCharacter::SetStatValue(int32 newValue, int32 StatIndex) {
 	// check we have a valid index
@@ -387,24 +299,6 @@ void AAIE_BotCharacter::SetStatValue(int32 newValue, int32 StatIndex) {
 //Add to Stat Value
 void AAIE_BotCharacter::AddStatValue(int32 inValue, EBotStatNames InName) {
 	AddStatValue(inValue, (uint8)InName);
-	/*
-	switch (InName) {
-	case EBotStatNames::SName_Health:
-		AddStatValue(inValue, 0);
-		break;
-	case EBotStatNames::SName_Stamina:
-		AddStatValue(inValue, 1);
-		break;
-	case EBotStatNames::SName_Hunger:
-		AddStatValue(inValue, 2);
-		break;
-	case EBotStatNames::SName_Happiness:
-		AddStatValue(inValue, 3);
-		break;
-	default:
-		break;
-	}
-	*/
 }
 void AAIE_BotCharacter::AddStatValue(int32 inValue, int32 StatIndex) {
 	// check we have a valid index
@@ -418,25 +312,6 @@ void AAIE_BotCharacter::AddStatValue(int32 inValue, int32 StatIndex) {
 // Get Stat Max
 int32 AAIE_BotCharacter::GetStatMax(EBotStatNames InName) const {
 	int32 val = GetStatMax((uint8)InName);
-	/*
-	int32 val = -1;
-	switch (InName) {
-	case EBotStatNames::SName_Health:
-		val = GetStatMax(0);
-		break;
-	case EBotStatNames::SName_Stamina:
-		val = GetStatMax(1);
-		break;
-	case EBotStatNames::SName_Hunger:
-		val = GetStatMax(2);
-		break;
-	case EBotStatNames::SName_Happiness:
-		val = GetStatMax(3);
-		break;
-	default:
-		break;
-	}
-	*/
 	return val;
 }
 int32 AAIE_BotCharacter::GetStatMax(int32 StatIndex) const {
@@ -447,24 +322,6 @@ int32 AAIE_BotCharacter::GetStatMax(int32 StatIndex) const {
 // Set Stat Max
 void AAIE_BotCharacter::SetStatMax(int32 newMax, EBotStatNames InName) {
 	SetStatMax(newMax, (uint8)InName);
-	/*
-	switch (InName) {
-	case EBotStatNames::SName_Health:
-		SetStatMax(newMax, 0);
-		break;
-	case EBotStatNames::SName_Stamina:
-		SetStatMax(newMax, 1);
-		break;
-	case EBotStatNames::SName_Hunger:
-		SetStatMax(newMax, 2);
-		break;
-	case EBotStatNames::SName_Happiness:
-		SetStatMax(newMax, 3);
-		break;
-	default:
-		break;
-	}
-	*/
 }
 void AAIE_BotCharacter::SetStatMax(int32 newMax, int32 StatIndex) {
 	// check we have a valid index
@@ -478,25 +335,6 @@ void AAIE_BotCharacter::SetStatMax(int32 newMax, int32 StatIndex) {
 // Get Stat Min
 int32 AAIE_BotCharacter::GetStatMin(EBotStatNames InName) const {
 	int32 val = GetStatMin((uint8)InName);
-	/*
-	int32 val = -1;
-	switch (InName) {
-	case EBotStatNames::SName_Health:
-		val = GetStatMin(0);
-		break;
-	case EBotStatNames::SName_Stamina:
-		val = GetStatMin(1);
-		break;
-	case EBotStatNames::SName_Hunger:
-		val = GetStatMin(2);
-		break;
-	case EBotStatNames::SName_Happiness:
-		val = GetStatMin(3);
-		break;
-	default:
-		break;
-	}
-	*/
 	return val;
 }
 int32 AAIE_BotCharacter::GetStatMin(int32 StatIndex) const {
@@ -507,24 +345,6 @@ int32 AAIE_BotCharacter::GetStatMin(int32 StatIndex) const {
 // Set Stat Min
 void AAIE_BotCharacter::SetStatMin(int32 newMin, EBotStatNames InName) {
 	SetStatMin(newMin, (uint8)InName);
-	/*
-	switch (InName) {
-	case EBotStatNames::SName_Health:
-		SetStatMin(newMin, 0);
-		break;
-	case EBotStatNames::SName_Stamina:
-		SetStatMin(newMin, 1);
-		break;
-	case EBotStatNames::SName_Hunger:
-		SetStatMin(newMin, 2);
-		break;
-	case EBotStatNames::SName_Happiness:
-		SetStatMin(newMin, 3);
-		break;
-	default:
-		break;
-	}
-	*/
 }
 void AAIE_BotCharacter::SetStatMin(int32 newMin, int32 StatIndex) {
 	// check we have a valid index
@@ -538,24 +358,6 @@ void AAIE_BotCharacter::SetStatMin(int32 newMin, int32 StatIndex) {
 // set Stat desire
 void AAIE_BotCharacter::SetStatDesire(int32 newDesire, EBotStatNames InName) {
 	SetStatDesire(newDesire, (uint8)InName);
-	/*
-	switch (InName) {
-	case EBotStatNames::SName_Health:
-		SetStatDesire(newDesire, 0);
-		break;
-	case EBotStatNames::SName_Stamina:
-		SetStatDesire(newDesire, 1);
-		break;
-	case EBotStatNames::SName_Hunger:
-		SetStatDesire(newDesire, 2);
-		break;
-	case EBotStatNames::SName_Happiness:
-		SetStatDesire(newDesire, 3);
-		break;
-	default:
-		break;
-	}
-	*/
 }
 void AAIE_BotCharacter::SetStatDesire(int32 newDesire, int32 StatIndex) {
 	// check we have a valid index
@@ -568,25 +370,7 @@ void AAIE_BotCharacter::SetStatDesire(int32 newDesire, int32 StatIndex) {
 // get Desire
 int32 AAIE_BotCharacter::GetStatDesire(EBotStatNames InName) const {
 	int32 val = GetStatDesire((uint8)InName);
-	/*
-	int32 val = -1;
-	switch (InName) {
-	case EBotStatNames::SName_Health:
-		val = GetStatDesire(0);
-		break;
-	case EBotStatNames::SName_Stamina:
-		val = GetStatDesire(1);
-		break;
-	case EBotStatNames::SName_Hunger:
-		val = GetStatDesire(2);
-		break;
-	case EBotStatNames::SName_Happiness:
-		val = GetStatDesire(3);
-		break;
-	default:
-		break;
-	}
-	*/
+
 	return val;
 }
 int32 AAIE_BotCharacter::GetStatDesire(int32 StatIndex) const {
@@ -707,4 +491,35 @@ void AAIE_BotCharacter::DialogCallout_Implementation(AActor* thingTalkingAbout) 
 			
 		}
 	}
+}
+
+EBotStatNames AAIE_BotCharacter::GetMostDesiredStat() const {
+	EBotStatNames mostDesired = EBotStatNames::SName_None;
+	// lowest percent
+	float lowestScore = FLT_MAX;
+
+	float desireMultiplier;
+	float percent;
+	for (int32 i = 0; i < Stats.Num(); ++i) {
+		// get our desire multi and convert to a decimal
+		desireMultiplier = Stats[i].DesireMultiplier == 0 ? 1 : (float)Stats[i].DesireMultiplier;
+		desireMultiplier = 1 / desireMultiplier;
+		// get percent and apply the multiplier brining the percent down even further if applicable
+		//percent = Stats[i].GetPercent();
+		if (Stats[i].bInverse) {
+			percent = (100.0f - Stats[i].GetPercent()) * desireMultiplier;
+			//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, " Desire Check " + FString::SanitizeFloat((float)i) + " " + FString::SanitizeFloat(percent));
+		}
+		else {
+			percent = Stats[i].GetPercent() * desireMultiplier;
+			//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, " Desire Check " + FString::SanitizeFloat((float)i) + " " + FString::SanitizeFloat(percent));
+		}
+		// if current stats percent score to current lowest score
+		if (percent <= Stats[i].lowPercent && percent < lowestScore) {
+			// set the new lowest stat
+			mostDesired = Stats[i].Stat;
+			lowestScore = percent;
+		}
+	}
+	return mostDesired;
 }

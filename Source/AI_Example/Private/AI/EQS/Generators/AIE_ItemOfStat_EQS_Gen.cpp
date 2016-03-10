@@ -22,7 +22,8 @@ UAIE_ItemOfStat_EQS_Gen::UAIE_ItemOfStat_EQS_Gen(const FObjectInitializer &Objec
 
 }
 void UAIE_ItemOfStat_EQS_Gen::GenerateItems(FEnvQueryInstance& QueryInstance) const {
-	int32 StatIndex;
+	int32 StatIndex = uint8(StatName);
+	/*
 	switch (StatName) {
 	case EBotStatNames::SName_Health:
 		StatIndex = 0;
@@ -49,8 +50,9 @@ void UAIE_ItemOfStat_EQS_Gen::GenerateItems(FEnvQueryInstance& QueryInstance) co
 		StatIndex = -1;
 		break;
 	}
+	*/
 	// add our owner to the search rad data
-	SearchRadius.BindData(QueryInstance.Owner.Get(), QueryInstance.QueryID);
+	//SearchRadius.BindData(QueryInstance.Owner.Get(), QueryInstance.QueryID);
 	// get the world
 	UWorld* World = GEngine->GetWorldFromContextObject(QueryInstance.Owner.Get());
 	if (World == NULL || SearchedActorClass == NULL)
