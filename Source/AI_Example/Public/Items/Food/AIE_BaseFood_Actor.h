@@ -52,6 +52,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		TArray<FAIE_ItemStatEffect_Struct> Stats;
 
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+		int32 GetStatEffectByName(EBotStatNames inName) const;
+
 	class AAIE_BaseFoodSpawner* ownedSpawner;
 protected:
 	// Forward declaration needed to get around circular dependancy

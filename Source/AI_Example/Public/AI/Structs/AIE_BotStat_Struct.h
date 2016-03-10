@@ -69,6 +69,9 @@ struct AI_EXAMPLE_API FAIE_BotStat_Struct
 		// the desire multiplier for our stat
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 			int32 DesireMultiplier;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats|Behavior")
+			int32 lowPercent;
+
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 			bool bInverse;
@@ -115,6 +118,8 @@ struct AI_EXAMPLE_API FAIE_BotStat_Struct
 		DesireMultiplier = inDesire;
 		bInverse = bInInverse;
 
+		lowPercent = 50;
+
 		EffectStats = TArray<FAIE_StatEffect_Struct>();
 		StatBehavior = NULL;
 	}
@@ -125,10 +130,10 @@ struct AI_EXAMPLE_API FAIE_BotStat_Struct
 	void AddStatValue(int32 addValue) {
 		Value = FMath::Clamp(Value + addValue, MinValue, MaxValue);
 	}
-	int32 GetStatValue() {
+	int32 GetStatValue() const {
 		return Value;
 	}
-	float GetPercent() {
+	float GetPercent() const {
 		float percent;
 
 		percent = ((float(Value) - float(MinValue)) / (float(MaxValue) - float(MinValue)) * 100.0f);

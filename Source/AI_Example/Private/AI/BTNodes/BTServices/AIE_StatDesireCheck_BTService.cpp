@@ -9,6 +9,7 @@ UAIE_StatDesireCheck_BTService::UAIE_StatDesireCheck_BTService(const FObjectInit
 }
 void UAIE_StatDesireCheck_BTService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+	/*
 	EBotStatNames mostDesired = EBotStatNames::SName_None;
 	// lowest percent
 	float lowestScore = 100;
@@ -55,5 +56,14 @@ void UAIE_StatDesireCheck_BTService::TickNode(UBehaviorTreeComponent& OwnerComp,
 			Blackboard->SetValue<UBlackboardKeyType_Enum>(lowStatEnum, static_cast<UBlackboardKeyType_Enum::FDataType>(mostDesired));
 		}
 	}
-
+	*/
+	if (Blackboard && BotCharacter) {
+		FBlackboard::FKey lowStatEnum = Blackboard->GetKeyID("lowStat");
+		if (Blackboard->IsValidKey(lowStatEnum)) {
+			//if (lowestScore <= statLowValue) {
+			//}
+			EBotStatNames mostDesired = BotCharacter->GetMostDesiredStat();
+			Blackboard->SetValue<UBlackboardKeyType_Enum>(lowStatEnum, static_cast<UBlackboardKeyType_Enum::FDataType>(mostDesired));
+		}
+	}
 }
