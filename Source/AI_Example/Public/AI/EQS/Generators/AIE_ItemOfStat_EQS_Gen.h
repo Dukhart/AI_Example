@@ -15,16 +15,21 @@ UCLASS()
 class AI_EXAMPLE_API UAIE_ItemOfStat_EQS_Gen : public UEnvQueryGenerator
 {
 	GENERATED_BODY()
+
+protected:
 		// constructor
 		UAIE_ItemOfStat_EQS_Gen(const FObjectInitializer &ObjectInitializer);
+		
+		UPROPERTY(EditDefaultsOnly, Category = Generator)
+		FAIDataProviderIntValue StatIndex;
 
 	UPROPERTY(EditDefaultsOnly, Category = Generator)
 		TSubclassOf<AActor> SearchedActorClass;
 	UPROPERTY(EditDefaultsOnly, Category = Generator)
 		FAIDataProviderFloatValue SearchRadius;
 
-	UPROPERTY(EditDefaultsOnly, Category = Generator)
-		EBotStatNames StatName;
+	//UPROPERTY(EditDefaultsOnly, Category = Generator)
+	//	EBotStatNames StatName;
 	/** context */
 	UPROPERTY(EditAnywhere, Category = Generator)
 		TSubclassOf<UEnvQueryContext> SearchCenter;
