@@ -8,12 +8,13 @@
 
 #include "Runtime/UMG/Public/Components/WidgetComponent.h"
 
-#include "AIE_StatBar_UserWidget.h"
-#include "AIE_StatBox_UserWidget.h"
+//#include "AIE_StatBar_UserWidget.h"
+#include "AIE_Base_UserWidget.h"
 
 // interfaces
 #include "AIE_AIAnimationInterface.h"
 #include "AIE_IsUsable.h"
+#include "AIE_IsSelectable.h"
 
 #include "AIE_BotStat_Struct.h"
 #include "AIE_DialogueComponent.h"
@@ -25,7 +26,7 @@
 
 
 UCLASS()
-class AI_EXAMPLE_API AAIE_BotCharacter : public ACharacter, public IAIE_IsUsable, public IAIE_AIAnimationInterface
+class AI_EXAMPLE_API AAIE_BotCharacter : public ACharacter, public IAIE_IsUsable, public IAIE_AIAnimationInterface, public IAIE_IsSelectable
 {
 	GENERATED_BODY()
 
@@ -81,11 +82,19 @@ public:
 		// BotBehavior;
 	// UI
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|UI")
-		UWidgetComponent* UI_Stat_Component;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|UI")
-		TSubclassOf<UAIE_StatBox_UserWidget> UI_Stat_WidgetTemplate;
+		TSubclassOf<UAIE_Base_UserWidget> UI_Stat_WidgetTemplate;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components|UI")
-		UAIE_StatBox_UserWidget* UI_Stat_WidgetInstance;
+		UAIE_Base_UserWidget* UI_Stat_WidgetInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|UI")
+		UWidgetComponent* UI_Selected_Component;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components|UI")
+		UAIE_Base_UserWidget* UI_SelectedWidgetInstance;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components|UI")
+	TArray<UMaterialInterface*> MainMaterials;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|UI")
+	TArray<UMaterialInterface*> SelectedMaterials;
+
 	// dialogue component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components|Dialogue")
 		UAIE_DialogueComponent* DialogueComp;
@@ -180,14 +189,25 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")
 		void DialogCallout(AActor* thingTalkingAbout);
 
-	//INTERFACES
+	
 public:
-	// IsUsable Interface
+	// * INTERFACES * //
+
+	// * IsUsable Interface
 	void UseItem_Implementation(AAIE_BotCharacter* BotUsing);
 	void AI_ActivateUseItem_Implementation(AActor* ActorToUse);
-	// animation interface
+
+	// * AIAnimationInterface
 	void TaskToController_Implementation(EMontageNames eAnimName);
 	void ControllerToCharacter_Implementation(EMontageNames eAnimName);
 	void CharacterToAnimBp_Implementation(EMontageNames eAnimName);
 
+	// * IsSelectable
+	// Used to return the content to be displayed on the HUD while object is selected
+	class UAIE_Base_UserWidget* GetSelectedDisplayWidget_Implementation();
+
+	// Used to tint the colour of the actor while selected
+		void ActivateSelectionTint_Implementation();
+	// Used to untint the colour of the actor when deselected
+		void DeactivateSelectionTint_Implementation();
 };

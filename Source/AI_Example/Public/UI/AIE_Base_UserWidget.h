@@ -21,11 +21,18 @@ class AI_EXAMPLE_API UAIE_Base_UserWidget : public UUserWidget
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pawn")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pawn")
 		AActor* Owner;
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Construct")
+		void BuildWidget();
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Update")
 		void UpdateWidget();
+	//UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Update")
+		//void RebuildWidget();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Pawn")
+		void SetOwner(AActor* NewOwner);
 
 
 };

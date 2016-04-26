@@ -17,6 +17,5 @@ public:
 		UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stats")
 		TArray<UAIE_Base_UserWidget*> StatBars;
 
-		UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Construct")
-			void BuildWidget();
+		
 };

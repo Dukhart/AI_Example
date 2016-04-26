@@ -6,3 +6,13 @@
 
 
 
+void UAIE_Base_UserWidget::SetOwner_Implementation(AActor* NewOwner) {
+	if (NewOwner != nullptr) {
+		// Set the Owner
+		Owner = NewOwner;
+		// Rebuild the widget
+		//RebuildWidget();
+		// update the widget
+		UpdateWidget();
+	}
+}

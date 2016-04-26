@@ -3,6 +3,10 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
+
+// includes for HUD classes
+#include "AIE_Base_UserWidget.h"
+
 #include "AIE_PlayerController.generated.h"
 
 /**
@@ -13,10 +17,8 @@ class AI_EXAMPLE_API AAIE_PlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
-	// class setup
 public:
-	// handles what happens when the controller is first created
-	AAIE_PlayerController(const FObjectInitializer& ObjectInitializer);
+	// * MOVEMENT SETTINGS * //
 	// the base movement speed modifier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float BaseMovementSpeed = 300.0f;
@@ -25,12 +27,26 @@ public:
 	// holds delta time
 	float DeltaTime = 0.0f;
 protected:
-	// what happens every frame
-	virtual void PlayerTick(float DeltaTime) override;
+	
+
+	// * INITIALIZATION * //
+	// handles what happens when the controller is first created
+	AAIE_PlayerController(const FObjectInitializer& ObjectInitializer);
 	// handles what happens when the objet finishes construction
 	virtual void BeginPlay() override;
 	// handles setting up input, primarly used to bind methods to various inputs
 	virtual void SetupInputComponent() override;
+	// * HUD * //
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD")
+	//	TSubclassOf<UAIE_StatBox_UserWidget> BotStatDisplayTemplate;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD")
+	//	UAIE_StatBox_UserWidget* BotStatDisplayInstance;
+
+	// * TICK & TIMERS * //
+	// what happens every frame
+	virtual void PlayerTick(float DeltaTime) override;
+
+	// * INPUT * //
 	// bools for click detection
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mouse Settings")
 	bool bLeftClick = 0;
@@ -67,11 +83,32 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, Category = "Input")
 	void OnRightMouseRelease();
 	virtual void OnRightMouseRelease_Implementation();
-
+	UFUNCTION()
 	void DoRightMouseAction(float time);
+	UFUNCTION()
 	void DoLeftMouseAction(float time);
+	// what happens when right mouse is click is detected
+	UFUNCTION()
+		void DoRightMouseClick();
+	// what happens when left mouse is click is detected
+	UFUNCTION()
+		void DoLeftMouseClick();
+
+	// * ACTOR SELECT * //
+	// Ref to our selected actor if any
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Selection")
+		AActor* SelectedActor;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD")
+		UAIE_Base_UserWidget* SelectedActorWidgetInstance;
+	// selects an actor for HUD feedback
+	UFUNCTION(BlueprintCallable, Category = "Selection")
+		void SelectActor(AActor* NewSelection);
+	// remove selected actor
+	UFUNCTION(BlueprintCallable, Category = "Selection")
+		void DeselectActor();
 
 public:
+	// * MOVENENT * //
 	// Handles execution of valid input
 	virtual void DoMoveLeftRight(FVector value);
 	virtual void DoMoveForwardBack(FVector value);

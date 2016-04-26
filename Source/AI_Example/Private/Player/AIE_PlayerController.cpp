@@ -3,8 +3,10 @@
 #include "AI_Example.h"
 #include "AIE_PlayerController.h"
 
+#include "AIE_IsSelectable.h"
 
 
+// * INITIALIZATION * //
 // Constructor
 AAIE_PlayerController::AAIE_PlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer) {
@@ -55,7 +57,7 @@ void AAIE_PlayerController::SetupInputComponent() {
 	InputComponent->BindAction("RightMouseButton", IE_Released, this, &AAIE_PlayerController::OnRightMouseRelease);
 }
 
-// INPUT
+// * INPUT * //
 // Called when move left right input is detected
 void AAIE_PlayerController::OnMoveLeftRight_Implementation(float value) {
 #if !UE_BUILD_SHIPPING
@@ -100,19 +102,23 @@ void AAIE_PlayerController::DoMoveLeftRight(FVector value) {
 void AAIE_PlayerController::DoMoveForwardBack(FVector value) {
 	DoSimpleMove(value);
 }
-// left mouse behavior
+// * LEFT MOUSE BEHAVIOR
+// first pressed
 void AAIE_PlayerController::OnLeftMousePress_Implementation() {
 	bLeftClick = 1;
 }
+// when released
 void AAIE_PlayerController::OnLeftMouseRelease_Implementation() {
 	if (fLeftClickCounter <= fClickHoldTime) {
 #if !UE_BUILD_SHIPPING
 		GEngine->AddOnScreenDebugMessage(3, 1.0f, FColor::Cyan, "Left Mouse Button Clicked");
 #endif // !UE_BUILD_SHIPPING
+		DoLeftMouseClick();
 	}
 	fLeftClickCounter = 0.0f;
 	bLeftClick = 0;
 }
+// action calculation between press and release
 void AAIE_PlayerController::DoLeftMouseAction(float time) {
 	fLeftClickCounter += time;
 	if (fLeftClickCounter > fClickHoldTime) {
@@ -121,19 +127,36 @@ void AAIE_PlayerController::DoLeftMouseAction(float time) {
 	}
 #endif // !UE_BUILD_SHIPPING
 }
-// right mouse behavior
+// what happens when left mouse is click is detected
+void AAIE_PlayerController::DoLeftMouseClick(){
+	FHitResult outHit;
+	if (GetHitResultUnderCursor(ECollisionChannel::ECC_Camera, true, outHit)) {
+		AActor* hitActor = outHit.GetActor();
+		// return if the actor does not implement IsSelectable
+		if (hitActor->Implements<UAIE_IsSelectable>() == false) {
+			return;
+		}
+		SelectActor(hitActor);
+	}
+}
+
+// * RIGHT MOUSE BEHAVIOR
+// first pressed
 void AAIE_PlayerController::OnRightMousePress_Implementation() {
 	bRightClick = 1;
 }
+// when released
 void AAIE_PlayerController::OnRightMouseRelease_Implementation() {
 	if (fRightClickCounter <= fClickHoldTime) {
 #if !UE_BUILD_SHIPPING
 		GEngine->AddOnScreenDebugMessage(3, 1.0f, FColor::Cyan, "Right Mouse Button Clicked");
 #endif // !UE_BUILD_SHIPPING
+		DoRightMouseClick();
 	}
 	fRightClickCounter = 0.0f;
 	bRightClick = 0;
 }
+// action calculation between press and release
 void AAIE_PlayerController::DoRightMouseAction(float time) {
 	fRightClickCounter += time;
 	if (fRightClickCounter > fClickHoldTime) {
@@ -153,7 +176,7 @@ void AAIE_PlayerController::DoRightMouseAction(float time) {
 		if (GetPawn() != NULL) {
 			// cast the pawn to our custom player pawn
 			AAIE_PlayerPawn* pawnRef = Cast<AAIE_PlayerPawn>(GetPawn());
-			// check that casting was succsefull
+			// check that casting was successfull
 			if (pawnRef) {
 				// get the rotation of the spring arm
 				FRotator rotRef = pawnRef->GetPawnSpringArm()->GetComponentRotation();
@@ -166,7 +189,57 @@ void AAIE_PlayerController::DoRightMouseAction(float time) {
 
 	}
 }
+// what happens when right mouse is click is detected
+void AAIE_PlayerController::DoRightMouseClick() {
+	// run Deselect actor if we have one
+	if (SelectedActor != nullptr) {
+		DeselectActor();
+	}
+}
 
+// * ACTOR SELECT * //
+//selects an actor for HUD feedback
+void AAIE_PlayerController::SelectActor(AActor* NewSelection) {
+	// check the pointer to our new selection is valid and implements the selectable interface
+	if (NewSelection == nullptr || NewSelection->Implements<UAIE_IsSelectable>() == false) {
+		return;
+	}
+	// check if we already have a selected actor
+	if (SelectedActor != nullptr) {
+		// Deselect our old selection
+		DeselectActor();
+	}
+	// Get the widget to display from the actor
+	SelectedActorWidgetInstance = IAIE_IsSelectable::Execute_GetSelectedDisplayWidget(NewSelection);
+	// if their is a widget add it to viewport
+	if (SelectedActorWidgetInstance != nullptr) {
+		SelectedActorWidgetInstance->AddToViewport();
+	}
+	// activate the colour change for the selected actor
+	IAIE_IsSelectable::Execute_ActivateSelectionTint(NewSelection);
+	// assign the new selection to our refrence of selected actor
+	SelectedActor = NewSelection;
+}
+// remove selected actor
+void AAIE_PlayerController::DeselectActor() {
+	// check if selected actor is already null
+	if (SelectedActor == nullptr) {
+		// return if we don't currently have a selected actor
+		return;
+	}
+	// attempt to remove the widget instance from the viewport
+	if (SelectedActorWidgetInstance != nullptr) {
+		SelectedActorWidgetInstance->RemoveFromViewport();
+		// clear the ref to the widget
+		SelectedActorWidgetInstance = nullptr;
+	}
+	// Deactivate colour change
+	IAIE_IsSelectable::Execute_DeactivateSelectionTint(SelectedActor);
+	// clear the ref
+	SelectedActor = nullptr;
+}
+
+// * MOVENENT * //
 //Moves the pawn
 void AAIE_PlayerController::DoSimpleMove(FVector value) {
 	if (GetPawn() != NULL && value != FVector(0, 0, 0)) {

@@ -32,14 +32,15 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	if (StaminaBTAsset.Object) {
 		BotStatBehavior.Add(StaminaBTAsset.Object);
 	}
-	// create the ui Component
-	UI_Stat_Component = CreateDefaultSubobject<UWidgetComponent>("Widget Component");
+	// create the selected ui Component
+	UI_Selected_Component = CreateDefaultSubobject<UWidgetComponent>("Selected Widget Component");
 	// attach our UI to the root
-	UI_Stat_Component->AttachTo(RootComponent);
-	// set the draw size of our ui
-	UI_Stat_Component->SetDrawSize(FVector2D(450.0f, 266.0f));
-	UI_Stat_Component->SetRelativeLocation(FVector(0, 0, 100));
-	//BotUI->SetWidget(UIAsset.Object);
+	UI_Selected_Component->AttachTo(RootComponent);
+	// set the draw size of the ui
+	//UI_Selected_Component->SetDrawSize(FVector2D(100.0f, 100.0f));
+	// set relative location of the ui
+	UI_Selected_Component->SetRelativeLocation(FVector(0, 0, 100));
+
 // get the refrence to our skeletal mesh
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MeshObj(*FAIE_Asset_Paths::DefaultBotMesh);
 	// check that we got the mesh and a mesh component exists
@@ -54,6 +55,10 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 			// set the character mesh to use our animation blueprint
 			GetMesh()->AnimBlueprintGeneratedClass = AnimRef.Object;
 		}
+		// Get refrence to the mesh's materials
+		MainMaterials = GetMesh()->GetMaterials();
+		// set selected materials to the same number of elements
+		SelectedMaterials.SetNum(MainMaterials.Num());
 	}
 	// set default movement speeds
 	if (GetCharacterMovement()) {
@@ -127,11 +132,6 @@ AAIE_BotCharacter::AAIE_BotCharacter()
 	Stats.Add(Intelligence);
 	Stats.Add(Speed);
 
-
-	//ConstructorHelpers::FObjectFinder<UDialogueWave> waveToRef(*FAIE_Asset_Paths::BotFoundItWave);
-	//if (waveToRef.Object) {
-	//	waveToPlay = waveToRef.Object;
-	//}
 }
 // Called when the game starts or when spawned
 void AAIE_BotCharacter::BeginPlay()
@@ -143,11 +143,23 @@ void AAIE_BotCharacter::BeginPlay()
 	// set health to max health
 	SetStatValue(GetStatMax(0), 0);
 	//UIWidgetInstance
-	UI_Stat_WidgetInstance = Cast<UAIE_StatBox_UserWidget>(UI_Stat_Component->GetUserWidgetObject());
-	if (UI_Stat_WidgetInstance) {
+	UGameInstance* GI = GetGameInstance();
+	if (GI) {
+		UI_Stat_WidgetInstance = CreateWidget<UAIE_Base_UserWidget>(GI, UI_Stat_WidgetTemplate);
+	}
+	if (UI_Stat_WidgetInstance != nullptr) {
 		UI_Stat_WidgetInstance->Owner = this;
 		UI_Stat_WidgetInstance->BuildWidget();
 		UI_Stat_WidgetInstance->UpdateWidget();
+	}
+	// get the insance of the selected display
+	UI_SelectedWidgetInstance = Cast<UAIE_Base_UserWidget>(UI_Selected_Component->GetUserWidgetObject());
+	if (UI_SelectedWidgetInstance != nullptr) {
+		// hide the selected display
+		UI_SelectedWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+		FLinearColor colRef(UI_SelectedWidgetInstance->ColorAndOpacity);
+		colRef.A = 0;
+		UI_SelectedWidgetInstance->SetColorAndOpacity(colRef);
 	}
 	// was on controller possess caused error in editor when trying to open blueprint derived from our AAIE_BotCharacter
 	AAIE_AIController* controlRef = Cast<AAIE_AIController>(GetController());
@@ -379,32 +391,8 @@ int32 AAIE_BotCharacter::GetStatDesire(int32 StatIndex) const {
 	return value;
 }
 
-// IsUsable interface
-void AAIE_BotCharacter::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {}
 
-void AAIE_BotCharacter::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
-	// checks we have a valid actor AND that actor implements our IsUsable Interface
-	if (ActorToUse && ActorToUse->GetClass()->ImplementsInterface(UAIE_IsUsable::StaticClass())) {
-		IAIE_IsUsable::Execute_UseItem(ActorToUse, this);
-	}
-	else {
-#if !UE_BUILD_SHIPPING
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " trying to use invalid object IsUsable not Implemented");
-#endif
-	}
-}
-// AIAnimation Interface
-void AAIE_BotCharacter::TaskToController_Implementation(EMontageNames eAnimName) {
 
-}
-void AAIE_BotCharacter::ControllerToCharacter_Implementation(EMontageNames eAnimName) {
-	if (GetMesh() && GetMesh()->GetAnimInstance() != NULL && GetMesh()->GetAnimInstance()->Implements<UAIE_AIAnimationInterface>()){
-		IAIE_AIAnimationInterface::Execute_CharacterToAnimBp(GetMesh()->GetAnimInstance(), eAnimName);
-	}
-}
-void AAIE_BotCharacter::CharacterToAnimBp_Implementation(EMontageNames eAnimName) {
-
-}
 
 
 // PERCEPTION
@@ -522,4 +510,80 @@ EBotStatNames AAIE_BotCharacter::GetMostDesiredStat() const {
 		}
 	}
 	return mostDesired;
+}
+
+// * INTERFACES * //
+// * IsUsable interface
+void AAIE_BotCharacter::UseItem_Implementation(AAIE_BotCharacter* BotUsing) {}
+
+void AAIE_BotCharacter::AI_ActivateUseItem_Implementation(AActor* ActorToUse) {
+	// checks we have a valid actor AND that actor implements our IsUsable Interface
+	if (ActorToUse && ActorToUse->GetClass()->ImplementsInterface(UAIE_IsUsable::StaticClass())) {
+		IAIE_IsUsable::Execute_UseItem(ActorToUse, this);
+	}
+	else {
+#if !UE_BUILD_SHIPPING
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, BotName.ToString() + " trying to use invalid object IsUsable not Implemented");
+#endif
+	}
+}
+
+// * AIAnimation Interface
+void AAIE_BotCharacter::TaskToController_Implementation(EMontageNames eAnimName) {
+
+}
+void AAIE_BotCharacter::ControllerToCharacter_Implementation(EMontageNames eAnimName) {
+	if (GetMesh() && GetMesh()->GetAnimInstance() != NULL && GetMesh()->GetAnimInstance()->Implements<UAIE_AIAnimationInterface>()) {
+		IAIE_AIAnimationInterface::Execute_CharacterToAnimBp(GetMesh()->GetAnimInstance(), eAnimName);
+	}
+}
+void AAIE_BotCharacter::CharacterToAnimBp_Implementation(EMontageNames eAnimName) {
+
+}
+
+// * IsSelectable
+// Used to return the content to be displayed on the HUD while object is selected
+UAIE_Base_UserWidget* AAIE_BotCharacter::GetSelectedDisplayWidget_Implementation() {
+	return UI_Stat_WidgetInstance;
+}
+
+// Used to tint the colour of the actor while selected
+void AAIE_BotCharacter::ActivateSelectionTint_Implementation() {
+	if (UI_SelectedWidgetInstance != nullptr) {
+		// make the selected widget visible
+		UI_SelectedWidgetInstance->SetVisibility(ESlateVisibility::Visible);
+		FLinearColor colRef(UI_SelectedWidgetInstance->ColorAndOpacity);
+		colRef.A = 1;
+		UI_SelectedWidgetInstance->SetColorAndOpacity(colRef);
+	}
+	// check we can get the mesh
+	if (GetMesh() != nullptr) {
+		for (int32 index = 0; index < SelectedMaterials.Num(); ++index) {
+			// check the index has a valid material
+			if (SelectedMaterials[index] != nullptr) {
+				// set the material
+				GetMesh()->SetMaterial(index, SelectedMaterials[index]);
+			}
+		}
+	}
+}
+// Used to untint the colour of the actor when deselected
+void AAIE_BotCharacter::DeactivateSelectionTint_Implementation() {
+	if (UI_SelectedWidgetInstance != nullptr) {
+		// hide the selection widget
+		UI_SelectedWidgetInstance->SetVisibility(ESlateVisibility::Hidden);
+		FLinearColor colRef(UI_SelectedWidgetInstance->ColorAndOpacity);
+		colRef.A = 0;
+		UI_SelectedWidgetInstance->SetColorAndOpacity(colRef);
+	}
+	// check we can get the mesh
+	if (GetMesh() != nullptr) {
+		for (int32 index = 0; index < MainMaterials.Num(); ++index) {
+			// check the index has a valid material
+			if (MainMaterials[index] != nullptr) {
+				// set the material
+				GetMesh()->SetMaterial(index, MainMaterials[index]);
+			}
+		}
+	}
 }
