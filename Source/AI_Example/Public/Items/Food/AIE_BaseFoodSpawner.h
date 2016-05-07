@@ -16,6 +16,12 @@ enum class ESpawnerType : uint8 {
 	Fountain UMETA(DisplayName = "Fountain")
 };
 
+UENUM(BlueprintType)
+enum class ESpawnOrder : uint8 {
+	Random,
+	Sequence
+};
+
 UCLASS()
 class AI_EXAMPLE_API AAIE_BaseFoodSpawner : public AActor
 {
@@ -35,8 +41,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Perception")
 	UAIPerceptionStimuliSourceComponent* StimuliSourceComp;
 
+	//TSubclassOf<AAIE_BaseFood_Actor> FoodToSpawn;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner")
-		TSubclassOf<AAIE_BaseFood_Actor> FoodToSpawn;
+		TArray<TSubclassOf<AAIE_BaseFood_Actor>> FoodToSpawn;
 	// tells the spawner to keep spawning every tick
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner")
 		bool bLoops;
@@ -59,18 +66,29 @@ private:
 protected:
 	// holds spawner type
 	// use get set functions to change
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spawner|Stats", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Stats", meta = (AllowPrivateAccess = "true"))
 		ESpawnerType SpawnerType;
 	// number of acrots to spawn per tick
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Stats", meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 		int32 actorsSpawnedPerTick;
+	// Ticks before the spawn order will make a new selection
+	// 0 will result in never changing
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Stats", meta = (ClampMin = "0", AllowPrivateAccess = "true"))
+	int32 NumberTicksBeforeSelection;
+	int32 CurrentTickIndex;
+	// if more then one food type can be spawned will effect how food is selected
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Stats", meta = (AllowPrivateAccess = "true"))
+	ESpawnOrder SpawnOrder;
 	// how often to spawn actors
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spawner|Stats", meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 		float tickRate;
 	// max number of spawned actors
-	// 0 ir less will be infinate
+	// 0 or less will be infinate
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Stats", meta = (ClampMin = "0", AllowPrivateAccess = "true"))
 		int32 maxActors;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawner|Stats", meta = (ClampMin = "0", AllowPrivateAccess = "true"))
+	int32 CurrentSpawnIndex;
+
 
 	FSpawnFood SpawnFood;
 	// sets spawner type
@@ -78,6 +96,9 @@ protected:
 		void SetSpawnerType(ESpawnerType newSpawnerType);
 	UFUNCTION(BlueprintCallable, Category = "Spawner")
 		ESpawnerType GetSpawnerType();
+
+	UFUNCTION(BlueprintCallable, Category = "Spawner")
+		void GetNextSelection();
 
 	// spawns food based on assigned value of the spawnFood delegate
 	UFUNCTION()

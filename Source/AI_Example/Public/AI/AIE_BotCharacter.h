@@ -19,6 +19,8 @@
 #include "AIE_BotStat_Struct.h"
 #include "AIE_DialogueComponent.h"
 
+#include "AIE_AI_MovementComponent.h"
+
 #include "AIE_BaseFoodSpawner.h"
 
 #include "AIE_BotCharacter.generated.h"
@@ -32,7 +34,7 @@ class AI_EXAMPLE_API AAIE_BotCharacter : public ACharacter, public IAIE_IsUsable
 
 public:
 	// Sets default values for this character's properties
-	AAIE_BotCharacter();
+	AAIE_BotCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	// Called every frame

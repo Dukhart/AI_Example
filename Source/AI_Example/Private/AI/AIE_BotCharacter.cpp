@@ -8,8 +8,7 @@
 #include "AIE_IsUsable.h"
 
 // Constructor
-AAIE_BotCharacter::AAIE_BotCharacter()
-{
+AAIE_BotCharacter::AAIE_BotCharacter(const FObjectInitializer& ObjectInitializer) : Super (ObjectInitializer.SetDefaultSubobjectClass<UAIE_AI_MovementComponent>(ACharacter::CharacterMovementComponentName)) {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	// set the default name of the bot
@@ -483,6 +482,7 @@ void AAIE_BotCharacter::DialogCallout_Implementation(AActor* thingTalkingAbout) 
 
 EBotStatNames AAIE_BotCharacter::GetMostDesiredStat() const {
 	EBotStatNames mostDesired = EBotStatNames::SName_None;
+
 	// lowest percent
 	float lowestScore = FLT_MAX;
 

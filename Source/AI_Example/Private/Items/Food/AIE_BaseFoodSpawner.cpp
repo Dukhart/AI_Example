@@ -21,6 +21,8 @@ AAIE_BaseFoodSpawner::AAIE_BaseFoodSpawner(const FObjectInitializer& ObjectIniti
 	}
 	// default spawner type
 	SpawnerType = ESpawnerType::Radial;
+	// default spawn order to sequence
+	SpawnOrder = ESpawnOrder::Sequence;
 	// default tick rate
 	tickRate = 1.0f;
 	// default actors per tick
@@ -29,6 +31,10 @@ AAIE_BaseFoodSpawner::AAIE_BaseFoodSpawner(const FObjectInitializer& ObjectIniti
 	bLoops = true;
 	// defaults to infinate
 	maxActors = 0;
+	// defaults to never changing
+	NumberTicksBeforeSelection = 1;
+	CurrentTickIndex = 0;
+	CurrentSpawnIndex = 0;
 
 	fountainForce = 1000.0f;
 	upForceMultiplier = 50.0f;
@@ -41,11 +47,28 @@ void AAIE_BaseFoodSpawner::BeginPlay()
 	Super::BeginPlay();
 	// sets spawner type to assigned spawner type binding the appropriate delegate
 	SetSpawnerType(SpawnerType);
+
+	if (!FoodToSpawn.IsValidIndex(CurrentSpawnIndex)) {
+		CurrentSpawnIndex = 0;
+	}
+
+	switch (SpawnOrder) {
+	case ESpawnOrder::Sequence:
+		break;
+	case ESpawnOrder::Random:
+		if (FoodToSpawn.Num() > 1) {
+			CurrentSpawnIndex = FMath::RandRange(0, FoodToSpawn.Num() - 1);
+		}
+		break;
+	default:
+		break;
+	}
 	// starts the timer
 	// timer won't start if actors spawned is 0 or less
 	if (actorsSpawnedPerTick > 0) {
 		GetWorldTimerManager().SetTimer(SpawnTimerHandle, this, &AAIE_BaseFoodSpawner::OnSpawnFood, tickRate, bLoops);
 	}
+
 	StimuliSourceComp->RegisterForSense(UAISense_Sight::StaticClass());
 }
 // Called every frame
@@ -75,7 +98,7 @@ ESpawnerType AAIE_BaseFoodSpawner::GetSpawnerType() {
 }
 // called by the spawn timer
 void AAIE_BaseFoodSpawner::OnSpawnFood() {
-	if (FoodToSpawn) {
+	if (FoodToSpawn.IsValidIndex(CurrentSpawnIndex) && FoodToSpawn[CurrentSpawnIndex] != NULL) {
 		// spawn an actor for every actor spawned per tick
 		for (int i = 0; i < actorsSpawnedPerTick; ++i) {
 			// if actors hasn't reached max cap spawn an actor
@@ -86,9 +109,33 @@ void AAIE_BaseFoodSpawner::OnSpawnFood() {
 			}
 		}
 	}
+	// increment the tick index
+	++CurrentTickIndex;
+	// get next selection if we have hit are tick value
+	if (NumberTicksBeforeSelection > 0 && CurrentTickIndex >= NumberTicksBeforeSelection) {
+		GetNextSelection();
+	}
+
 }
 
-
+void AAIE_BaseFoodSpawner::GetNextSelection() {
+	switch (SpawnOrder) {
+	case ESpawnOrder::Sequence:
+		// increment the spawn index / reset to zero if we are at max
+		CurrentSpawnIndex = CurrentSpawnIndex >= (FoodToSpawn.Num() - 1) ? 0 : ++CurrentSpawnIndex;
+		break;
+	case ESpawnOrder::Random:
+		// get a random index from food to spawn array
+		CurrentSpawnIndex = FMath::RandRange(0, FoodToSpawn.Num() - 1);
+		break;
+	default:
+		// fail safe
+		CurrentSpawnIndex = 0;
+		break;
+	}
+	// reset the tick index
+	CurrentTickIndex = 0;
+}
 
 void AAIE_BaseFoodSpawner::SpawnFood_Radial () {
 	// setup location
@@ -121,7 +168,7 @@ void AAIE_BaseFoodSpawner::SpawnFood_Radial () {
 	DrawDebugLine(GetWorld(), trace, spawnLocation, FColor::Yellow, false, 10);
 #endif // !BUILD_SHIPPING
 	// spawn actor
-	AAIE_BaseFood_Actor* newActor = GetWorld()->SpawnActor<AAIE_BaseFood_Actor>(FoodToSpawn , spawnLocation, spawnRot);
+	AAIE_BaseFood_Actor* newActor = GetWorld()->SpawnActor<AAIE_BaseFood_Actor>(FoodToSpawn[CurrentSpawnIndex] , spawnLocation, spawnRot);
 	activeActors.AddUnique(newActor);
 	newActor->ownedSpawner = this;
 }
@@ -141,7 +188,7 @@ void AAIE_BaseFoodSpawner::SpawnFood_Fountain () {
 	FVector rotV = randStream.VRand();
 	FRotator spawnRot = FRotator(rotV.X, rotV.Y, rotV.Z);
 	//AAIE_BaseFood_Actor* actorRef = ;
-	AAIE_BaseFood_Actor* newActor = GetWorld()->SpawnActor<AAIE_BaseFood_Actor>(FoodToSpawn, spawnLocation, spawnRot);
+	AAIE_BaseFood_Actor* newActor = GetWorld()->SpawnActor<AAIE_BaseFood_Actor>(FoodToSpawn[CurrentSpawnIndex], spawnLocation, spawnRot);
 	activeActors.AddUnique(newActor);
 	newActor->ownedSpawner = this;
 

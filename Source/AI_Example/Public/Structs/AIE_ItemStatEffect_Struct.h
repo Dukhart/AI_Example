@@ -14,9 +14,10 @@ struct AI_EXAMPLE_API FAIE_ItemStatEffect_Struct
 {
 	GENERATED_USTRUCT_BODY()
 
-		//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+		// Index of the stat updated when SetStat is called to set the stat enum
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
 		int32 StatIndex;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Stats")
 		EBotStatNames Stat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
@@ -34,36 +35,17 @@ struct AI_EXAMPLE_API FAIE_ItemStatEffect_Struct
 	FAIE_ItemStatEffect_Struct(EBotStatNames InStat = EBotStatNames::SName_None, int32 InStatChange = 0, int32 InStatMaxChange = 0, int32 InStatMinChange = 0, int32 InStatDesireChange = 0) {
 		Stat = InStat;
 		bIsInverse = false;
-		switch (InStat) {
-		case EBotStatNames::SName_Health:
-			StatIndex = 0;
-			break;
-		case EBotStatNames::SName_Stamina:
-			StatIndex = 1;
-			break;
-		case EBotStatNames::SName_Hunger:
-			bIsInverse = true;
-			StatIndex = 2;
-			break;
-		case EBotStatNames::SName_Happiness:
-			StatIndex = 3;
-			break;
 
-		case EBotStatNames::SName_Strength:
-			StatIndex = 4;
-			break;
-		case EBotStatNames::SName_Intelligence:
-			StatIndex = 5;
-			break;
-		case EBotStatNames::SName_Speed:
-			StatIndex = 6;
-			break;
-		default:
-			break;
-		}
+		StatIndex = (uint8)InStat;
+
 		StatChange = InStatChange;
 		StatMaxChange = InStatMaxChange;
 		StatMinChange = InStatMinChange;
 		StatDesireChange = InStatDesireChange;
+	}
+
+		inline void SetStat(EBotStatNames InStat = EBotStatNames::SName_None){
+		Stat = InStat;
+		StatIndex = (uint8)InStat;
 	}
 };

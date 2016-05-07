@@ -54,11 +54,13 @@ void AAIE_BaseFood_Actor::BeginPlay()
 	//Mesh->SetSimulatePhysics(true);
 	Mesh->SetRelativeLocation(FVector(0, 0, -(Mesh->Bounds.SphereRadius / 2)));
 	Mesh->WeldTo(RootComponent);
-
+	// register for sight
 	StimuliSourceComp->RegisterForSense(UAISense_Sight::StaticClass());
 
-	//UAIPerceptionSystem::RegisterPerceptionStimuliSource(this, UAISense_Sight::StaticClass(), this);
-
+	// Set stat index
+	for (int32 i = 0; i < Stats.Num(); ++i) {
+		Stats[i].SetStat(Stats[i].Stat);
+	}
 }
 
 // Called every frame
